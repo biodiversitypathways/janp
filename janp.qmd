@@ -1,0 +1,288 @@
+---
+title: "Report on the use of passive acoustic monitoring in Jasper National Park"
+format:
+  html:
+    grid:
+      margin-width: 300px
+navbar: right
+theme: cosmo
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: 
+  - name: "Alex MacPhail"
+    affiliation: "Biodiversity Pathways Ltd."
+  - name: "Brenda Shepherd"
+    affiliation: "Parks Canada"
+editor: visual
+bibliography: references.bib
+nocite: '@*'
+toc: true
+toc-depth: 3
+toc-expand: true
+toc-location: left
+styles: styles.css
+github: https://github.com/biodiversitypathways/janp
+---
+
+![](janp.png){style="float:left`;" fig-alt="Photo of Jasper" fig-align="center"}
+```{r}
+#| label: Load packages and authenticate to WildTrax
+#| include: false
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(leaflet)
+library(wildrtrax)
+library(sf)
+library(ggridges)
+library(scales)
+library(kableExtra)
+library(plotly)
+library(DT)
+
+wt_auth()
+
+load('janp.RData')
+#save.image('janp.RData')
+```
+
+```{r}
+#| label: Download data from WildTrax
+#| warning: false
+#| message: false
+#| echo: false
+#| eval: false
+#| include: true
+
+janp_projects <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
+  filter(grepl('Jasper', project)) |>
+  select(project_id) |>
+  pull()
+
+janp_main <-
+  map_dfr(
+    .x = janp_projects,
+    .f = ~ wildrtrax::wt_download_report(
+      project_id = .x,
+      sensor_id = "ARU",
+      weather_cols = T,
+      reports = "main"
+    )
+  )
+
+```
+
+# Abstract
+
+::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
+This report is dynamically generated, meaning its results may evolve with the addition of new data or further analyses. For the most recent updates, refer to the publication date and feel free to reach out to the authors.
+:::
+
+# Land Acknowledgement
+
+# Introduction
+
+# Methods
+
+
+```{r}
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+#| include: true
+#| fig-align: center
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: Locations from Jasper National Park ARU Monitoring Program
+#| label: fig-aru-monitoring-locations
+
+
+janp_locs <- janp_main |>
+  mutate(year = lubridate::year(recording_date_time)) |>
+  select(location, latitude, longitude, year) |>
+  drop_na(latitude) |>
+  distinct() |>
+  mutate(type = case_when(grepl('BAT',location) ~ "Bat", TRUE ~ "Bird")) |>
+  sf::st_as_sf(coords = c("longitude","latitude"), crs = 4326)
+
+locs_summary <- janp_locs |>
+  st_drop_geometry() |>
+  group_by(location, year) |>
+  mutate(value = row_number()) |>
+  ungroup() |>
+  arrange(year) |>
+  pivot_wider(names_from = year, values_from = value, values_fill = 0) |>
+  rename('Location' = location)
+
+janp_shp <- read_sf('assets/National_Parks_and_National_Park_Reserves_of_Canada_Legislative_Boundaries.shp') |>
+  filter(grepl('JASPER',adminAreaN))
+janp_shp <- st_transform(janp_shp, st_crs(janp_locs)) |> st_make_valid()
+
+leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addPolygons(
+    data = janp_shp,
+    fillColor = "#29ABE2",
+    color = "black",
+    weight = 1,
+    fillOpacity = 0.4,
+    popup = ~paste("Park:", adminAreaN)
+  ) %>%
+  addCircleMarkers(
+    data = janp_locs,
+    popup = ~paste("Location:", janp_locs$location, "<br>"),
+    radius = 5  # Adjust marker size
+  ) %>%
+  addMeasure(primaryLengthUnit = "meters", primaryAreaUnit = "sqmeters") %>%
+  addMiniMap(position = "bottomleft")
+  
+
+
+```
+
+# Results
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: true
+#| include: true
+#| label: tbl-verified
+#| tbl-cap: Proportion of tags verified
+
+all_tags <- janp_main |>
+  tally() |>
+  pull()
+
+verified_tags <- janp_main |>
+  group_by(tag_is_verified) |>
+  tally() |>
+  ungroup() |>
+  mutate(Proportion = round(n / all_tags,4)*100) |>
+  rename("Count" = n) |>
+  rename("Tag is verified" = tag_is_verified)
+
+kable(verified_tags)
+
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: true
+#| include: true
+#| label: tbl-tmtt
+#| tbl-cap: TMTT tags
+
+tmtt_tags <- janp_main |>
+  select(location, recording_date_time, species_code, individual_count) |>
+  distinct() |>
+  filter(individual_count == "TMTT")
+
+kable(head(tmtt_tags))
+
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-width: 10
+#| fig-height: 10
+#| fig-cap: Seasonal detection activity of most commonly detected forest species
+#| label: fig-spp-activity
+#| cap-location: margin
+
+guilds <- read_csv("bird_guilds.csv")
+
+janp_main |>
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
+  select(location, recording_date_time, species_common_name, species_code, individual_count) |>
+  mutate(julian = lubridate::yday(recording_date_time),
+         month= month(recording_date_time),
+         year = factor(year(recording_date_time))) |>
+  inner_join(guilds |> select(species_common_name, habitat_nesting)) |>
+  arrange(species_code) |>
+  filter(habitat_nesting %in% c("CW","MW","OW","TSS")) |>
+  group_by(species_code) |>
+  add_tally() |>
+  ungroup() |>
+  mutate(habitat_nesting = case_when(
+    habitat_nesting == "CW" ~ "Coniferous Woodland",
+    habitat_nesting == "MW" ~ "Mixedwood",
+    habitat_nesting == "OW" ~ "Open Woodland",
+    habitat_nesting == "TSS" ~ "Tree Shrub / Swamp",
+    TRUE ~ as.character(habitat_nesting)
+  )) |>
+  rename("Nesting habitat" = habitat_nesting) |>
+  group_by(julian, species_common_name) |>
+  add_tally() |>
+  ungroup() |>
+  filter(!n < 3) |>
+  arrange(species_code) |>
+  mutate(recording_date_time = as.POSIXct(recording_date_time)) |>
+  mutate(species_code = factor(species_code, levels = sort(unique(species_code)))) |>
+  ggplot(aes(x = julian, y = species_code, fill = `Nesting habitat`)) + 
+  geom_density_ridges(alpha = 0.2) +
+  scale_fill_viridis_d() +
+  theme_bw() +
+  xlab("Day of Year") + 
+  ylab("Species")
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-width: 8
+#| fig-height: 8
+#| fig-cap: Count abundance of medium-distance migrants by year
+#| label: relative-abundance-auriol
+#| cap-location: margin
+
+# Medium-distance migrants
+mdm <- c("AMRO","DEJU","VATH","WWCR","YRWA")
+
+tot_a <- janp_main |>
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T)
+
+tot_a_mdm <- tot_a |>
+  filter(species_code %in% mdm)
+
+prop_a <- nrow(tot_a_mdm) / nrow(tot_a)
+
+plot_mdm <- 
+  tot_a_mdm |>
+  mutate(year = year(recording_date_time)) |>
+  wt_replace_tmtt(calc = "round") |>
+  select(location, year, species_code, individual_order, individual_count) |>
+  group_by(location, year, species_code) |>
+  summarise(individual_order = mean(individual_order)) |>
+  ungroup() |>
+  mutate(year = round(year,0))
+
+plot_mdm |>
+  ggplot(aes(x = year, y = individual_order, colour = species_code)) +
+  geom_point() +
+  geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") +  # Use numeric conversion for geom_smooth
+  scale_colour_viridis_d() +
+  scale_x_discrete(labels = scales::label_number(accuracy = 0)) +  # Keep years as factors and format without spaces
+  theme_bw() +
+  facet_wrap(~species_code) +
+  labs(x = "Year", y = "Mean number of individuals")
+
+```
+# Discussion
