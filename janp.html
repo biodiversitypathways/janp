@@ -23,6 +23,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -66,8 +100,16 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
   <li><a href="#land-acknowledgement" id="toc-land-acknowledgement" class="nav-link" data-scroll-target="#land-acknowledgement">Land Acknowledgement</a></li>
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
+  <ul class="collapse">
+  <li><a href="#location-correlation" id="toc-location-correlation" class="nav-link" data-scroll-target="#location-correlation">Location correlation</a></li>
+  </ul></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a>
+  <ul class="collapse">
+  <li><a href="#montane-site-re-selection" id="toc-montane-site-re-selection" class="nav-link" data-scroll-target="#montane-site-re-selection">Montane site re-selection</a></li>
+  <li><a href="#trends-in-abundance-for-montane-sub-alpine-ecoregion" id="toc-trends-in-abundance-for-montane-sub-alpine-ecoregion" class="nav-link" data-scroll-target="#trends-in-abundance-for-montane-sub-alpine-ecoregion">Trends in abundance for montane / sub-alpine ecoregion</a></li>
+  <li><a href="#trends-in-abundance-for-alpine-ecoregion" id="toc-trends-in-abundance-for-alpine-ecoregion" class="nav-link" data-scroll-target="#trends-in-abundance-for-alpine-ecoregion">Trends in abundance for alpine ecoregion</a></li>
+  </ul></li>
   <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">Discussion</a></li>
   </ul>
 </nav>
@@ -167,9 +209,81 @@ Figure&nbsp;1: Locations from Jasper National Park ARU Monitoring Program
 </figure>
 </div>
 </div>
+<section id="location-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="location-correlation">Location correlation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>janp_main <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(location, latitude, longitude) <span class="sc">|&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(latitude) <span class="sc">|&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_location_distances</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(distance <span class="sc">&lt;</span> <span class="dv">300</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(distance) <span class="sc">|&gt;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">20</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>All rows have a latitude and longitude! Creating the matrix...</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 116 × 3
+   location_from distance_to  distance
+   &lt;chr&gt;         &lt;chr&gt;           &lt;dbl&gt;
+ 1 JANP-CAV-000  CAVELL-7         26.0
+ 2 CAVELL-7      JANP-CAV-000     26.0
+ 3 JANP-WAT-002  WATCHTOWER-2     30.9
+ 4 WATCHTOWER-2  JANP-WAT-002     30.9
+ 5 JANP-WAT-003  WATCHTOWER-4     53.8
+ 6 WATCHTOWER-4  JANP-WAT-003     53.8
+ 7 JANP-WLX-003  WILCOX-4         60.9
+ 8 WILCOX-4      JANP-WLX-003     60.9
+ 9 JANP-WLX-004  WILCOX-9         62.8
+10 WILCOX-9      JANP-WLX-004     62.8
+11 JANP-WAT-004  WATCHTOWER-6     67.5
+12 WATCHTOWER-6  JANP-WAT-004     67.5
+13 JANP-OPL-003  OPAL-3           97.6
+14 OPAL-3        JANP-OPL-003     97.6
+15 JANP-3-1      JANP-BAH-004    118. 
+16 JANP-BAH-004  JANP-3-1        118. 
+17 JANP-WLX-002  WILCOX-1        151. 
+18 WILCOX-1      JANP-WLX-002    151. 
+19 JANP-OPL-004  OPAL-5          176. 
+20 OPAL-5        JANP-OPL-004    176. 
+# ℹ 96 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>luh <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(location, latitude, longitude) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(latitude)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>ll <span class="ot">&lt;-</span> luh <span class="sc">|&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  sf<span class="sc">::</span><span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>,<span class="st">"latitude"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">knearneigh</span>(<span class="at">k=</span><span class="dv">1</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">knn2nb</span>(ll)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in knn2nb(ll): neighbour object has 64 sub-graphs</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Neighbour list object:
+Number of regions: 198 
+Number of nonzero links: 198 
+Percentage nonzero weights: 0.5050505 
+Average number of links: 1 
+64 disjoint connected subgraphs
+Non-symmetric neighbours list</code></pre>
+</div>
+</div>
+</section>
 </section>
 <section id="results" class="level1 page-columns page-full">
 <h1>Results</h1>
+<section id="montane-site-re-selection" class="level2">
+<h2 class="anchored" data-anchor-id="montane-site-re-selection">Montane site re-selection</h2>
+</section>
+<section id="trends-in-abundance-for-montane-sub-alpine-ecoregion" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="trends-in-abundance-for-montane-sub-alpine-ecoregion">Trends in abundance for montane / sub-alpine ecoregion</h2>
 <div class="cell">
 <div id="tbl-verified" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -294,6 +408,10 @@ Figure&nbsp;2: Seasonal detection activity of most commonly detected forest spec
 </div>
 </div>
 </div>
+</section>
+<section id="trends-in-abundance-for-alpine-ecoregion" class="level2">
+<h2 class="anchored" data-anchor-id="trends-in-abundance-for-alpine-ecoregion">Trends in abundance for alpine ecoregion</h2>
+</section>
 </section>
 <section id="discussion" class="level1">
 <h1>Discussion</h1>
