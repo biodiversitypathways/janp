@@ -41,6 +41,7 @@ library(scales)
 library(kableExtra)
 library(plotly)
 library(DT)
+library(spdep)
 
 wt_auth()
 
@@ -85,7 +86,6 @@ This report is dynamically generated, meaning its results may evolve with the ad
 # Introduction
 
 # Methods
-
 
 ```{r}
 #| echo: false
@@ -143,7 +143,42 @@ leaflet() %>%
 
 ```
 
+## Location correlation
+
+```{r}
+
+janp_main |>
+  select(location, latitude, longitude) |>
+  distinct() |>
+  drop_na(latitude) |>
+  wt_location_distances() |>
+  filter(distance < 300) |>
+  arrange(distance) |>
+  print(n = 20)
+
+```
+
+```{r}
+
+luh <- janp_main |>
+  select(location, latitude, longitude) |>
+  distinct() |>
+  drop_na(latitude)
+
+ll <- luh |>
+  sf::st_as_sf(coords = c("longitude","latitude"), crs = 4326) %>%
+  knearneigh(k=1)
+
+nb <- knn2nb(ll)
+
+nb
+```
+
 # Results
+
+## Montane site re-selection
+
+## Trends in abundance for montane / sub-alpine ecoregion
 
 ```{r}
 #| warning: false
@@ -285,4 +320,7 @@ plot_mdm |>
   labs(x = "Year", y = "Mean number of individuals")
 
 ```
+
+## Trends in abundance for alpine ecoregion
+
 # Discussion
