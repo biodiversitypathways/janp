@@ -41,6 +41,7 @@ library(scales)
 library(kableExtra)
 library(plotly)
 library(DT)
+library(lubridate)
 library(spdep)
 
 wt_auth()
@@ -72,6 +73,8 @@ janp_main <-
       reports = "main"
     )
   )
+
+janp_main <- bind_rows(old_standardized, janp_main)
 
 ```
 
@@ -143,6 +146,9 @@ leaflet() %>%
 
 ```
 
+To analyze trends in bird abundance in Jasper National Park from 2007–2024, we utilized bird point count data to assess changes in abundance at the species and guild levels. Observations were grouped by transects within the montane/sub-alpine and alpine ecoregions to address spatial clustering and ensure results aligned with Ecological Integrity reporting requirements. Point count data were first filtered to include only observations from 2007–2024. Each observation was classified by species and functional guild based on established ecological trait databases [FIG]. The dataset was split by ecoregion (montane/sub-alpine and alpine) using georeferenced transect locations. A variable representing time-to-first-detection (TTFD) was included when available, to control for potential biases in detectability. Trends in abundance were assessed separately for species and guilds using generalized linear mixed-effects models (GLMMs) implemented in the lme4 package (Bates et al., 2015) in R (R Core Team, 2023). Count data were modeled using a Poisson distribution or a negative binomial distribution where overdispersion was evident. Models included fixed effects for year, ecoregion, and their interaction, while accounting for spatial clustering using random intercepts for transects. Separate models were fitted for montane/sub-alpine and alpine ecoregions to facilitate region-specific comparisons. Declines in abundance were calculated as the annual percent change (APC) using the equation. Temporal trends were visualized using the `ggplot2` package (Wickham, 2016), with separate panels for species and guilds.
+
+
 ## Location correlation
 
 ```{r}
@@ -175,8 +181,6 @@ nb
 ```
 
 # Results
-
-## Montane site re-selection
 
 ## Trends in abundance for montane / sub-alpine ecoregion
 
@@ -237,42 +241,48 @@ kable(head(tmtt_tags))
 #| label: fig-spp-activity
 #| cap-location: margin
 
-guilds <- read_csv("bird_guilds.csv")
+guilds <- read_csv("jasper_guilds.csv")
 
-janp_main |>
+guild_activity <- janp_main |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
   select(location, recording_date_time, species_common_name, species_code, individual_count) |>
   mutate(julian = lubridate::yday(recording_date_time),
          month= month(recording_date_time),
          year = factor(year(recording_date_time))) |>
-  inner_join(guilds |> select(species_common_name, habitat_nesting)) |>
-  arrange(species_code) |>
-  filter(habitat_nesting %in% c("CW","MW","OW","TSS")) |>
+  inner_join(guilds, by = "species_code") |>
   group_by(species_code) |>
   add_tally() |>
   ungroup() |>
-  mutate(habitat_nesting = case_when(
-    habitat_nesting == "CW" ~ "Coniferous Woodland",
-    habitat_nesting == "MW" ~ "Mixedwood",
-    habitat_nesting == "OW" ~ "Open Woodland",
-    habitat_nesting == "TSS" ~ "Tree Shrub / Swamp",
-    TRUE ~ as.character(habitat_nesting)
-  )) |>
-  rename("Nesting habitat" = habitat_nesting) |>
-  group_by(julian, species_common_name) |>
+  rename("Nesting habitat" = habitat_guild) |>
+  group_by(julian, species_code) |>
   add_tally() |>
   ungroup() |>
   filter(!n < 3) |>
   arrange(species_code) |>
   mutate(recording_date_time = as.POSIXct(recording_date_time)) |>
-  mutate(species_code = factor(species_code, levels = sort(unique(species_code)))) |>
-  ggplot(aes(x = julian, y = species_code, fill = `Nesting habitat`)) + 
+  mutate(species_code = factor(species_code, levels = sort(unique(species_code))))
+
+guild_activity |>
+  ggplot(aes(x = julian, y = `Nesting habitat`, fill = `Nesting habitat`)) + 
   geom_density_ridges(alpha = 0.2) +
   scale_fill_viridis_d() +
   theme_bw() +
   xlab("Day of Year") + 
   ylab("Species")
 ```
+
+```{r}
+guild_activity |>
+  rename(`Dietary guild` = "dietary_guild") |>
+  ggplot(aes(x = julian, y = `Dietary guild`, fill = `Dietary guild`)) + 
+  geom_density_ridges(alpha = 0.7) +
+  scale_fill_viridis_d(option = "cividis") +
+  theme_bw() +
+  xlab("Day of Year") + 
+  ylab("Species")
+
+```
+
 
 ```{r}
 #| warning: false
@@ -289,7 +299,7 @@ janp_main |>
 #| cap-location: margin
 
 # Medium-distance migrants
-mdm <- c("AMRO","DEJU","VATH","WWCR","YRWA")
+mdm <- c("AMRO","CHSP","DEJU","GCKI","HETH","FOSP","RCKI","SWTH","VATH","WCSP","WTSP","GCSP","YRWA")
 
 tot_a <- janp_main |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T)
@@ -313,14 +323,54 @@ plot_mdm |>
   ggplot(aes(x = year, y = individual_order, colour = species_code)) +
   geom_point() +
   geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") +  # Use numeric conversion for geom_smooth
-  scale_colour_viridis_d() +
+  scale_colour_viridis_d(option = "cividis", alpha = 0.7) +
   scale_x_discrete(labels = scales::label_number(accuracy = 0)) +  # Keep years as factors and format without spaces
   theme_bw() +
   facet_wrap(~species_code) +
   labs(x = "Year", y = "Mean number of individuals")
 
 ```
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap: Annual count of medium-distance migrants 
+#| label: fig-annual-auriol-count
+#| cap-location: bottom
+#| code-fold: true
 
-## Trends in abundance for alpine ecoregion
+count_annual_mdm <- tot_a_mdm |>
+  mutate(year = year(recording_date_time)) |>
+  wt_replace_tmtt(calc = "round") |>
+  select(location, year, species_code, individual_order, individual_count) |>
+  group_by(location, year, species_code) |>
+  summarise(individual_order = max(individual_order)) |>
+  ungroup() |>
+  mutate(year = round(year,0)) |>
+  group_by(year) |>
+  summarise(sum_year = sum(individual_order)) |>
+  ungroup()
+
+linear_model_count_annual_mdm <- lm(sum_year ~ year, data = count_annual_mdm)
+slope_count_annual_mdm <- coef(linear_model_count_annual_mdm)[2]
+p_value_count_annual_mdm <- summary(linear_model_count_annual_mdm)$coefficients[2, 4]
+
+ggplot(count_annual_mdm, aes(x = year, y = sum_year)) +
+  geom_smooth(method = "lm") +
+  geom_point(size = 2, color = "darkblue") +
+  scale_fill_viridis_d(option = "mako") +
+  labs(x = "Year", y = "Count of medium-distance migrants", fill = "Year") +
+  scale_x_continuous(breaks = unique(count_annual_mdm$year)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  annotate("text", x = 2021, y = max(count_annual_mdm$sum_year), 
+           label = paste("Slope: ", round(slope_count_annual_mdm, 2), "\nP-value: ", round(p_value_count_annual_mdm, 4)), 
+           size = 3, hjust = 0, vjust = 1)
+
+```
 
 # Discussion
