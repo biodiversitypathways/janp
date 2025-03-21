@@ -24,6 +24,7 @@ github: https://github.com/biodiversitypathways/janp
 ---
 
 ![](janp.png){style="float:left`;" fig-alt="Photo of Jasper" fig-align="center"}
+
 ```{r}
 #| label: Load packages and authenticate to WildTrax
 #| include: false
@@ -146,8 +147,7 @@ leaflet() %>%
 
 ```
 
-To analyze trends in bird abundance in Jasper National Park from 2007–2024, we utilized bird point count data to assess changes in abundance at the species and guild levels. Observations were grouped by transects within the montane/sub-alpine and alpine ecoregions to address spatial clustering and ensure results aligned with Ecological Integrity reporting requirements. Point count data were first filtered to include only observations from 2007–2024. Each observation was classified by species and functional guild based on established ecological trait databases [FIG]. The dataset was split by ecoregion (montane/sub-alpine and alpine) using georeferenced transect locations. A variable representing time-to-first-detection (TTFD) was included when available, to control for potential biases in detectability. Trends in abundance were assessed separately for species and guilds using generalized linear mixed-effects models (GLMMs) implemented in the lme4 package (Bates et al., 2015) in R (R Core Team, 2023). Count data were modeled using a Poisson distribution or a negative binomial distribution where overdispersion was evident. Models included fixed effects for year, ecoregion, and their interaction, while accounting for spatial clustering using random intercepts for transects. Separate models were fitted for montane/sub-alpine and alpine ecoregions to facilitate region-specific comparisons. Declines in abundance were calculated as the annual percent change (APC) using the equation. Temporal trends were visualized using the `ggplot2` package (Wickham, 2016), with separate panels for species and guilds.
-
+To analyze trends in bird abundance in Jasper National Park from 2007–2024, we utilized bird point count data to assess changes in abundance at the species and guild levels. Observations were grouped by transects within the montane/sub-alpine and alpine ecoregions to address spatial clustering and ensure results aligned with Ecological Integrity reporting requirements. Point count data were first filtered to include only observations from 2007–2024. Each observation was classified by species and functional guild based on established ecological trait databases \[FIG\]. The dataset was split by ecoregion (montane/sub-alpine and alpine) using georeferenced transect locations. A variable representing time-to-first-detection (TTFD) was included when available, to control for potential biases in detectability. Trends in abundance were assessed separately for species and guilds using generalized linear mixed-effects models (GLMMs) implemented in the lme4 package (Bates et al., 2015) in R (R Core Team, 2023). Count data were modeled using a Poisson distribution or a negative binomial distribution where overdispersion was evident. Models included fixed effects for year, ecoregion, and their interaction, while accounting for spatial clustering using random intercepts for transects. Separate models were fitted for montane/sub-alpine and alpine ecoregions to facilitate region-specific comparisons. Declines in abundance were calculated as the annual percent change (APC) using the equation. Temporal trends were visualized using the `ggplot2` package (Wickham, 2016), with separate panels for species and guilds.
 
 ## Location correlation
 
@@ -264,8 +264,8 @@ guild_activity <- janp_main |>
 
 guild_activity |>
   ggplot(aes(x = julian, y = `Nesting habitat`, fill = `Nesting habitat`)) + 
-  geom_density_ridges(alpha = 0.2) +
-  scale_fill_viridis_d() +
+  geom_density_ridges(alpha = 0.7, scale = 1) +
+  scale_fill_viridis_d(option = "cividis") +
   theme_bw() +
   xlab("Day of Year") + 
   ylab("Species")
@@ -275,14 +275,13 @@ guild_activity |>
 guild_activity |>
   rename(`Dietary guild` = "dietary_guild") |>
   ggplot(aes(x = julian, y = `Dietary guild`, fill = `Dietary guild`)) + 
-  geom_density_ridges(alpha = 0.7) +
+  geom_density_ridges(alpha = 0.7, scale = 2.5) +
   scale_fill_viridis_d(option = "cividis") +
   theme_bw() +
   xlab("Day of Year") + 
   ylab("Species")
 
 ```
-
 
 ```{r}
 #| warning: false
@@ -304,6 +303,8 @@ mdm <- c("AMRO","CHSP","DEJU","GCKI","HETH","FOSP","RCKI","SWTH","VATH","WCSP","
 tot_a <- janp_main |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T)
 
+prop_tidy <- nrow(tot_a) / nrow(janp_main)
+
 tot_a_mdm <- tot_a |>
   filter(species_code %in% mdm)
 
@@ -321,15 +322,15 @@ plot_mdm <-
 
 plot_mdm |>
   ggplot(aes(x = year, y = individual_order, colour = species_code)) +
-  geom_point() +
+  geom_point() + 
   geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") +  # Use numeric conversion for geom_smooth
-  scale_colour_viridis_d(option = "cividis", alpha = 0.7) +
-  scale_x_discrete(labels = scales::label_number(accuracy = 0)) +  # Keep years as factors and format without spaces
+  scale_colour_viridis_d(option = "cividis", alpha = 0.7) + # Keep years as factors and format without spaces
   theme_bw() +
   facet_wrap(~species_code) +
   labs(x = "Year", y = "Mean number of individuals")
 
 ```
+
 ```{r}
 #| warning: false
 #| echo: true

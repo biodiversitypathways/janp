@@ -9,9 +9,9 @@ old_standardized <- old_data |>
   relocate(c(location,latitude, longitude, recording_date_time, observer, species_common_name)) |>
   group_by(location, latitude, longitude, recording_date_time, elevation, ecoregion, temperature, sky, wind, survey_duration, observer, species_code, species_common_name, TTFD) |>
   rowwise() |>
-  summarise(individual_count = as.character(max(across(starts_with("abundance"))))) |>
+  summarise(individual_order = as.numeric(max(across(starts_with("abundance"))))) |> # Max count per visit of individuals
   ungroup() |>
-  select(location, latitude, longitude, recording_date_time, observer, species_common_name, TTFD, individual_count) |>
+  select(location, latitude, longitude, recording_date_time, observer, species_common_name, TTFD, individual_order) |>
   distinct()
 
 
