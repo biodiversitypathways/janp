@@ -44,6 +44,7 @@ library(plotly)
 library(DT)
 library(lubridate)
 library(spdep)
+library(vegan)
 
 wt_auth()
 
@@ -59,23 +60,53 @@ load('janp.RData')
 #| eval: false
 #| include: true
 
-janp_projects <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
-  filter(grepl('Jasper', project)) |>
+janp_aru_projects <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
+  filter(grepl('Jasper National Park', project)) |>
   select(project_id) |>
   pull()
 
-janp_main <-
-  map_dfr(
-    .x = janp_projects,
-    .f = ~ wildrtrax::wt_download_report(
-      project_id = .x,
-      sensor_id = "ARU",
-      weather_cols = T,
-      reports = "main"
-    )
-  )
+# All projects associated with a single-visit ARU deployment with no abundance cap
+janp_0max <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
+  filter(grepl('Jasper NP - EI', project)) |>
+  filter(!grepl('2021|2022',project)) |>
+  select(project_id) |>
+  pull()
 
-janp_main <- bind_rows(old_standardized, janp_main)
+# All projects associated with a single-visit ARU deployment with an abundance cap of 3
+janp_3max <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
+  filter(grepl('Jasper NP - EI', project)) |>
+  filter(grepl('2021|2022',project)) |>
+  select(project_id) |>
+  pull()
+
+janp_project_lists <- list(
+  multi_day = janp_aru_projects,
+  single_visit_0_max = janp_0max,
+  single_visit_3_max = janp_3max
+)
+
+janp_aru <- imap_dfr(
+  janp_project_lists,
+  ~ map_dfr(
+      .x, 
+      ~ wildrtrax::wt_download_report(
+          project_id = .x,
+          sensor_id = "ARU",
+          weather_cols = TRUE,
+          reports = "main"
+        )
+    ) |> mutate(data_type = .y, .after = organization) 
+)
+
+# Mountain Pine Beetle
+mpb <- wildrtrax::wt_download_report(project_id = 2129, sensor_id = "ARU", weather_cols = TRUE, reports = "main")
+
+# Bind legacy data with acoustic data
+janp_main <- bind_rows(old_s, janp_aru) |>
+  group_by(location) |>
+  fill(ecoregion, .direction = "down") |>
+  ungroup() |>
+  mutate(year = year(recording_date_time)) # Get year in as a variable
 
 ```
 
@@ -98,15 +129,12 @@ This report is dynamically generated, meaning its results may evolve with the ad
 #| message: false
 #| include: true
 #| fig-align: center
-#| fig-width: 10
-#| fig-height: 10
 #| fig-cap: Locations from Jasper National Park ARU Monitoring Program
 #| label: fig-aru-monitoring-locations
 
-
 janp_locs <- janp_main |>
   mutate(year = lubridate::year(recording_date_time)) |>
-  select(location, latitude, longitude, year) |>
+  select(location, latitude, longitude, year, ecoregion) |>
   drop_na(latitude) |>
   distinct() |>
   mutate(type = case_when(grepl('BAT',location) ~ "Bat", TRUE ~ "Bird")) |>
@@ -114,7 +142,8 @@ janp_locs <- janp_main |>
 
 locs_summary <- janp_locs |>
   st_drop_geometry() |>
-  group_by(location, year) |>
+  group_by(location, ecoregion, year) |>
+  distinct() |>
   mutate(value = row_number()) |>
   ungroup() |>
   arrange(year) |>
@@ -125,11 +154,15 @@ janp_shp <- read_sf('assets/National_Parks_and_National_Park_Reserves_of_Canada_
   filter(grepl('JASPER',adminAreaN))
 janp_shp <- st_transform(janp_shp, st_crs(janp_locs)) |> st_make_valid()
 
+pal <- colorFactor(
+  palette = "Set3", 
+  domain = janp_locs$ecoregion
+)
+
 leaflet() %>%
-  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addTiles() %>%
   addPolygons(
     data = janp_shp,
-    fillColor = "#29ABE2",
     color = "black",
     weight = 1,
     fillOpacity = 0.4,
@@ -138,22 +171,57 @@ leaflet() %>%
   addCircleMarkers(
     data = janp_locs,
     popup = ~paste("Location:", janp_locs$location, "<br>"),
-    radius = 5  # Adjust marker size
+    fillColor = ~pal(ecoregion),  
+    fillOpacity = 1,
+    color = "black", 
+    radius = 6 
+  ) %>%
+  addLegend(
+    "topright",
+    pal = pal,
+    values = janp_locs$ecoregion,
+    title = "Ecoregion",
+    opacity = 1
   ) %>%
   addMeasure(primaryLengthUnit = "meters", primaryAreaUnit = "sqmeters") %>%
   addMiniMap(position = "bottomleft")
-  
 
 
 ```
 
-To analyze trends in bird abundance in Jasper National Park from 2007–2024, we utilized bird point count data to assess changes in abundance at the species and guild levels. Observations were grouped by transects within the montane/sub-alpine and alpine ecoregions to address spatial clustering and ensure results aligned with Ecological Integrity reporting requirements. Point count data were first filtered to include only observations from 2007–2024. Each observation was classified by species and functional guild based on established ecological trait databases \[FIG\]. The dataset was split by ecoregion (montane/sub-alpine and alpine) using georeferenced transect locations. A variable representing time-to-first-detection (TTFD) was included when available, to control for potential biases in detectability. Trends in abundance were assessed separately for species and guilds using generalized linear mixed-effects models (GLMMs) implemented in the lme4 package (Bates et al., 2015) in R (R Core Team, 2023). Count data were modeled using a Poisson distribution or a negative binomial distribution where overdispersion was evident. Models included fixed effects for year, ecoregion, and their interaction, while accounting for spatial clustering using random intercepts for transects. Separate models were fitted for montane/sub-alpine and alpine ecoregions to facilitate region-specific comparisons. Declines in abundance were calculated as the annual percent change (APC) using the equation. Temporal trends were visualized using the `ggplot2` package (Wickham, 2016), with separate panels for species and guilds.
+To analyze trends in bird abundance in Jasper National Park from 2007–2024, we utilized bird point count data to assess changes in abundance at the species and guild levels. Observations were grouped by transects within the montane / sub-alpine and alpine ecoregions to address spatial clustering and ensure results aligned with Ecological Integrity reporting requirements. Point count data were first filtered to include only observations from 2007–2024. Each observation was classified by species and functional guild based on established ecological trait databases @tbl-guilds. The dataset was split by ecoregion (montane/sub-alpine and alpine) using georeferenced transect locations. A variable representing time-to-first-detection (TTFD) was included when available, to control for potential biases in detectability. Trends in abundance were assessed separately for species and guilds using generalized linear mixed-effects models (GLMMs) implemented in the lme4 package (Bates et al., 2015) in R (R Core Team, 2023). Count data were modeled using a Poisson distribution or a negative binomial distribution where overdispersion was evident. Models included fixed effects for year, ecoregion, and their interaction, while accounting for spatial clustering using random intercepts for transects. Separate models were fitted for montane/sub-alpine and alpine ecoregions to facilitate region-specific comparisons. Declines in abundance were calculated as the annual percent change (APC) using the equation. Temporal trends were visualized using the `ggplot2` package (Wickham, 2016), with separate panels for species and guilds.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| label: tbl-loc-summary
+#| collapse: true
+#| code-fold: true
+#| tbl-cap: Locations surveyed across years. Ones indicated a deployment in that year for that location.
+
+datatable(locs_summary, 
+          options = list(
+            searching = TRUE,  
+            paging = TRUE,    
+            pageLength = 10   
+          )) |>
+  formatStyle(columns = colnames(locs_summary), 
+              backgroundColor = styleEqual(c("NA"), "lightgray"))  
+```
 
 ## Location correlation
 
 ```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: false
+#| include: false
 
-janp_main |>
+old_standardized |>
   select(location, latitude, longitude) |>
   distinct() |>
   drop_na(latitude) |>
@@ -165,6 +233,13 @@ janp_main |>
 ```
 
 ```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: false
+#| include: false
+#| label: tbl-kmeans
+#| tbl-cap: Kmeans
 
 luh <- janp_main |>
   select(location, latitude, longitude) |>
@@ -180,9 +255,22 @@ nb <- knn2nb(ll)
 nb
 ```
 
-# Results
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: false
+#| include: false
+#| label: tbl-loc-distances
+#| tbl-cap: Locations distances
 
-## Trends in abundance for montane / sub-alpine ecoregion
+
+jj <- wt_location_distances(janp_main) |> filter(location_from %in% multiaru, distance < 300) |> inner_join(janp_main |> select(location, ecoregion) |> distinct(), by = c("location_from" = "location"))
+```
+
+## Data quality control
+
+We also verified tags @tbl-verified and @tbl-tmtt for abundance balancing.
 
 ```{r}
 #| warning: false
@@ -227,6 +315,100 @@ kable(head(tmtt_tags))
 
 ```
 
+# Results
+
+## Ecoregional results
+
+@fig-community shows the relationship between species and ecoregion using an RDA.
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: true
+#| include: true
+#| label: fig-community
+#| tbl-cap: Community matrix
+
+comm_matrix <- janp_main |>
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
+  wt_replace_tmtt(calc = "round") |>
+  select(-ecoregion) |>
+  inner_join(locs_summary, by = c("location" = "Location")) |>
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
+  group_by(location, ecoregion, species_code) |>
+  summarise(individual_order = max(individual_order)) |>
+  ungroup() |>
+  pivot_wider(names_from = species_code, values_from = individual_order, values_fill = 0) |>
+  drop_na(ecoregion)
+
+multi_type <- comm_matrix  %>%
+  dplyr::select(location, ecoregion) %>%
+  distinct() %>%
+  drop_na()
+
+t3 <- rda(comm_matrix[,-c(1:2)] ~ ecoregion + location, data = multi_type)
+# Print the results of a permutation test for the constrained ordination
+ordi <- ordistep(t3)
+# Set up the output - scores first
+t3scores <- scores(t3, display = "sites") %>%
+as.data.frame() %>%
+rownames_to_column("site") %>%
+bind_cols(., multi_type)
+t3vect <- scores(t3, display = "species") %>%
+as.data.frame()
+
+plot_RDA <- ggplot(data = t3scores, aes(x = RDA1, y = RDA2)) +
+  geom_point(data = t3scores, aes(x = RDA1, y = RDA2, colour = ecoregion), 
+             alpha = 0.7, size = 3, shape = 16) +
+  stat_ellipse(data = t3scores, aes(colour = ecoregion), 
+               linetype = 1, type = 'norm', level = 0.67, size = 1) +
+  geom_vline(xintercept = 0, color = "#A19E99", linetype = 2, size = 1) +
+  geom_hline(yintercept = 0, color = "#A19E99", linetype = 2, size = 1) +
+  geom_segment(data = t3vect, aes(x = 0, y = 0, xend = RDA1, yend = RDA2), 
+               arrow = arrow(length = unit(0.2, "cm")), size = 1) +
+  geom_text(data = t3vect, aes(x = RDA1, y = RDA2, label = rownames(t3vect)), 
+            size = 3, colour = "black", fontface = "italic", nudge_x = 0.1, nudge_y = 0.1) +
+  theme_bw() +
+  scale_colour_viridis_d(option = "cividis", end = 0.9) +
+  labs(x = "RDA1", y = "RDA2", title = "RDA Plot of Ecoregions and Species", 
+       colour = "Ecoregion") +
+  theme(legend.position = "right", 
+        legend.title = element_text(size = 10), 
+        legend.text = element_text(size = 9), 
+        plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
+
+plot_RDA
+
+```
+
+## Guild analysis
+
+Here are species guilds @tbl-guilds and see @fig-spp-activity-nesting and @fig-spp-activity-dietary by nesting and dietary guilds.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| label: tbl-guilds
+#| collapse: true
+#| code-fold: true
+#| tbl-cap: Guilds
+
+guilds <- read_csv("jasper_guilds.csv")
+
+datatable(guilds, 
+          options = list(
+            searching = TRUE,  
+            paging = TRUE,    
+            pageLength = 10   
+          ))
+
+```
+
 ```{r}
 #| warning: false
 #| echo: false
@@ -235,13 +417,10 @@ kable(head(tmtt_tags))
 #| include: true
 #| results: hide
 #| fig-align: center
-#| fig-width: 10
-#| fig-height: 10
-#| fig-cap: Seasonal detection activity of most commonly detected forest species
-#| label: fig-spp-activity
+#| fig-cap: Seasonal detection activity of by nesting guild and ecoregion
+#| label: fig-spp-activity-nesting
 #| cap-location: margin
-
-guilds <- read_csv("jasper_guilds.csv")
+#| code-fold: true
 
 guild_activity <- janp_main |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
@@ -260,28 +439,50 @@ guild_activity <- janp_main |>
   filter(!n < 3) |>
   arrange(species_code) |>
   mutate(recording_date_time = as.POSIXct(recording_date_time)) |>
-  mutate(species_code = factor(species_code, levels = sort(unique(species_code))))
+  mutate(species_code = factor(species_code, levels = sort(unique(species_code)))) |>
+  inner_join(locs_summary, by = c("location" = "Location")) |>
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"))
 
 guild_activity |>
   ggplot(aes(x = julian, y = `Nesting habitat`, fill = `Nesting habitat`)) + 
   geom_density_ridges(alpha = 0.7, scale = 1) +
   scale_fill_viridis_d(option = "cividis") +
+  facet_wrap(~ecoregion) +
   theme_bw() +
   xlab("Day of Year") + 
   ylab("Species")
 ```
 
 ```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap:  Seasonal detection activity of by nesting guild and ecoregion
+#| label: fig-spp-activity-dietary
+#| cap-location: margin
+#| code-fold: true
+
+
 guild_activity |>
   rename(`Dietary guild` = "dietary_guild") |>
   ggplot(aes(x = julian, y = `Dietary guild`, fill = `Dietary guild`)) + 
   geom_density_ridges(alpha = 0.7, scale = 2.5) +
   scale_fill_viridis_d(option = "cividis") +
+  facet_wrap(~ecoregion) +
   theme_bw() +
   xlab("Day of Year") + 
   ylab("Species")
 
 ```
+
+## Trend analysis
+
+We first analyzed the trend in mean abundance of medium-distance migrants, representing approximately 63% of the total data set. 
 
 ```{r}
 #| warning: false
@@ -293,15 +494,22 @@ guild_activity |>
 #| fig-align: center
 #| fig-width: 8
 #| fig-height: 8
-#| fig-cap: Count abundance of medium-distance migrants by year
+#| fig-cap: Normalized count abundance of mean number of medium-distance migrants by year
 #| label: relative-abundance-auriol
 #| cap-location: margin
 
+z <- locs_summary |>
+  rowwise() |>
+  mutate(sum = sum(across(`2007`:`2024`))) |>
+  filter(sum == 17)
+
 # Medium-distance migrants
-mdm <- c("AMRO","CHSP","DEJU","GCKI","HETH","FOSP","RCKI","SWTH","VATH","WCSP","WTSP","GCSP","YRWA")
+mdm <- c("AMRO","BRSP","CHSP","DEJU","GCKI","HETH","FOSP","OCWA","RCKI","SWTH","VATH","WAVI","WCSP","WTSP","GCSP","YRWA")
 
 tot_a <- janp_main |>
-  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T)
+  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
+  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F)
 
 prop_tidy <- nrow(tot_a) / nrow(janp_main)
 
@@ -313,21 +521,27 @@ prop_a <- nrow(tot_a_mdm) / nrow(tot_a)
 plot_mdm <- 
   tot_a_mdm |>
   mutate(year = year(recording_date_time)) |>
-  wt_replace_tmtt(calc = "round") |>
-  select(location, year, species_code, individual_order, individual_count) |>
-  group_by(location, year, species_code) |>
+  select(location, data_type, year, species_code, individual_order, individual_count) |>
+  group_by(location, data_type, year, species_code) |>
   summarise(individual_order = mean(individual_order)) |>
   ungroup() |>
-  mutate(year = round(year,0))
+  mutate(year = round(year,0)) |>
+  group_by(year, species_code) |>
+  summarise(
+    total_abundance = sum(individual_order),  
+    sample_size = n_distinct(location)
+  ) |>
+  ungroup() |>
+  mutate(normalized_count = total_abundance / sample_size)
 
 plot_mdm |>
-  ggplot(aes(x = year, y = individual_order, colour = species_code)) +
+  ggplot(aes(x = year, y = normalized_count, colour = species_code)) +
   geom_point() + 
-  geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") +  # Use numeric conversion for geom_smooth
-  scale_colour_viridis_d(option = "cividis", alpha = 0.7) + # Keep years as factors and format without spaces
+  geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") + 
+  scale_colour_viridis_d(option = "cividis", alpha = 0.7) +
   theme_bw() +
   facet_wrap(~species_code) +
-  labs(x = "Year", y = "Mean number of individuals")
+  labs(x = "Year", y = "Normalized count of mean number of individuals per location")
 
 ```
 
@@ -340,38 +554,128 @@ plot_mdm |>
 #| results: hide
 #| fig-align: center
 #| fig-cap: Annual count of medium-distance migrants 
-#| label: fig-annual-auriol-count
+#| label: fig-annual-count
 #| cap-location: bottom
 #| code-fold: true
 
 count_annual_mdm <- tot_a_mdm |>
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
   mutate(year = year(recording_date_time)) |>
-  wt_replace_tmtt(calc = "round") |>
-  select(location, year, species_code, individual_order, individual_count) |>
-  group_by(location, year, species_code) |>
+  select(location, ecoregion, year, species_code, individual_order, individual_count) |>
+  group_by(location, ecoregion, year, species_code) |>
   summarise(individual_order = max(individual_order)) |>
   ungroup() |>
-  mutate(year = round(year,0)) |>
-  group_by(year) |>
-  summarise(sum_year = sum(individual_order)) |>
-  ungroup()
+  mutate(year = round(year, 0)) |>
+  group_by(ecoregion, year) |>
+  summarise(sum_year = sum(individual_order), 
+            sample_size = n()) |>
+  ungroup() |>
+  mutate(normalized_count = sum_year / sample_size)
 
-linear_model_count_annual_mdm <- lm(sum_year ~ year, data = count_annual_mdm)
+# Linear model with normalized counts
+linear_model_count_annual_mdm <- lm(normalized_count ~ year + ecoregion, data = count_annual_mdm)
 slope_count_annual_mdm <- coef(linear_model_count_annual_mdm)[2]
 p_value_count_annual_mdm <- summary(linear_model_count_annual_mdm)$coefficients[2, 4]
 
-ggplot(count_annual_mdm, aes(x = year, y = sum_year)) +
+# Plot with normalized counts
+ggplot(count_annual_mdm, aes(x = year, y = normalized_count, colour = ecoregion)) +
   geom_smooth(method = "lm") +
-  geom_point(size = 2, color = "darkblue") +
-  scale_fill_viridis_d(option = "mako") +
-  labs(x = "Year", y = "Count of medium-distance migrants", fill = "Year") +
+  geom_point(size = 2) +
+  scale_colour_viridis_d(option = "cividis") +
+  labs(x = "Year", y = "Normalized Count of Medium-Distance Migrants", fill = "Year") +
   scale_x_continuous(breaks = unique(count_annual_mdm$year)) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  annotate("text", x = 2021, y = max(count_annual_mdm$sum_year), 
+  annotate("text", x = 2008, y = max(count_annual_mdm$normalized_count), 
            label = paste("Slope: ", round(slope_count_annual_mdm, 2), "\nP-value: ", round(p_value_count_annual_mdm, 4)), 
            size = 3, hjust = 0, vjust = 1)
 
+```
+
+## Species richness and diversity trends
+
+Species richness per location is at @fig-spp-rich-locs and Shannon's diversity index over years at @fig-shannon.
+
+```{r}
+#| warning: false
+#| message: false
+#| echo: true
+#| eval: true
+#| include: true
+#| fig-align: center
+#| fig-cap: Species richness by year
+#| label: fig-spp-rich-locs
+#| cap-location: bottom
+#| code-fold: true
+
+spp_rich_location <- janp_main |>
+  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
+  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
+  select(location, year, species_code) |>
+  distinct() |>
+  group_by(location, year) |>
+  summarise(species_count = n_distinct(species_code)) |>
+  ungroup() |>
+  inner_join(locs_summary, by = c("location" = "Location")) |>
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"))
+
+spp_rich_location |>
+  ggplot(aes(x=as.factor(year), y=species_count, fill=year)) +
+  geom_boxplot() +
+  geom_point(alpha = 0.7, colour = "grey") +
+  geom_smooth(method = "lm") +
+  theme_bw() +
+  facet_wrap(~ecoregion) +
+  scale_fill_viridis_c(option = "cividis") +
+  xlab('Year') + ylab('Species richness per location') +
+  coord_flip()
+
+```
+
+
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap: Shannon diversity index over years
+#| label: fig-shannon
+#| cap-location: bottom
+#| code-fold: true
+
+shannon_d <- janp_main |> 
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
+  inner_join(wt_get_species() |> select(species_code, species_class, species_order), by = "species_code") |>
+  select(location, recording_date_time, species_code, species_common_name, individual_order, individual_count) |>
+  distinct() |>
+  group_by(location, recording_date_time, species_code, species_common_name) |>
+  summarise(count = max(individual_order)) |>
+  ungroup() |>
+  pivot_wider(names_from = species_code, values_from = count, values_fill = 0) |>
+  pivot_longer(cols = -(location:species_common_name), names_to = "species", values_to = "count") |>
+  group_by(location, year = year(recording_date_time), species) |>
+  summarise(total_count = sum(count)) |>
+  ungroup() |>
+  group_by(location, year) |>
+  summarise(shannon_index = diversity(total_count, index = "shannon")) |>
+  ungroup() |>
+  ggplot(aes(x = factor(year), y = shannon_index, fill = factor(year))) +
+  geom_boxplot() +
+  geom_point(alpha = 0.6, colour = "grey") +
+  labs(x = "Year",
+       y = "Shannon diversity index per location") +
+  theme_bw() +
+  guides(fill = guide_legend(title = "Year")) +
+  scale_fill_viridis_d(alpha = 0.8, option = "cividis")
+
+shannon_d
 ```
 
 # Discussion
