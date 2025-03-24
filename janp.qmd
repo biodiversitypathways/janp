@@ -45,6 +45,7 @@ library(DT)
 library(lubridate)
 library(spdep)
 library(vegan)
+library(ggrepel)
 
 wt_auth()
 
@@ -350,7 +351,7 @@ multi_type <- comm_matrix  %>%
 
 t3 <- rda(comm_matrix[,-c(1:2)] ~ ecoregion + location, data = multi_type)
 # Print the results of a permutation test for the constrained ordination
-ordi <- ordistep(t3)
+#ordi <- ordistep(t3)
 # Set up the output - scores first
 t3scores <- scores(t3, display = "sites") %>%
 as.data.frame() %>%
@@ -367,9 +368,11 @@ plot_RDA <- ggplot(data = t3scores, aes(x = RDA1, y = RDA2)) +
   geom_vline(xintercept = 0, color = "#A19E99", linetype = 2, size = 1) +
   geom_hline(yintercept = 0, color = "#A19E99", linetype = 2, size = 1) +
   geom_segment(data = t3vect, aes(x = 0, y = 0, xend = RDA1, yend = RDA2), 
-               arrow = arrow(length = unit(0.2, "cm")), size = 1) +
-  geom_text(data = t3vect, aes(x = RDA1, y = RDA2, label = rownames(t3vect)), 
-            size = 3, colour = "black", fontface = "italic", nudge_x = 0.1, nudge_y = 0.1) +
+               arrow = arrow(length = unit(0.2, "cm")), size = 0.3) +
+  geom_text_repel(data = t3vect, aes(x = RDA1, y = RDA2, label = rownames(t3vect)), 
+                  size = 3, colour = "black", fontface = "italic", 
+                  max.overlaps = 10, 
+                  segment.color = "grey70") +
   theme_bw() +
   scale_colour_viridis_d(option = "cividis", end = 0.9) +
   labs(x = "RDA1", y = "RDA2", title = "RDA Plot of Ecoregions and Species", 
@@ -385,7 +388,7 @@ plot_RDA
 
 ## Guild analysis
 
-Here are species guilds @tbl-guilds and see @fig-spp-activity-nesting and @fig-spp-activity-dietary by nesting and dietary guilds.
+Here are the species guilds listed in @tbl-guilds, with activity patterns illustrated in @fig-spp-activity-nesting, @fig-spp-activity-dietary, and @fig-spp-activity-migratory, categorized by nesting, dietary, and migratory guilds.
 
 ```{r}
 #| warning: false
@@ -423,6 +426,8 @@ datatable(guilds,
 #| code-fold: true
 
 guild_activity <- janp_main |>
+  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
+  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
   select(location, recording_date_time, species_common_name, species_code, individual_count) |>
   mutate(julian = lubridate::yday(recording_date_time),
@@ -467,10 +472,34 @@ guild_activity |>
 #| cap-location: margin
 #| code-fold: true
 
-
 guild_activity |>
   rename(`Dietary guild` = "dietary_guild") |>
   ggplot(aes(x = julian, y = `Dietary guild`, fill = `Dietary guild`)) + 
+  geom_density_ridges(alpha = 0.7, scale = 2.5) +
+  scale_fill_viridis_d(option = "cividis") +
+  facet_wrap(~ecoregion) +
+  theme_bw() +
+  xlab("Day of Year") + 
+  ylab("Species")
+
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap:  Seasonal detection activity of by migratory guild and ecoregion
+#| label: fig-spp-activity-migratory
+#| cap-location: margin
+#| code-fold: true
+
+guild_activity |>
+  rename(`Migratory guild` = "migratory_guild") |>
+  ggplot(aes(x = julian, y = `Migratory guild`, fill = `Migratory guild`)) + 
   geom_density_ridges(alpha = 0.7, scale = 2.5) +
   scale_fill_viridis_d(option = "cividis") +
   facet_wrap(~ecoregion) +
