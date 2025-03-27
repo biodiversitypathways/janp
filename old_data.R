@@ -17,6 +17,7 @@ old_s <- old_data |>
   select(location, latitude, longitude, ecoregion, recording_date_time, observer, species_code, species_common_name, TTFD, individual_order) |>
   distinct() |>
   rename(detection_time = TTFD) |>
+  mutate(detection_time = floor(detection_time) * 60 + (detection_time %% 1) * 100) |>
   mutate(location = case_when(grepl("^POBOK",location) ~ gsub("POBOKTON","POBOKTAN",location),
                               grepl("^ELY",location) ~ gsub("ELYISUM","ELYSIUM",location),
                               TRUE ~ location)) |>

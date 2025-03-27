@@ -1,5 +1,5 @@
 ---
-title: "Report on the use of passive acoustic monitoring in Jasper National Park"
+title: "Report on the use of passive acoustic monitoring for analysis of bird trends in Jasper National Park"
 format:
   html:
     grid:
@@ -46,6 +46,11 @@ library(lubridate)
 library(spdep)
 library(vegan)
 library(ggrepel)
+library(broom)
+library(lme4)
+library(pwr)
+library(ggeffects)
+library(emmeans)
 
 wt_auth()
 
@@ -189,9 +194,6 @@ leaflet() %>%
 
 
 ```
-
-To analyze trends in bird abundance in Jasper National Park from 2007–2024, we utilized bird point count data to assess changes in abundance at the species and guild levels. Observations were grouped by transects within the montane / sub-alpine and alpine ecoregions to address spatial clustering and ensure results aligned with Ecological Integrity reporting requirements. Point count data were first filtered to include only observations from 2007–2024. Each observation was classified by species and functional guild based on established ecological trait databases @tbl-guilds. The dataset was split by ecoregion (montane/sub-alpine and alpine) using georeferenced transect locations. A variable representing time-to-first-detection (TTFD) was included when available, to control for potential biases in detectability. Trends in abundance were assessed separately for species and guilds using generalized linear mixed-effects models (GLMMs) implemented in the lme4 package (Bates et al., 2015) in R (R Core Team, 2023). Count data were modeled using a Poisson distribution or a negative binomial distribution where overdispersion was evident. Models included fixed effects for year, ecoregion, and their interaction, while accounting for spatial clustering using random intercepts for transects. Separate models were fitted for montane/sub-alpine and alpine ecoregions to facilitate region-specific comparisons. Declines in abundance were calculated as the annual percent change (APC) using the equation. Temporal trends were visualized using the `ggplot2` package (Wickham, 2016), with separate panels for species and guilds.
-
 ```{r}
 #| warning: false
 #| echo: true
@@ -316,11 +318,18 @@ kable(head(tmtt_tags))
 
 ```
 
+
+## Analysis
+
+To analyze trends in bird abundance in Jasper National Park from 2007–2024, we utilized bird point count data to assess changes in abundance at the species and guild levels. Observations were grouped by transects within the montane / sub-alpine and alpine ecoregions to address spatial clustering and ensure results aligned with Ecological Integrity reporting requirements. Point count data were first filtered to include only observations from 2007–2024. Each observation was classified by species and functional guild based on established ecological trait databases @tbl-guilds. The dataset was split by ecoregion (montane/sub-alpine and alpine) using georeferenced transect locations. A variable representing time-to-first-detection (TTFD) was included when available, to control for potential biases in detectability. Trends in abundance were assessed separately for species and guilds using generalized linear mixed-effects models (GLMMs) implemented in the lme4 package (Bates et al., 2015) in R (R Core Team, 2023). 
+
+Count data were modeled using a Poisson distribution or a negative binomial distribution where overdispersion was evident. Models included fixed effects for year, ecoregion, and their interaction, while accounting for spatial clustering using random intercepts for transects. Separate models were fitted for montane/sub-alpine and alpine ecoregions to facilitate region-specific comparisons.
+
 # Results
 
-## Ecoregional results
+## Ecoregional analysis
 
-@fig-community shows the relationship between species and ecoregion using an RDA.
+@fig-community shows the relationship between species and ecoregion.
 
 ```{r}
 #| warning: false
@@ -388,7 +397,7 @@ plot_RDA
 
 ## Guild analysis
 
-Here are the species guilds listed in @tbl-guilds, with activity patterns illustrated in @fig-spp-activity-nesting, @fig-spp-activity-dietary, and @fig-spp-activity-migratory, categorized by nesting, dietary, and migratory guilds.
+Here are the species guilds listed in @tbl-guilds, with activity patterns illustrated in @fig-spp-activity-nesting, @fig-spp-activity-dietary, and @fig-spp-activity-migratory, categorized by nesting, dietary, and migratory guilds. A notable pattern emerges across all three guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion.
 
 ```{r}
 #| warning: false
@@ -441,7 +450,7 @@ guild_activity <- janp_main |>
   group_by(julian, species_code) |>
   add_tally() |>
   ungroup() |>
-  filter(!n < 3) |>
+  filter(!nn < 3) |>
   arrange(species_code) |>
   mutate(recording_date_time = as.POSIXct(recording_date_time)) |>
   mutate(species_code = factor(species_code, levels = sort(unique(species_code)))) |>
@@ -451,7 +460,7 @@ guild_activity <- janp_main |>
 
 guild_activity |>
   ggplot(aes(x = julian, y = `Nesting habitat`, fill = `Nesting habitat`)) + 
-  geom_density_ridges(alpha = 0.7, scale = 1) +
+  geom_density_ridges(alpha = 0.7) +
   scale_fill_viridis_d(option = "cividis") +
   facet_wrap(~ecoregion) +
   theme_bw() +
@@ -475,7 +484,7 @@ guild_activity |>
 guild_activity |>
   rename(`Dietary guild` = "dietary_guild") |>
   ggplot(aes(x = julian, y = `Dietary guild`, fill = `Dietary guild`)) + 
-  geom_density_ridges(alpha = 0.7, scale = 2.5) +
+  geom_density_ridges(alpha = 0.7) +
   scale_fill_viridis_d(option = "cividis") +
   facet_wrap(~ecoregion) +
   theme_bw() +
@@ -500,7 +509,7 @@ guild_activity |>
 guild_activity |>
   rename(`Migratory guild` = "migratory_guild") |>
   ggplot(aes(x = julian, y = `Migratory guild`, fill = `Migratory guild`)) + 
-  geom_density_ridges(alpha = 0.7, scale = 2.5) +
+  geom_density_ridges(alpha = 0.7) +
   scale_fill_viridis_d(option = "cividis") +
   facet_wrap(~ecoregion) +
   theme_bw() +
@@ -509,9 +518,9 @@ guild_activity |>
 
 ```
 
-## Trend analysis
+## Abundance trend analysis
 
-We first analyzed the trend in mean abundance of medium-distance migrants, representing approximately 63% of the total data set. 
+The trend in species abundance is summarized in @fig-normalized-count-mdm-year.
 
 ```{r}
 #| warning: false
@@ -524,7 +533,7 @@ We first analyzed the trend in mean abundance of medium-distance migrants, repre
 #| fig-width: 8
 #| fig-height: 8
 #| fig-cap: Normalized count abundance of mean number of medium-distance migrants by year
-#| label: relative-abundance-auriol
+#| label: fig-normalized-count-mdm-year
 #| cap-location: margin
 
 z <- locs_summary |>
@@ -555,7 +564,7 @@ plot_mdm <-
   summarise(individual_order = mean(individual_order)) |>
   ungroup() |>
   mutate(year = round(year,0)) |>
-  group_by(year, species_code) |>
+  group_by(year, data_type, species_code) |>
   summarise(
     total_abundance = sum(individual_order),  
     sample_size = n_distinct(location)
@@ -571,6 +580,36 @@ plot_mdm |>
   theme_bw() +
   facet_wrap(~species_code) +
   labs(x = "Year", y = "Normalized count of mean number of individuals per location")
+
+```
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| label: tbl-normalized-count-mdm-year
+#| collapse: true
+#| code-fold: true
+#| tbl-cap: Linear models of species trends using normalized mean count per location
+
+datatable(
+  plot_mdm |>
+    group_by(species_code) |>
+    summarise(models = list(
+      lm(normalized_count ~ year + data_type, data = cur_data())
+    )) |>
+    mutate(model_summary = map(models, tidy)) |>
+    unnest(model_summary) |>
+    select(-models) |>
+    mutate(across(where(is.numeric), round, 2)),
+  options = list(
+    searching = TRUE,
+    paging = TRUE,
+    pageLength = 10
+  )
+)
 
 ```
 
@@ -612,7 +651,7 @@ ggplot(count_annual_mdm, aes(x = year, y = normalized_count, colour = ecoregion)
   geom_smooth(method = "lm") +
   geom_point(size = 2) +
   scale_colour_viridis_d(option = "cividis") +
-  labs(x = "Year", y = "Normalized Count of Medium-Distance Migrants", fill = "Year") +
+  labs(x = "Year", y = "Normalized Count of Medium-Distance Migrants", fill = "Ecoregion") +
   scale_x_continuous(breaks = unique(count_annual_mdm$year)) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -621,6 +660,88 @@ ggplot(count_annual_mdm, aes(x = year, y = normalized_count, colour = ecoregion)
            size = 3, hjust = 0, vjust = 1)
 
 ```
+
+The mean time to first detection was stable throughout the years and methods used.
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap: Mean time of first detection across years
+#| label: fig-mean-time-ttfd
+#| cap-location: bottom
+#| code-fold: true
+
+mean_ttfd <- janp_main |>
+  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
+  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
+  group_by(year, location, data_type, species_code) |>
+  summarise(mean_detection = mean(detection_time, na.rm = TRUE)) |>
+  ungroup() |>
+  mutate(mean_detection_log = log(mean_ttfd$mean_detection + 1))
+
+mean_ttfd |>
+  ggplot(aes(x = factor(year), y = mean_detection, fill = factor(year))) +  # Convert year to factor
+  geom_boxplot() +
+  theme_bw() +
+  xlab("Year") + ylab("Mean time of first detection") +
+  scale_fill_viridis_d(option = "cividis")
+
+ggplot(mean_ttfd, aes(x = factor(year), y = mean_detection, fill = data_type)) +
+  geom_boxplot() +
+  facet_wrap(~ data_type) +
+  theme_bw() +
+  xlab("Year") + ylab("Mean time to first detection") +
+  scale_fill_viridis_d(option = "cividis")
+
+mean_ttfd_model_mixed <- lmer(mean_detection ~ year + data_type + (1 | species_code) + (1 | location), data = mean_ttfd)
+reduced_model_log <- lmer(mean_detection_log ~ data_type + (1 | species_code) + (1 | location), data = mean_ttfd)
+model_ttfd_anova <- anova(mean_ttfd_model_mixed, reduced_model)
+p_ttfd <- model_ttfd_anova$`Pr(>Chisq)`[2]
+
+glmm_nb <- glmer.nb(mean_detection ~ data_type + (1 | species_code) + (1 | location), data = mean_ttfd)
+fixed_effects <- fixef(glmm_nb)
+
+prediction_data <- data.frame(
+  data_type = c("legacy", "single_visit_0_max", "single_visit_3_max")
+)
+
+# Calculate predicted mean_detection values
+prediction_data <- prediction_data %>%
+  mutate(predicted_mean_detection = exp(fixed_effects[1] + 
+                                          case_when(
+                                            data_type == "legacy" ~ 0,
+                                            data_type == "single_visit_0_max" ~ fixed_effects["data_typesingle_visit_0_max"],
+                                            data_type == "single_visit_3_max" ~ fixed_effects["data_typesingle_visit_3_max"]
+                                          )))
+
+# Plot the predicted values
+ggplot(prediction_data, aes(x = data_type, y = predicted_mean_detection, fill = data_type)) +
+  geom_bar(stat = "identity", color = "black") +
+  theme_bw() +
+  xlab("Data Type") +
+  ylab("Predicted Mean Detection Time") +
+  scale_fill_viridis_d(option = "cividis") +
+  ggtitle("Predicted Mean Detection Time by Data Type")
+
+# preds <- ggpredict(reduced_model, terms = c("data_type"))
+# ggplot(preds, aes(x = x, y = predicted, color = group)) +
+#   geom_line() +
+#   geom_point() +
+#   theme_minimal() +
+#   labs(x = "Year", y = "Predicted mean detection time", color = "Data Type")
+# emmeans_reduced <- emmeans(reduced_model_log, pairwise ~ data_type)
+# plot(emmeans_reduced$emmeans)
+# qqnorm(residuals(reduced_model_log))
+# qqline(residuals(reduced_model_log))
+
+```
+
+
 
 ## Species richness and diversity trends
 
@@ -664,8 +785,6 @@ spp_rich_location |>
 
 ```
 
-
-
 ```{r}
 #| warning: false
 #| echo: true
@@ -707,4 +826,7 @@ shannon_d <- janp_main |>
 shannon_d
 ```
 
+
 # Discussion
+
+
