@@ -514,7 +514,6 @@ guild_activity <- janp_main |>
   group_by(julian, species_code) |>
   add_tally() |>
   ungroup() |>
-  filter(!nn < 3) |>
   arrange(species_code) |>
   mutate(recording_date_time = as.POSIXct(recording_date_time)) |>
   mutate(species_code = factor(species_code, levels = sort(unique(species_code)))) |>
@@ -748,19 +747,19 @@ mean_ttfd <- janp_main |>
   ungroup() |>
   mutate(mean_detection_log = log(mean_ttfd$mean_detection + 1))
 
-mean_ttfd |>
-  ggplot(aes(x = factor(year), y = mean_detection, fill = factor(year))) +  # Convert year to factor
-  geom_boxplot() +
-  theme_bw() +
-  xlab("Year") + ylab("Mean time of first detection") +
-  scale_fill_viridis_d(option = "cividis")
+# mean_ttfd |>
+#   ggplot(aes(x = factor(year), y = mean_detection, fill = factor(year))) +  # Convert year to factor
+#   geom_boxplot() +
+#   theme_bw() +
+#   xlab("Year") + ylab("Mean time of first detection") +
+#   scale_fill_viridis_d(option = "cividis")
 
-ggplot(mean_ttfd, aes(x = factor(year), y = mean_detection, fill = data_type)) +
-  geom_boxplot() +
-  facet_wrap(~ data_type) +
-  theme_bw() +
-  xlab("Year") + ylab("Mean time to first detection") +
-  scale_fill_viridis_d(option = "cividis")
+# ggplot(mean_ttfd, aes(x = factor(year), y = mean_detection, fill = data_type)) +
+#   geom_boxplot() +
+#   facet_wrap(~ data_type) +
+#   theme_bw() +
+#   xlab("Year") + ylab("Mean time to first detection") +
+#   scale_fill_viridis_d(option = "cividis")
 
 mean_ttfd_model_mixed <- lmer(mean_detection ~ year + data_type + (1 | species_code) + (1 | location), data = mean_ttfd)
 reduced_model_log <- lmer(mean_detection_log ~ data_type + (1 | species_code) + (1 | location), data = mean_ttfd)
@@ -804,8 +803,6 @@ ggplot(prediction_data, aes(x = data_type, y = predicted_mean_detection, fill = 
 # qqline(residuals(reduced_model_log))
 
 ```
-
-
 
 ## Species richness and diversity trends
 
