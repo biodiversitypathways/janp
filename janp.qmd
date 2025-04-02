@@ -628,7 +628,6 @@ guild_trend |>
   facet_grid(ecoregion ~ guild_type) +
   scale_colour_viridis_d(option = "cividis", alpha = 0.7) + 
   theme_bw() +
-  theme(strip.text.x = element_blank()) +
   labs(x = "Year", y = "Normalized count of mean number of individuals per location")
 
 
