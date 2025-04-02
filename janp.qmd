@@ -246,7 +246,7 @@ To assess whether bird survey locations in Jasper National Park can be treated a
 #| code-fold: true
 
 janp_locs_sf <- janp_locs %>%
-  distinct(location, ecoregion, geometry) %>%  # Ensure unique locations
+  distinct(location, ecoregion, geometry) |>
   st_as_sf()
 
 create_neighbors <- function(locations_sf, threshold) {
@@ -262,9 +262,8 @@ janp_locs_sf <- janp_locs_sf %>%
 
 neighbor_counts <- map_int(janp_locs_sf$neighbors, ~ length(.x))
 
-summary(neighbor_counts)  # Summary of connections
+summary(neighbor_counts)  
 
-# Percentage of locations with no connections
 sum(neighbor_counts == 0) / length(neighbor_counts) * 100
 
 ```
@@ -583,6 +582,58 @@ guild_activity |>
 
 ```
 
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap: Guild trend by ecoregion
+#| label: fig-guild-ecoregion-trend
+#| cap-location: margin
+#| code-fold: true
+
+
+guild_trend <- janp_main |>
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
+  filter(species_code %in% mdm) |>
+  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
+  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
+  mutate(year = year(recording_date_time)) |>
+  select(location, year, species_code, individual_order, individual_count) |>
+  group_by(location, year, species_code) |>
+  summarise(individual_order = mean(individual_order)) |>
+  ungroup() |>
+  mutate(year = round(year,0)) |>
+  inner_join(guilds, by = "species_code") |>
+  pivot_longer(cols = c(dietary_guild, habitat_guild, migratory_guild), names_to = "guild_type", values_to = "guild_value") |>
+  inner_join(locs_summary |> select(Location, ecoregion), by = c("location" = "Location")) |>
+  group_by(ecoregion, year, guild_type, guild_value) |>
+  summarise(total_abundance = sum(individual_order),  
+            sample_size = n_distinct(location)) |>
+  ungroup() |>
+  mutate(normalized_count = total_abundance / sample_size) |>
+  mutate(ecoregion = case_when(
+    ecoregion == "Alpine" ~ "Alpine",
+    ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"
+  )) 
+
+guild_trend |>
+  ggplot(aes(x = year, y = normalized_count, colour = guild_value)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm") +
+  facet_grid(ecoregion ~ guild_type) +
+  scale_colour_viridis_d(option = "cividis", alpha = 0.7) + 
+  theme_bw() +
+  theme(strip.text.x = element_blank()) +
+  labs(x = "Year", y = "Normalized count of mean number of individuals per location")
+
+
+```
+
 ## Abundance trend analysis
 
 The trend in species abundance is summarized in @fig-normalized-count-mdm-year.
@@ -606,7 +657,7 @@ z <- locs_summary |>
   mutate(sum = sum(across(`2007`:`2024`))) |>
   filter(sum == 17)
 
-# Medium-distance migrants
+# Jasper species
 mdm <- c("AMRO","BRSP","CHSP","DEJU","GCKI","HETH","FOSP","OCWA","RCKI","SWTH","VATH","WAVI","WCSP","WTSP","GCSP","YRWA")
 
 tot_a <- janp_main |>
@@ -691,40 +742,65 @@ datatable(
 #| cap-location: bottom
 #| code-fold: true
 
+# Aggregate and normalize data
 count_annual_mdm <- tot_a_mdm |>
-  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
-                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
+  mutate(ecoregion = case_when(
+    ecoregion == "Alpine" ~ "Alpine",
+    ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"
+  )) |>
   mutate(year = year(recording_date_time)) |>
   select(location, ecoregion, year, species_code, individual_order, individual_count) |>
   group_by(location, ecoregion, year, species_code) |>
-  summarise(individual_order = max(individual_order)) |>
-  ungroup() |>
+  summarise(individual_order = max(individual_order), .groups = "drop") |>
   mutate(year = round(year, 0)) |>
   group_by(ecoregion, year) |>
   summarise(sum_year = sum(individual_order), 
-            sample_size = n()) |>
-  ungroup() |>
+            sample_size = n(), 
+            .groups = "drop") |>
   mutate(normalized_count = sum_year / sample_size)
 
-# Linear model with normalized counts
-linear_model_count_annual_mdm <- lm(normalized_count ~ year + ecoregion, data = count_annual_mdm)
-slope_count_annual_mdm <- coef(linear_model_count_annual_mdm)[2]
-p_value_count_annual_mdm <- summary(linear_model_count_annual_mdm)$coefficients[2, 4]
+# Run separate models for each ecoregion
+lm_results <- count_annual_mdm %>%
+  group_split(ecoregion) %>%
+  map_df(~ {
+    model <- lm(normalized_count ~ year, data = .x)
+    tibble(
+      ecoregion = unique(.x$ecoregion),
+      slope = coef(model)[2],
+      p_value = summary(model)$coefficients[2, 4]
+    )
+  })
 
-# Plot with normalized counts
+# Merge results back
+count_annual_mdm <- count_annual_mdm %>%
+  left_join(lm_results, by = "ecoregion")
+
+# Plot
 ggplot(count_annual_mdm, aes(x = year, y = normalized_count, colour = ecoregion)) +
   geom_smooth(method = "lm") +
   geom_point(size = 2) +
-  scale_colour_viridis_d(option = "cividis") +
-  labs(x = "Year", y = "Normalized Count of Medium-Distance Migrants", fill = "Ecoregion") +
+  scale_colour_manual(values = c("Alpine" = "#71706D", "Montane" = "#001F42")) +
+  labs(x = "Year", y = "Normalized Count of Medium-Distance Migrants", colour = "Ecoregion") +
   scale_x_continuous(breaks = unique(count_annual_mdm$year)) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  annotate("text", x = 2008, y = max(count_annual_mdm$normalized_count), 
-           label = paste("Slope: ", round(slope_count_annual_mdm, 2), "\nP-value: ", round(p_value_count_annual_mdm, 4)), 
-           size = 3, hjust = 0, vjust = 1)
+  geom_text(data = lm_results, 
+            aes(x = 2008, 
+                y = ifelse(ecoregion == "Alpine", 1.7, 1.55),  # Offset text
+                label = paste0("Ecoregion: ", ecoregion, 
+                               "\nSlope: ", round(slope, 2), 
+                               "\nP-value: ", round(p_value, 4))),
+            size = 3, hjust = 0, vjust = 1, show.legend = FALSE)
+
 
 ```
+
+```{r}
+
+
+
+```
+
 
 The mean time to first detection was stable throughout the years and methods used (see @fig-mean-time-ttfd)
 
