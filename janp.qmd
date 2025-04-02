@@ -568,6 +568,10 @@ guild_activity |>
 #| code-fold: true
 
 guild_activity |>
+  mutate(migratory_guild = case_when(migratory_guild == "Winter residents" ~ "Winter resident",
+                                     migratory_guild == "Short-distance migrants" ~ "Short-distance migrant",
+                                     migratory_guild == "Long-distance migrants" ~ "Long-distance migrant",
+                                     TRUE ~ migratory_guild)) |>
   rename(`Migratory guild` = "migratory_guild") |>
   ggplot(aes(x = julian, y = `Migratory guild`, fill = `Migratory guild`)) + 
   geom_density_ridges(alpha = 0.7) +
