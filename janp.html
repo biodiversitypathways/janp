@@ -8,7 +8,7 @@
 
 <meta name="author" content="Alex MacPhail">
 <meta name="author" content="Brenda Shepherd">
-<meta name="dcterms.date" content="2025-04-02">
+<meta name="dcterms.date" content="2025-05-07">
 
 <title>Report on the use of passive acoustic monitoring for analysis of bird trends in Jasper National Park</title>
 <style>
@@ -129,15 +129,16 @@ div.csl-indent {
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
   <ul class="collapse">
-  <li><a href="#data-collection" id="toc-data-collection" class="nav-link" data-scroll-target="#data-collection">Data collection</a></li>
+  <li><a href="#data-and-processing" id="toc-data-and-processing" class="nav-link" data-scroll-target="#data-and-processing">Data and processing</a></li>
   <li><a href="#location-correlation" id="toc-location-correlation" class="nav-link" data-scroll-target="#location-correlation">Location correlation</a></li>
   <li><a href="#data-quality-control" id="toc-data-quality-control" class="nav-link" data-scroll-target="#data-quality-control">Data quality control</a></li>
-  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a></li>
+  <li><a href="#methods-1" id="toc-methods-1" class="nav-link" data-scroll-target="#methods-1">Methods</a></li>
   </ul></li>
   <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a>
   <ul class="collapse">
   <li><a href="#ecoregional-analysis" id="toc-ecoregional-analysis" class="nav-link" data-scroll-target="#ecoregional-analysis">Ecoregional analysis</a></li>
   <li><a href="#guild-analysis" id="toc-guild-analysis" class="nav-link" data-scroll-target="#guild-analysis">Guild analysis</a></li>
+  <li><a href="#model-summary" id="toc-model-summary" class="nav-link" data-scroll-target="#model-summary">Model summary</a></li>
   <li><a href="#abundance-trend-analysis" id="toc-abundance-trend-analysis" class="nav-link" data-scroll-target="#abundance-trend-analysis">Abundance trend analysis</a></li>
   <li><a href="#species-richness-and-diversity-trends" id="toc-species-richness-and-diversity-trends" class="nav-link" data-scroll-target="#species-richness-and-diversity-trends">Species richness and diversity trends</a></li>
   </ul></li>
@@ -183,7 +184,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 2, 2025</p>
+      <p class="date">May 7, 2025</p>
     </div>
   </div>
   
@@ -225,22 +226,22 @@ Note
 </section>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p>Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (<span class="citation" data-cites="allan2017recent">Allan et al. (<a href="#ref-allan2017recent" role="doc-biblioref">2017</a>)</span>). The repercussions of habitat fragmentation (<span class="citation" data-cites="fahrig2003effects">Fahrig (<a href="#ref-fahrig2003effects" role="doc-biblioref">2003</a>)</span>) and loss (<span class="citation" data-cites="hanski2011habitat">Hanski (<a href="#ref-hanski2011habitat" role="doc-biblioref">2011</a>)</span>), climate change (<span class="citation" data-cites="mantyka2012interactions">Mantyka-pringle, Martin, and Rhodes (<a href="#ref-mantyka2012interactions" role="doc-biblioref">2012</a>)</span>, <span class="citation" data-cites="sattar2021review">Sattar et al. (<a href="#ref-sattar2021review" role="doc-biblioref">2021</a>)</span>, <span class="citation" data-cites="abrahms2023climate">Abrahms et al. (<a href="#ref-abrahms2023climate" role="doc-biblioref">2023</a>)</span>), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in managed regions in Canada (<span class="citation" data-cites="lemieux2011state">Lemieux et al. (<a href="#ref-lemieux2011state" role="doc-biblioref">2011</a>)</span>). Wildfire activity has significantly impacted montane bird monitoring in Jasper National Park. Two of the park’s three long-term monitoring transects have been burned, while the third is undergoing wildfire risk reduction efforts. To ensure comprehensive ecological integrity reporting, an assessment is needed to determine whether additional transects should be established during this transition period.</p>
+<p>Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (<span class="citation" data-cites="allan2017recent">Allan et al. (<a href="#ref-allan2017recent" role="doc-biblioref">2017</a>)</span>). The repercussions of habitat fragmentation (<span class="citation" data-cites="fahrig2003effects">Fahrig (<a href="#ref-fahrig2003effects" role="doc-biblioref">2003</a>)</span>) and loss (<span class="citation" data-cites="hanski2011habitat">Hanski (<a href="#ref-hanski2011habitat" role="doc-biblioref">2011</a>)</span>), climate change (<span class="citation" data-cites="mantyka2012interactions">Mantyka-pringle, Martin, and Rhodes (<a href="#ref-mantyka2012interactions" role="doc-biblioref">2012</a>)</span>, <span class="citation" data-cites="sattar2021review">Sattar et al. (<a href="#ref-sattar2021review" role="doc-biblioref">2021</a>)</span>, <span class="citation" data-cites="abrahms2023climate">Abrahms et al. (<a href="#ref-abrahms2023climate" role="doc-biblioref">2023</a>)</span>), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in managed regions in Canada (<span class="citation" data-cites="lemieux2011state">Lemieux et al. (<a href="#ref-lemieux2011state" role="doc-biblioref">2011</a>)</span>). Wildfire activity has significantly impacted montane bird monitoring in Jasper National Park. In 2023, two of the park’s three montane long-term monitoring transects have been burned, while the third is undergoing wildfire risk reduction efforts.</p>
 <p>In 2007, Jasper National Park initiated a program incorporating autonomous recording units (ARUs) for passive acoustic monitoring (PAM) of the Park’s wildlife. ARUs are compact environmental sensors that are designed to passively record the environment (<span class="citation" data-cites="aru-overview">Shonfield and Bayne (<a href="#ref-aru-overview" role="doc-biblioref">2017</a>)</span>), capturing vocalizing species like birds and amphibians, which is growing in use across the globe (<span class="citation" data-cites="lots-of-pam">Sugai et al. (<a href="#ref-lots-of-pam" role="doc-biblioref">2018</a>)</span>). This technology enables resource managers to conduct prolonged surveys with minimal human interference. The subsequent data collected by these units contribute valuable information to ecological integrity metrics such as species richness, diversity, occupancy, and trends over time. This data aids decision-making and management within the Park. Given the rapid and ease of accumulating data from these units, maintaining a high standard of data integrity is paramount to ensure future data interoperability and sharing. <a href="https://www.wildtrax.ca">WildTrax</a> is an online platform developed by the <a href="https://abmi.ca">Alberta Biodiversity Monitoring Institute (<strong>ABMI</strong>)</a> for users of environmental sensors to help addresses these big data challenges by providing solutions to standardize, harmonize, and share data.</p>
-<p>The project will analyze Jasper’s bird point count data from 2007 to 2024, assessing trends in species and guild abundance while accounting for the clustering of survey points within transects. Separate analyses will be conducted for montane/sub-alpine and alpine ecoregions to align with Ecological Integrity reporting requirements, determing time-to-first-detection usability in analysis. To enhance accessibility and reproducibility, the findings will be presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations will be developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. The objectives of this report are to:</p>
+<p>The project will analyze Jasper’s bird point count data from 2007 to 2024, assessing trends in species and guild abundance while accounting for the clustering of survey points within transects. Separate analyses will be conducted for montane and sub-alpine and alpine ecoregions to align with Ecological Integrity reporting requirements, determining time-to-first-detection usability in analysis. To enhance accessibility and reproducibility, the findings will be presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations will be developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. The objectives of this report are to:</p>
 <ul>
 <li>Describe the data management and processing procedures for the acoustic data collected from 2007 to 2024;</li>
-<li>Comparing tagging methods on count species and individuals heard on recordings;</li>
-<li>Define straightforward methods for evaluating species presence, species richness, and species occupancy over time at various locations;</li>
-<li>Offer recommendations for ongoing monitoring approaches to contribute to the assessment of ecological integrity in forest ecosystems;</li>
+<li>Comparing data processing methods on count of species and individuals heard on recordings;</li>
+<li>Report on transects in montane/sub-alpine and alpine ecoregions, including time-to-first-detection where possible, with key metrics such as the percentage of bird species and guilds declining by ≥2.5% in both montane/sub-alpine and alpine regions.</li>
+<li>Recommendations for prioritizing previous years’ data for re-transcription to 1SPT, determine the best approach for annual reporting, e.g.&nbsp;baseline comparisons or 10-year trend assessments, adjust methods for evaluating species trends against thresholds, and review guilds and traits used in assessments</li>
 <li>Facilitate data publication to the public, resource managers, academic institutions, and any other relevant agencies</li>
 </ul>
 </section>
 <section id="methods" class="level1">
 <h1>Methods</h1>
-<section id="data-collection" class="level2">
-<h2 class="anchored" data-anchor-id="data-collection">Data collection</h2>
-<p>Songbird data is collected using autonomous recording units (ARUs), deployed by field staff to capture one 10-minute recording per point count annually. Surveys are scheduled consistently each breeding season in June and early July, starting at dawn. Technicians walk transects containing ten points, each spaced at least 300 m apart to prevent duplicate detections. At each site, the ARU is set up, and technicians move 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording.</p>
+<section id="data-and-processing" class="level2">
+<h2 class="anchored" data-anchor-id="data-and-processing">Data and processing</h2>
+<p>Songbird data was collected using autonomous recording units (ARUs), deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting at dawn. Technicians walked transects containing ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each location, the ARU is set up, and technicians move 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording. Recordings were then clipped and organized to only include the 10-minute count.</p>
 <div class="cell" data-layout-align="center">
 <div id="fig-aru-monitoring-locations" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -283,7 +284,7 @@ Table&nbsp;1: Locations surveyed across years. Ones indicated a deployment in th
 </section>
 <section id="location-correlation" class="level2">
 <h2 class="anchored" data-anchor-id="location-correlation">Location correlation</h2>
-<p>To assess whether bird survey locations in Jasper National Park can be treated as independent, we evaluated spatial connectivity using a distance-based neighbor analysis implemented with the <code>sf</code> and <code>spdep</code> R packages. Locations were classified based on their ecoregion, with a threshold of 500 m for alpine sites and 300 m for all other ecoregions. Using the <code>dnearneigh()</code> function from <code>spdep</code>, we identified spatial relationships between survey points within these thresholds. We then calculated the number of connected locations for each point and determined the percentage of isolated locations with no neighbors. The distribution of connections was summarized to assess spatial clustering, providing insight into whether survey sites should be modeled as independent or if spatial autocorrelation should be accounted for in further analysis.</p>
+<p>To assess whether bird survey locations in Jasper National Park can be treated as independent, we evaluated spatial connectivity using a distance-based neighbour analysis implemented with the <code>sf</code> and <code>spdep</code> R packages. Locations were classified based on their ecoregion, with a threshold of 500 m for alpine sites and 300 m for all other ecoregions. Using the <code>dnearneigh()</code> function from <code>spdep</code>, we identified spatial relationships between survey points within these thresholds. We then calculated the number of connected locations for each point and determined the percentage of isolated locations with no neighbours. The distribution of connections was summarized to assess spatial clustering, providing insight into whether survey sites should be modeled as independent or if spatial autocorrelation should be accounted for in further analysis.</p>
 </section>
 <section id="data-quality-control" class="level2">
 <h2 class="anchored" data-anchor-id="data-quality-control">Data quality control</h2>
@@ -445,16 +446,44 @@ Table&nbsp;4: TMTT tags
 </div>
 </div>
 </section>
-<section id="analysis" class="level2">
-<h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
-<p>To analyze trends in bird abundance in Jasper National Park from 2007–2024, we utilized bird point count data to assess changes in abundance at the species and guild levels. Observations were grouped by transects within the montane / sub-alpine and alpine ecoregions to address spatial clustering and ensure results aligned with Ecological Integrity reporting requirements. Point count data were first filtered to include only observations from 2007–2024. Each observation was classified by species and functional guild based on established ecological trait databases <a href="#tbl-guilds" class="quarto-xref">Table&nbsp;5</a>. The dataset was split by ecoregion (montane/sub-alpine and alpine) using georeferenced transect locations. A variable representing time-to-first-detection (TTFD) was included when available, to control for potential biases in detectability. Trends in abundance were assessed separately for species and guilds using generalized linear mixed-effects models (GLMMs) implemented in the lme4 package (Bates et al., 2015) in R (R Core Team, 2023). Count data were modeled using a Poisson distribution or a negative binomial distribution where overdispersion was evident. Models included fixed effects for year, ecoregion, and their interaction, while accounting for spatial clustering using random intercepts for transects. Separate models were fitted for montane/sub-alpine and alpine ecoregions to facilitate region-specific comparisons.</p>
+<section id="methods-1" class="level2">
+<h2 class="anchored" data-anchor-id="methods-1">Methods</h2>
+<p>To analyze trends in bird abundance in Jasper National Park from 2007 to 2024, we utilized point count data to evaluate changes at the species and guild levels. Abundance was defined as the count of individuals detected during point counts, rather than as a density x area relationship. Observations were first filtered to include only data from the study period and were classified by species and functional guilds using established ecological trait databases (<code>tbl-guilds</code>). Spatial clustering was addressed by grouping data by individual locations and transects. Georeferenced transect locations were used to define these strata. A time-to-first-detection (TTFD) variable was included, when available, to control for potential biases in detectability.</p>
+<p>Community composition in Jasper National Park was analyzed using multivariate statistical approaches. Species-level observations were aggregated into a species-by-location matrix, with abundances recorded as the maximum individual order for each location and transect. Ecoregions were categorized into Alpine and Montane groups, with the latter further divided into Upper Subalpine, Lower Subalpine, and Montane zones. Redundancy analysis (RDA) was conducted using the vegan package in R to quantify the variation in community composition explained by ecoregions and visualize species-environment relationships with ordination plots. Differences in composition between Alpine and Montane groups were tested using permutational multivariate analysis of variance (PERMANOVA) with Bray-Curtis dissimilarity and 999 permutations under a reduced model.</p>
+<p>Generalized linear mixed-effects models (GLMMs) were implemented in R (R Core Team, 2023) using the <code>lme4</code> package (Bates et al., 2015) to analyze abundance trends. Count data were modeled using a Poisson distribution or a negative binomial distribution in cases of overdispersion. Models included year, ecoregion, and their interaction as fixed effects, and location and transect as random effects to account for spatial clustering. Separate models were fitted for montane/subalpine and alpine ecoregions to facilitate region-specific analyses. Model selection was based on Akaike Information Criterion (AIC) to identify the best-fit models.</p>
+<p>To evaluate trends, we used the Mann-Kendall test to assess the statistical significance of observed changes and Sen’s Slope to estimate the magnitude of these trends over time. Functional diversity was assessed at the guild level using Rao’s Q, allowing us to explore changes in functional diversity across the study period. Breakpoint analysis was performed using the <code>segmented</code> package in R to identify significant shifts in abundance trends over time. Segmented models were fitted to detect structural changes that might warrant separating trend analysis into distinct phases. This ensured that important changes in abundance were not obscured by analyzing overall trends.</p>
+<p>Ecoregional assessments were conducted by grouping abundance data for alpine and montane (upper subalpine, lower subalpine, and montane) ecoregions into singular datasets. Guild-level trends were similarly analyzed using Rao’s Q to detect changes in functional diversity.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: true</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Jasper species</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>mdm <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"AMPI"</span>,<span class="st">"AMRO"</span>,<span class="st">"BRSP"</span>,<span class="st">"CHSP"</span>,<span class="st">"DEJU"</span>,<span class="st">"GCKI"</span>,<span class="st">"HETH"</span>,<span class="st">"FOSP"</span>,<span class="st">"OCWA"</span>,<span class="st">"RCKI"</span>,<span class="st">"SWTH"</span>,<span class="st">"VATH"</span>,<span class="st">"WAVI"</span>,<span class="st">"WCSP"</span>,<span class="st">"WTSP"</span>,<span class="st">"GCSP"</span>,<span class="st">"YRWA"</span>,<span class="st">"RBNU"</span>,<span class="st">"LISP"</span>,<span class="st">"MOCH"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>comp <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> lubridate<span class="sc">::</span><span class="fu">year</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, recording_date_time) <span class="sc">|&gt;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">unique_data_types =</span> <span class="fu">n_distinct</span>(data_type)) <span class="sc">|&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(unique_data_types <span class="sc">==</span> <span class="dv">2</span>, species_code <span class="sc">%in%</span> mdm) <span class="sc">|&gt;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, location, recording_date_time, data_type, species_code) <span class="sc">|&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean =</span> <span class="fu">mean</span>(individual_order)) <span class="sc">|&gt;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> data_type, <span class="at">y =</span> mean, <span class="at">group =</span> data_type)) <span class="sc">+</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>species_code) <span class="sc">+</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'year', 'location', 'recording_date_time',
+'data_type'. You can override using the `.groups` argument.</code></pre>
+</div>
+</div>
 </section>
 </section>
 <section id="results" class="level1 page-columns page-full">
 <h1>Results</h1>
 <section id="ecoregional-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="ecoregional-analysis">Ecoregional analysis</h2>
-<p>A redundancy analysis (RDA) was conducted using the <code>vegan</code> R package to assess how species composition varies across ecoregions and locations. RDA is a constrained ordination method that allows us to examine relationships between community composition and explanatory variables while preserving the structure of the species abundance data. The response matrix (comm_matrix) contains species data with the first two columns removed to retain only species abundance information. The predictor variables, ecoregion and location, represent environmental and spatial gradients that may influence species distributions. By running the RDA, we can determine how much variation in community composition is explained by these factors and visualize species-environment relationships through ordination plots. <a href="#fig-community" class="quarto-xref">Figure&nbsp;2</a> shows the relationship between species and ecoregion.</p>
+<p><a href="#fig-community" class="quarto-xref">Figure&nbsp;2</a> shows the relationship between species and ecoregion. The RDA can determine how much variation in community composition is explained by these factors and visualize species-environment relationships through ordination plots. The PERMANOVA test was performed using Bray-Curtis dissimilarity to assess whether community composition significantly differed between ecoregion groups. The analysis revealed a significant difference in community composition between alpine and montane groups. The ecoregion grouping explained approximately 27.85% of the variation in community composition, while residual variation accounted for 72.15%. These findings indicate a substantial divergence in species composition between ecoregion groups for subsequent analyses looking at trend differences between these areas.</p>
 <div class="cell" data-tbl-cap="Community matrix">
 <div class="cell-output-display">
 <div id="fig-community" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
@@ -469,21 +498,37 @@ Figure&nbsp;2
 </div>
 </div>
 </div>
+<div class="cell" data-tbl-cap="PERMANOVA test">
+<div class="cell-output cell-output-stdout">
+<pre><code>Permutation test for adonis under reduced model
+Terms added sequentially (first to last)
+Permutation: free
+Number of permutations: 999
+
+adonis2(formula = comm_matrix_data ~ ecoregion_group, data = comm_matrix, permutations = 999, method = "bray")
+                 Df SumOfSqs     R2      F Pr(&gt;F)    
+ecoregion_group   1   6.8953 0.2785 49.023  0.001 ***
+Residual        127  17.8630 0.7215                  
+Total           128  24.7583 1.0000                  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
 </section>
 <section id="guild-analysis" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="guild-analysis">Guild analysis</h2>
-<p>Here are the species guilds listed in <a href="#tbl-guilds" class="quarto-xref">Table&nbsp;5</a>, with activity patterns illustrated in <a href="#fig-spp-activity-nesting" class="quarto-xref">Figure&nbsp;3</a>, <a href="#fig-spp-activity-dietary" class="quarto-xref">Figure&nbsp;4</a>, and <a href="#fig-spp-activity-migratory" class="quarto-xref">Figure&nbsp;5</a>, categorized by nesting, dietary, and migratory guilds. A notable pattern emerges across all three guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion.</p>
+<p>Activity patterns across nesting, dietary and migratory guilds are illustrated in <a href="#fig-spp-activity-nesting" class="quarto-xref">Figure&nbsp;3</a>, <a href="#fig-spp-activity-dietary" class="quarto-xref">Figure&nbsp;4</a>, and <a href="#fig-spp-activity-migratory" class="quarto-xref">Figure&nbsp;5</a>, respectively. A notable pattern emerges across all three guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>guilds <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"jasper_guilds.csv"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(guilds, </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">options =</span> <span class="fu">list</span>(</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">searching =</span> <span class="cn">TRUE</span>,  </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">paging =</span> <span class="cn">TRUE</span>,    </span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">pageLength =</span> <span class="dv">10</span>   </span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>          ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>guilds <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"jasper_guilds.csv"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(guilds, </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">options =</span> <span class="fu">list</span>(</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">searching =</span> <span class="cn">TRUE</span>,  </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">paging =</span> <span class="cn">TRUE</span>,    </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">pageLength =</span> <span class="dv">10</span>   </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>          ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div id="tbl-guilds" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -501,7 +546,7 @@ Table&nbsp;5: Guilds
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-nesting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-nesting-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -515,7 +560,7 @@ Figure&nbsp;3: Seasonal detection activity of by nesting guild and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-dietary" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-dietary" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-dietary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-dietary-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -529,7 +574,7 @@ Figure&nbsp;4: Seasonal detection activity of by nesting guild and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-migratory" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-migratory" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-migratory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-migratory-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -543,7 +588,7 @@ Figure&nbsp;5: Seasonal detection activity of by migratory guild and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-guild-ecoregion-trend" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-guild-ecoregion-trend" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-guild-ecoregion-trend-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-guild-ecoregion-trend-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -556,18 +601,45 @@ Figure&nbsp;6: Guild trend by ecoregion
 </div>
 </div>
 </section>
+<section id="model-summary" class="level2">
+<h2 class="anchored" data-anchor-id="model-summary">Model summary</h2>
+</section>
 <section id="abundance-trend-analysis" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="abundance-trend-analysis">Abundance trend analysis</h2>
-<p>The trend in species abundance is summarized in <a href="#fig-normalized-count-mdm-year" class="quarto-xref">Figure&nbsp;7</a>.</p>
+<p>The trend in species abundance is summarized in <strong>?@fig-normalized-count-mdm-year</strong>.</p>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-normalized-count-mdm-year" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-normalized-count-mdm-year-1" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
-<div aria-describedby="fig-normalized-count-mdm-year-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="fig-normalized-count-mdm-year-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-normalized-count-mdm-year-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
 </div>
-<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-normalized-count-mdm-year-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-normalized-count-mdm-year-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7: Normalized count abundance of mean number of medium-distance migrants by year
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display page-columns page-full">
+<div id="fig-normalized-count-mdm-year-2" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
+<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div aria-describedby="fig-normalized-count-mdm-year-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="janp_files/figure-html/fig-normalized-count-mdm-year-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-normalized-count-mdm-year-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Normalized count abundance of mean number of medium-distance migrants by year
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display page-columns page-full">
+<div id="fig-normalized-count-mdm-year-3" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
+<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div aria-describedby="fig-normalized-count-mdm-year-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="janp_files/figure-html/fig-normalized-count-mdm-year-3.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-normalized-count-mdm-year-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Normalized count abundance of mean number of medium-distance migrants by year
 </figcaption>
 </figure>
 </div>
@@ -576,22 +648,22 @@ Figure&nbsp;7: Normalized count abundance of mean number of medium-distance migr
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  plot_mdm <span class="sc">|&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(species_code) <span class="sc">|&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">models =</span> <span class="fu">list</span>(</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">lm</span>(normalized_count <span class="sc">~</span> year <span class="sc">+</span> data_type, <span class="at">data =</span> <span class="fu">cur_data</span>())</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model_summary =</span> <span class="fu">map</span>(models, tidy)) <span class="sc">|&gt;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(model_summary) <span class="sc">|&gt;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>models) <span class="sc">|&gt;</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), round, <span class="dv">2</span>)),</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">list</span>(</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">searching =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">paging =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">pageLength =</span> <span class="dv">10</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  plot_mdm <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(species_code.x) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">models =</span> <span class="fu">list</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">lm</span>(normalized_count <span class="sc">~</span> year <span class="sc">+</span> data_type, <span class="at">data =</span> <span class="fu">cur_data</span>())</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    )) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">model_summary =</span> <span class="fu">map</span>(models, tidy)) <span class="sc">|&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unnest</span>(model_summary) <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>models) <span class="sc">|&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), round, <span class="dv">2</span>)),</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">list</span>(</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">searching =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">paging =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">pageLength =</span> <span class="dv">10</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div id="tbl-normalized-count-mdm-year" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -601,7 +673,7 @@ Table&nbsp;6: Linear models of species trends using normalized mean count per lo
 <div aria-describedby="tbl-normalized-count-mdm-year-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <div class="datatables html-widget html-fill-item" id="htmlwidget-f0239bff39031696925d" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-f0239bff39031696925d">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64"],["AMRO","AMRO","AMRO","AMRO","BRSP","BRSP","BRSP","BRSP","CHSP","CHSP","CHSP","CHSP","DEJU","DEJU","DEJU","DEJU","FOSP","FOSP","FOSP","FOSP","GCKI","GCKI","GCKI","GCKI","GCSP","GCSP","GCSP","GCSP","HETH","HETH","HETH","HETH","OCWA","OCWA","OCWA","OCWA","RCKI","RCKI","RCKI","RCKI","SWTH","SWTH","SWTH","SWTH","VATH","VATH","VATH","VATH","WAVI","WAVI","WAVI","WAVI","WCSP","WCSP","WCSP","WCSP","WTSP","WTSP","WTSP","WTSP","YRWA","YRWA","YRWA","YRWA"],["(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max"],[3.33,-0,-0.04,-0.02,-15.36,0.01,0,-0.03,22.29,-0.01,0.11,0.03,-16.48,0.01,0.04,-0.13,-67.44,0.03,-0.3,-0.15,-8.26,0,0,0.07000000000000001,-142.17,0.07000000000000001,-0.83,-0.68,-40.61,0.02,-0.17,-0.33,9.08,-0,-0.01,0.05,16.43,-0.01,0.07000000000000001,0.04,-7.99,0,-0.08,-0.31,-40.54,0.02,-0.35,-0.27,-35.55,0.02,-0.25,-0.15,-97.95,0.05,-0.34,-0.51,-25.01,0.01,-0.12,-0.08,-24.1,0.01,-0.24,-0.21],[6.69,0,0.05,0.05,9.99,0,0.07000000000000001,0.06,14.27,0.01,0.11,0.1,9.33,0,0.07000000000000001,0.06,15.54,0.01,0.12,0.11,8.15,0,0.06,0.06,24.18,0.01,0.18,0.17,19.68,0.01,0.14,0.13,9.84,0,0.07000000000000001,0.07000000000000001,7.73,0,0.06,0.05,25.91,0.01,0.19,0.18,17.13,0.01,0.13,0.12,12.37,0.01,0.09,0.09,36.62,0.02,0.26,0.23,28.59,0.01,0.21,0.2,19.38,0.01,0.15,0.13],[0.5,-0.32,-0.74,-0.4,-1.54,1.64,0.04,-0.49,1.56,-1.47,1.03,0.29,-1.77,1.89,0.54,-2.08,-4.34,4.42,-2.55,-1.42,-1.01,1.15,0.05,1.26,-5.88,5.94,-4.51,-4.03,-2.06,2.13,-1.2,-2.56,0.92,-0.8100000000000001,-0.14,0.77,2.12,-1.98,1.13,0.7,-0.31,0.37,-0.4,-1.73,-2.37,2.45,-2.7,-2.31,-2.87,2.97,-2.67,-1.8,-2.67,2.71,-1.31,-2.18,-0.87,0.92,-0.57,-0.41,-1.24,1.31,-1.62,-1.56],[0.63,0.75,0.47,0.6899999999999999,0.15,0.12,0.97,0.63,0.14,0.17,0.32,0.77,0.1,0.08,0.6,0.06,0,0,0.02,0.18,0.33,0.27,0.96,0.23,0,0,0,0,0.06,0.05,0.25,0.02,0.37,0.43,0.89,0.45,0.05,0.07000000000000001,0.28,0.49,0.76,0.72,0.6899999999999999,0.11,0.03,0.03,0.02,0.04,0.01,0.01,0.02,0.09,0.02,0.02,0.21,0.05,0.4,0.37,0.58,0.6899999999999999,0.23,0.21,0.13,0.14]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>species_code<\/th>\n      <th>term<\/th>\n      <th>estimate<\/th>\n      <th>std.error<\/th>\n      <th>statistic<\/th>\n      <th>p.value<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":true,"paging":true,"pageLength":10,"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"species_code","targets":1},{"name":"term","targets":2},{"name":"estimate","targets":3},{"name":"std.error","targets":4},{"name":"statistic","targets":5},{"name":"p.value","targets":6}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-f0239bff39031696925d">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80"],["AMPI","AMPI","AMPI","AMPI","AMRO","AMRO","AMRO","AMRO","BRSP","BRSP","BRSP","BRSP","CHSP","CHSP","CHSP","CHSP","DEJU","DEJU","DEJU","DEJU","FOSP","FOSP","FOSP","FOSP","GCKI","GCKI","GCKI","GCKI","GCSP","GCSP","GCSP","GCSP","HETH","HETH","HETH","HETH","LISP","LISP","LISP","LISP","MOCH","MOCH","MOCH","MOCH","OCWA","OCWA","OCWA","OCWA","RBNU","RBNU","RBNU","RBNU","RCKI","RCKI","RCKI","RCKI","SWTH","SWTH","SWTH","SWTH","VATH","VATH","VATH","VATH","WAVI","WAVI","WAVI","WAVI","WCSP","WCSP","WCSP","WCSP","WTSP","WTSP","WTSP","WTSP","YRWA","YRWA","YRWA","YRWA"],["(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max","(Intercept)","year","data_typesingle_visit_0_max","data_typesingle_visit_3_max"],[-30.54,0.02,-0.06,-0.03,3.33,-0,-0.04,-0.02,-15.36,0.01,0,-0.03,22.29,-0.01,0.11,0.03,-16.48,0.01,0.04,-0.13,-67.44,0.03,-0.3,-0.15,-8.26,0,0,0.07000000000000001,-142.17,0.07000000000000001,-0.83,-0.68,-40.61,0.02,-0.17,-0.33,-0.22,0,0.06,0.05,10.9,-0,0.02,0.11,9.08,-0,-0.01,0.05,11.65,-0.01,0.12,-0.02,16.43,-0.01,0.07000000000000001,0.04,-7.99,0,-0.08,-0.31,-40.54,0.02,-0.35,-0.27,-35.55,0.02,-0.25,-0.15,-97.95,0.05,-0.34,-0.51,-25.01,0.01,-0.12,-0.08,-24.1,0.01,-0.24,-0.21],[8.359999999999999,0,0.06,0.06,6.69,0,0.05,0.05,9.99,0,0.07000000000000001,0.06,14.27,0.01,0.11,0.1,9.33,0,0.07000000000000001,0.06,15.54,0.01,0.12,0.11,8.15,0,0.06,0.06,24.18,0.01,0.18,0.17,19.68,0.01,0.14,0.13,12.55,0.01,0.09,0.09,14.23,0.01,0.11,0.1,9.84,0,0.07000000000000001,0.07000000000000001,14.33,0.01,0.11,0.1,7.73,0,0.06,0.05,25.91,0.01,0.19,0.18,17.13,0.01,0.13,0.12,12.37,0.01,0.09,0.09,36.62,0.02,0.26,0.23,28.59,0.01,0.21,0.2,19.38,0.01,0.15,0.13],[-3.65,3.78,-0.96,-0.58,0.5,-0.32,-0.74,-0.4,-1.54,1.64,0.04,-0.49,1.56,-1.47,1.03,0.29,-1.77,1.89,0.54,-2.08,-4.34,4.42,-2.55,-1.42,-1.01,1.15,0.05,1.26,-5.88,5.94,-4.51,-4.03,-2.06,2.13,-1.2,-2.56,-0.02,0.11,0.68,0.52,0.77,-0.6899999999999999,0.15,1.16,0.92,-0.8100000000000001,-0.14,0.77,0.8100000000000001,-0.74,1.14,-0.19,2.12,-1.98,1.13,0.7,-0.31,0.37,-0.4,-1.73,-2.37,2.45,-2.7,-2.31,-2.87,2.97,-2.67,-1.8,-2.67,2.71,-1.31,-2.18,-0.87,0.92,-0.57,-0.41,-1.24,1.31,-1.62,-1.56],[0,0,0.35,0.57,0.63,0.75,0.47,0.6899999999999999,0.15,0.12,0.97,0.63,0.14,0.17,0.32,0.77,0.1,0.08,0.6,0.06,0,0,0.02,0.18,0.33,0.27,0.96,0.23,0,0,0,0,0.06,0.05,0.25,0.02,0.99,0.92,0.51,0.61,0.46,0.5,0.88,0.27,0.37,0.43,0.89,0.45,0.43,0.48,0.27,0.85,0.05,0.07000000000000001,0.28,0.49,0.76,0.72,0.6899999999999999,0.11,0.03,0.03,0.02,0.04,0.01,0.01,0.02,0.09,0.02,0.02,0.21,0.05,0.4,0.37,0.58,0.6899999999999999,0.23,0.21,0.13,0.14]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>species_code.x<\/th>\n      <th>term<\/th>\n      <th>estimate<\/th>\n      <th>std.error<\/th>\n      <th>statistic<\/th>\n      <th>p.value<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":true,"paging":true,"pageLength":10,"columnDefs":[{"className":"dt-right","targets":[3,4,5,6]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"species_code.x","targets":1},{"name":"term","targets":2},{"name":"estimate","targets":3},{"name":"std.error","targets":4},{"name":"statistic","targets":5},{"name":"p.value","targets":6}],"order":[],"autoWidth":false,"orderClasses":false},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </figure>
@@ -610,144 +682,144 @@ Table&nbsp;6: Linear models of species trends using normalized mean count per lo
 <div class="cell" data-layout-align="center" data-cap-location="bottom">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate and normalize data</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>count_annual_mdm <span class="ot">&lt;-</span> tot_a_mdm <span class="sc">|&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ecoregion =</span> <span class="fu">case_when</span>(</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    ecoregion <span class="sc">==</span> <span class="st">"Alpine"</span> <span class="sc">~</span> <span class="st">"Alpine"</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    ecoregion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Upper Subalpine"</span>, <span class="st">"Lower Subalpine"</span>, <span class="st">"Montane"</span>) <span class="sc">~</span> <span class="st">"Montane"</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(location, ecoregion, year, species_code, individual_order, individual_count) <span class="sc">|&gt;</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, ecoregion, year, species_code) <span class="sc">|&gt;</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">individual_order =</span> <span class="fu">max</span>(individual_order), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">round</span>(year, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ecoregion, year) <span class="sc">|&gt;</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">sum_year =</span> <span class="fu">sum</span>(individual_order), </span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">sample_size =</span> <span class="fu">n</span>(), </span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">normalized_count =</span> sum_year <span class="sc">/</span> sample_size)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Run separate models for each ecoregion</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>lm_results <span class="ot">&lt;-</span> count_annual_mdm <span class="sc">%&gt;%</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_split</span>(ecoregion) <span class="sc">%&gt;%</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>(<span class="sc">~</span> {</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    model <span class="ot">&lt;-</span> <span class="fu">lm</span>(normalized_count <span class="sc">~</span> year, <span class="at">data =</span> .x)</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">ecoregion =</span> <span class="fu">unique</span>(.x<span class="sc">$</span>ecoregion),</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">slope =</span> <span class="fu">coef</span>(model)[<span class="dv">2</span>],</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">p_value =</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>, <span class="dv">4</span>]</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge results back</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>count_annual_mdm <span class="ot">&lt;-</span> count_annual_mdm <span class="sc">%&gt;%</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(lm_results, <span class="at">by =</span> <span class="st">"ecoregion"</span>)</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(count_annual_mdm, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> normalized_count, <span class="at">colour =</span> ecoregion)) <span class="sc">+</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Alpine"</span> <span class="ot">=</span> <span class="st">"#71706D"</span>, <span class="st">"Montane"</span> <span class="ot">=</span> <span class="st">"#001F42"</span>)) <span class="sc">+</span></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Normalized Count of Medium-Distance Migrants"</span>, <span class="at">colour =</span> <span class="st">"Ecoregion"</span>) <span class="sc">+</span></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">unique</span>(count_annual_mdm<span class="sc">$</span>year)) <span class="sc">+</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> lm_results, </span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">2008</span>, </span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> <span class="fu">ifelse</span>(ecoregion <span class="sc">==</span> <span class="st">"Alpine"</span>, <span class="fl">1.7</span>, <span class="fl">1.55</span>),  <span class="co"># Offset text</span></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>                <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"Ecoregion: "</span>, ecoregion, </span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"</span><span class="sc">\n</span><span class="st">Slope: "</span>, <span class="fu">round</span>(slope, <span class="dv">2</span>), </span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"</span><span class="sc">\n</span><span class="st">P-value: "</span>, <span class="fu">round</span>(p_value, <span class="dv">4</span>))),</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate and normalize data</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>count_annual_mdm <span class="ot">&lt;-</span> tot_a_mdm <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ecoregion =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    ecoregion <span class="sc">==</span> <span class="st">"Alpine"</span> <span class="sc">~</span> <span class="st">"Alpine"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    ecoregion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Upper Subalpine"</span>, <span class="st">"Lower Subalpine"</span>, <span class="st">"Montane"</span>) <span class="sc">~</span> <span class="st">"Montane"</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  )) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(location, ecoregion, year, species_code, individual_order, individual_count) <span class="sc">|&gt;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, ecoregion, year, species_code) <span class="sc">|&gt;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">individual_order =</span> <span class="fu">max</span>(individual_order), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">round</span>(year, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ecoregion, year) <span class="sc">|&gt;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">sum_year =</span> <span class="fu">sum</span>(individual_order), </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">sample_size =</span> <span class="fu">n</span>(), </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">normalized_count =</span> sum_year <span class="sc">/</span> sample_size)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Run separate models for each ecoregion</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>lm_results <span class="ot">&lt;-</span> count_annual_mdm <span class="sc">%&gt;%</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_split</span>(ecoregion) <span class="sc">%&gt;%</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>(<span class="sc">~</span> {</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    model <span class="ot">&lt;-</span> <span class="fu">lm</span>(normalized_count <span class="sc">~</span> year, <span class="at">data =</span> .x)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">ecoregion =</span> <span class="fu">unique</span>(.x<span class="sc">$</span>ecoregion),</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">slope =</span> <span class="fu">coef</span>(model)[<span class="dv">2</span>],</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">p_value =</span> <span class="fu">summary</span>(model)<span class="sc">$</span>coefficients[<span class="dv">2</span>, <span class="dv">4</span>]</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge results back</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>count_annual_mdm <span class="ot">&lt;-</span> count_annual_mdm <span class="sc">%&gt;%</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(lm_results, <span class="at">by =</span> <span class="st">"ecoregion"</span>)</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(count_annual_mdm, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> normalized_count, <span class="at">colour =</span> ecoregion)) <span class="sc">+</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Alpine"</span> <span class="ot">=</span> <span class="st">"#71706D"</span>, <span class="st">"Montane"</span> <span class="ot">=</span> <span class="st">"#001F42"</span>)) <span class="sc">+</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>, <span class="at">y =</span> <span class="st">"Normalized Count of Medium-Distance Migrants"</span>, <span class="at">colour =</span> <span class="st">"Ecoregion"</span>) <span class="sc">+</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">unique</span>(count_annual_mdm<span class="sc">$</span>year)) <span class="sc">+</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> lm_results, </span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">2008</span>, </span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> <span class="fu">ifelse</span>(ecoregion <span class="sc">==</span> <span class="st">"Alpine"</span>, <span class="fl">1.7</span>, <span class="fl">1.55</span>),  <span class="co"># Offset text</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>                <span class="at">label =</span> <span class="fu">paste0</span>(<span class="st">"Ecoregion: "</span>, ecoregion, </span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"</span><span class="sc">\n</span><span class="st">Slope: "</span>, <span class="fu">round</span>(slope, <span class="dv">2</span>), </span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"</span><span class="sc">\n</span><span class="st">P-value: "</span>, <span class="fu">round</span>(p_value, <span class="dv">4</span>))),</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-annual-count" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-annual-count" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-annual-count-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-annual-count-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-annual-count-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: Annual count of medium-distance migrants
+Figure&nbsp;10: Annual count of medium-distance migrants
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>The mean time to first detection was stable throughout the years and methods used (see <a href="#fig-mean-time-ttfd" class="quarto-xref">Figure&nbsp;9</a>)</p>
+<p>The mean time to first detection was stable throughout the years and methods used (see <a href="#fig-mean-time-ttfd" class="quarto-xref">Figure&nbsp;11</a>)</p>
 <div class="cell" data-layout-align="center" data-cap-location="bottom">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mean_ttfd <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(data_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"legacy"</span>,<span class="st">"single_visit_3_max"</span>,<span class="st">"single_visit_0_max"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(data_type <span class="sc">==</span> <span class="st">"single_visit_0_max"</span> <span class="sc">&amp;</span> year <span class="sc">&lt;</span> <span class="dv">2023</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, location, data_type, species_code) <span class="sc">|&gt;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_detection =</span> <span class="fu">mean</span>(detection_time, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mean_detection_log =</span> <span class="fu">log</span>(mean_ttfd<span class="sc">$</span>mean_detection <span class="sc">+</span> <span class="dv">1</span>))</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># mean_ttfd |&gt;</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot(aes(x = factor(year), y = mean_detection, fill = factor(year))) +  # Convert year to factor</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_boxplot() +</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_bw() +</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#   xlab("Year") + ylab("Mean time of first detection") +</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_viridis_d(option = "cividis")</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(mean_ttfd, aes(x = factor(year), y = mean_detection, fill = data_type)) +</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_boxplot() +</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   facet_wrap(~ data_type) +</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_bw() +</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#   xlab("Year") + ylab("Mean time to first detection") +</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_viridis_d(option = "cividis")</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>mean_ttfd_model_mixed <span class="ot">&lt;-</span> <span class="fu">lmer</span>(mean_detection <span class="sc">~</span> year <span class="sc">+</span> data_type <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> species_code) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> location), <span class="at">data =</span> mean_ttfd)</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>reduced_model_log <span class="ot">&lt;-</span> <span class="fu">lmer</span>(mean_detection_log <span class="sc">~</span> data_type <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> species_code) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> location), <span class="at">data =</span> mean_ttfd)</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>model_ttfd_anova <span class="ot">&lt;-</span> <span class="fu">anova</span>(mean_ttfd_model_mixed, reduced_model)</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>p_ttfd <span class="ot">&lt;-</span> model_ttfd_anova<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;Chisq)</span><span class="st">`</span>[<span class="dv">2</span>]</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co"># glmm_nb &lt;- glmer.nb(mean_detection ~ data_type + (1 | species_code) + (1 | location), data = mean_ttfd)</span></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co"># fixed_effects &lt;- fixef(glmm_nb)</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a> prediction_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_type =</span> <span class="fu">c</span>(<span class="st">"legacy"</span>, <span class="st">"single_visit_0_max"</span>, <span class="st">"single_visit_3_max"</span>)</span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate predicted mean_detection values</span></span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>prediction_data <span class="ot">&lt;-</span> prediction_data <span class="sc">%&gt;%</span></span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">predicted_mean_detection =</span> <span class="fu">exp</span>(fixed_effects[<span class="dv">1</span>] <span class="sc">+</span> </span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">case_when</span>(</span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>                                            data_type <span class="sc">==</span> <span class="st">"legacy"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>                                            data_type <span class="sc">==</span> <span class="st">"single_visit_0_max"</span> <span class="sc">~</span> fixed_effects[<span class="st">"data_typesingle_visit_0_max"</span>],</span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>                                            data_type <span class="sc">==</span> <span class="st">"single_visit_3_max"</span> <span class="sc">~</span> fixed_effects[<span class="st">"data_typesingle_visit_3_max"</span>]</span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>                                          )))</span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the predicted values</span></span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(prediction_data, <span class="fu">aes</span>(<span class="at">x =</span> data_type, <span class="at">y =</span> predicted_mean_detection, <span class="at">fill =</span> data_type)) <span class="sc">+</span></span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Data Type"</span>) <span class="sc">+</span></span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Predicted Mean Detection Time"</span>) <span class="sc">+</span></span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">option =</span> <span class="st">"cividis"</span>) <span class="sc">+</span></span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Predicted Mean Detection Time by Data Type"</span>)</span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="co"># preds &lt;- ggpredict(reduced_model, terms = c("data_type"))</span></span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(preds, aes(x = x, y = predicted, color = group)) +</span></span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line() +</span></span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_point() +</span></span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal() +</span></span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(x = "Year", y = "Predicted mean detection time", color = "Data Type")</span></span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a><span class="co"># emmeans_reduced &lt;- emmeans(reduced_model_log, pairwise ~ data_type)</span></span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(emmeans_reduced$emmeans)</span></span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="co"># qqnorm(residuals(reduced_model_log))</span></span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a><span class="co"># qqline(residuals(reduced_model_log))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mean_ttfd <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(data_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"legacy"</span>,<span class="st">"single_visit_3_max"</span>,<span class="st">"single_visit_0_max"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(data_type <span class="sc">==</span> <span class="st">"single_visit_0_max"</span> <span class="sc">&amp;</span> year <span class="sc">&lt;</span> <span class="dv">2023</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, location, data_type, species_code) <span class="sc">|&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_detection =</span> <span class="fu">mean</span>(detection_time, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">mean_detection_log =</span> <span class="fu">log</span>(mean_ttfd<span class="sc">$</span>mean_detection <span class="sc">+</span> <span class="dv">1</span>))</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># mean_ttfd |&gt;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   ggplot(aes(x = factor(year), y = mean_detection, fill = factor(year))) +  # Convert year to factor</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_boxplot() +</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_bw() +</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#   xlab("Year") + ylab("Mean time of first detection") +</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_viridis_d(option = "cividis")</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(mean_ttfd, aes(x = factor(year), y = mean_detection, fill = data_type)) +</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_boxplot() +</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   facet_wrap(~ data_type) +</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_bw() +</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co">#   xlab("Year") + ylab("Mean time to first detection") +</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   scale_fill_viridis_d(option = "cividis")</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>mean_ttfd_model_mixed <span class="ot">&lt;-</span> <span class="fu">lmer</span>(mean_detection <span class="sc">~</span> year <span class="sc">+</span> data_type <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> species_code) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> location), <span class="at">data =</span> mean_ttfd)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>reduced_model_log <span class="ot">&lt;-</span> <span class="fu">lmer</span>(mean_detection_log <span class="sc">~</span> data_type <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> species_code) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> location), <span class="at">data =</span> mean_ttfd)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>model_ttfd_anova <span class="ot">&lt;-</span> <span class="fu">anova</span>(mean_ttfd_model_mixed, reduced_model)</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>p_ttfd <span class="ot">&lt;-</span> model_ttfd_anova<span class="sc">$</span><span class="st">`</span><span class="at">Pr(&gt;Chisq)</span><span class="st">`</span>[<span class="dv">2</span>]</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="co"># glmm_nb &lt;- glmer.nb(mean_detection ~ data_type + (1 | species_code) + (1 | location), data = mean_ttfd)</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="co"># fixed_effects &lt;- fixef(glmm_nb)</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a> prediction_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="at">data_type =</span> <span class="fu">c</span>(<span class="st">"legacy"</span>, <span class="st">"single_visit_0_max"</span>, <span class="st">"single_visit_3_max"</span>)</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate predicted mean_detection values</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>prediction_data <span class="ot">&lt;-</span> prediction_data <span class="sc">%&gt;%</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">predicted_mean_detection =</span> <span class="fu">exp</span>(fixed_effects[<span class="dv">1</span>] <span class="sc">+</span> </span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">case_when</span>(</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>                                            data_type <span class="sc">==</span> <span class="st">"legacy"</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>                                            data_type <span class="sc">==</span> <span class="st">"single_visit_0_max"</span> <span class="sc">~</span> fixed_effects[<span class="st">"data_typesingle_visit_0_max"</span>],</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>                                            data_type <span class="sc">==</span> <span class="st">"single_visit_3_max"</span> <span class="sc">~</span> fixed_effects[<span class="st">"data_typesingle_visit_3_max"</span>]</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>                                          )))</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the predicted values</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(prediction_data, <span class="fu">aes</span>(<span class="at">x =</span> data_type, <span class="at">y =</span> predicted_mean_detection, <span class="at">fill =</span> data_type)) <span class="sc">+</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Data Type"</span>) <span class="sc">+</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Predicted Mean Detection Time"</span>) <span class="sc">+</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">option =</span> <span class="st">"cividis"</span>) <span class="sc">+</span></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Predicted Mean Detection Time by Data Type"</span>)</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a><span class="co"># preds &lt;- ggpredict(reduced_model, terms = c("data_type"))</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(preds, aes(x = x, y = predicted, color = group)) +</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_line() +</span></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="co">#   geom_point() +</span></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a><span class="co">#   theme_minimal() +</span></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="co">#   labs(x = "Year", y = "Predicted mean detection time", color = "Data Type")</span></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a><span class="co"># emmeans_reduced &lt;- emmeans(reduced_model_log, pairwise ~ data_type)</span></span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a><span class="co"># plot(emmeans_reduced$emmeans)</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="co"># qqnorm(residuals(reduced_model_log))</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a><span class="co"># qqline(residuals(reduced_model_log))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-mean-time-ttfd" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-mean-time-ttfd" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mean-time-ttfd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-mean-time-ttfd-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-mean-time-ttfd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: Mean time of first detection across years
+Figure&nbsp;11: Mean time of first detection across years
 </figcaption>
 </figure>
 </div>
@@ -756,42 +828,42 @@ Figure&nbsp;9: Mean time of first detection across years
 </section>
 <section id="species-richness-and-diversity-trends" class="level2">
 <h2 class="anchored" data-anchor-id="species-richness-and-diversity-trends">Species richness and diversity trends</h2>
-<p>Species richness per location is at <a href="#fig-spp-rich-locs" class="quarto-xref">Figure&nbsp;10</a> and Shannon’s diversity index over years at <a href="#fig-shannon" class="quarto-xref">Figure&nbsp;11</a>.</p>
+<p>Species richness per location is at <a href="#fig-spp-rich-locs" class="quarto-xref">Figure&nbsp;12</a> and Shannon’s diversity index over years at <a href="#fig-shannon" class="quarto-xref">Figure&nbsp;13</a>.</p>
 <div class="cell" data-layout-align="center" data-cap-location="bottom">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>spp_rich_location <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(data_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"legacy"</span>,<span class="st">"single_visit_3_max"</span>,<span class="st">"single_visit_0_max"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(data_type <span class="sc">==</span> <span class="st">"single_visit_0_max"</span> <span class="sc">&amp;</span> year <span class="sc">&lt;</span> <span class="dv">2023</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>,<span class="st">"amphibian"</span>,<span class="st">"abiotic"</span>,<span class="st">"insect"</span>,<span class="st">"unknown"</span>), <span class="at">zerofill =</span> F) <span class="sc">|&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(location, year, species_code) <span class="sc">|&gt;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, year) <span class="sc">|&gt;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">species_count =</span> <span class="fu">n_distinct</span>(species_code)) <span class="sc">|&gt;</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(locs_summary, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"location"</span> <span class="ot">=</span> <span class="st">"Location"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ecoregion =</span> <span class="fu">case_when</span>(ecoregion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Alpine"</span>) <span class="sc">~</span> <span class="st">"Alpine"</span>,</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                               ecoregion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Upper Subalpine"</span>,<span class="st">"Lower Subalpine"</span>,<span class="st">"Montane"</span>) <span class="sc">~</span> <span class="st">"Montane"</span>))</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>spp_rich_location <span class="sc">|&gt;</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">as.factor</span>(year), <span class="at">y=</span>species_count, <span class="at">fill=</span>year)) <span class="sc">+</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">colour =</span> <span class="st">"grey"</span>) <span class="sc">+</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>ecoregion) <span class="sc">+</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">option =</span> <span class="st">"cividis"</span>) <span class="sc">+</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">'Year'</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">'Species richness per location'</span>) <span class="sc">+</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>spp_rich_location <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(data_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"legacy"</span>,<span class="st">"single_visit_3_max"</span>,<span class="st">"single_visit_0_max"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(data_type <span class="sc">==</span> <span class="st">"single_visit_0_max"</span> <span class="sc">&amp;</span> year <span class="sc">&lt;</span> <span class="dv">2023</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>,<span class="st">"amphibian"</span>,<span class="st">"abiotic"</span>,<span class="st">"insect"</span>,<span class="st">"unknown"</span>), <span class="at">zerofill =</span> F) <span class="sc">|&gt;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(location, year, species_code) <span class="sc">|&gt;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, year) <span class="sc">|&gt;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">species_count =</span> <span class="fu">n_distinct</span>(species_code)) <span class="sc">|&gt;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(locs_summary, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"location"</span> <span class="ot">=</span> <span class="st">"Location"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ecoregion =</span> <span class="fu">case_when</span>(ecoregion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Alpine"</span>) <span class="sc">~</span> <span class="st">"Alpine"</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                               ecoregion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Upper Subalpine"</span>,<span class="st">"Lower Subalpine"</span>,<span class="st">"Montane"</span>) <span class="sc">~</span> <span class="st">"Montane"</span>))</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>spp_rich_location <span class="sc">|&gt;</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="fu">as.factor</span>(year), <span class="at">y=</span>species_count, <span class="at">fill=</span>year)) <span class="sc">+</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">colour =</span> <span class="st">"grey"</span>) <span class="sc">+</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>ecoregion) <span class="sc">+</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">option =</span> <span class="st">"cividis"</span>) <span class="sc">+</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">'Year'</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">'Species richness per location'</span>) <span class="sc">+</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spp-rich-locs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-rich-locs-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spp-rich-locs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10: Species richness by year
+Figure&nbsp;12: Species richness by year
 </figcaption>
 </figure>
 </div>
@@ -800,41 +872,41 @@ Figure&nbsp;10: Species richness by year
 <div class="cell" data-layout-align="center" data-cap-location="bottom">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>shannon_d <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>,<span class="st">"amphibian"</span>,<span class="st">"abiotic"</span>,<span class="st">"insect"</span>,<span class="st">"unknown"</span>), <span class="at">zerofill =</span> F) <span class="sc">|&gt;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(<span class="fu">wt_get_species</span>() <span class="sc">|&gt;</span> <span class="fu">select</span>(species_code, species_class, species_order), <span class="at">by =</span> <span class="st">"species_code"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(location, recording_date_time, species_code, species_common_name, individual_order, individual_count) <span class="sc">|&gt;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, recording_date_time, species_code, species_common_name) <span class="sc">|&gt;</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">max</span>(individual_order)) <span class="sc">|&gt;</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> species_code, <span class="at">values_from =</span> count, <span class="at">values_fill =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>(location<span class="sc">:</span>species_common_name), <span class="at">names_to =</span> <span class="st">"species"</span>, <span class="at">values_to =</span> <span class="st">"count"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, <span class="at">year =</span> <span class="fu">year</span>(recording_date_time), species) <span class="sc">|&gt;</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_count =</span> <span class="fu">sum</span>(count)) <span class="sc">|&gt;</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, year) <span class="sc">|&gt;</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">shannon_index =</span> <span class="fu">diversity</span>(total_count, <span class="at">index =</span> <span class="st">"shannon"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(year), <span class="at">y =</span> shannon_index, <span class="at">fill =</span> <span class="fu">factor</span>(year))) <span class="sc">+</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">colour =</span> <span class="st">"grey"</span>) <span class="sc">+</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Shannon diversity index per location"</span>) <span class="sc">+</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">title =</span> <span class="st">"Year"</span>)) <span class="sc">+</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">option =</span> <span class="st">"cividis"</span>)</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>shannon_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>shannon_d <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>,<span class="st">"amphibian"</span>,<span class="st">"abiotic"</span>,<span class="st">"insect"</span>,<span class="st">"unknown"</span>), <span class="at">zerofill =</span> F) <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(<span class="fu">wt_get_species</span>() <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(species_code, species_class, species_order), <span class="at">by =</span> <span class="st">"species_code"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(location, recording_date_time, species_code, species_common_name, individual_order, individual_count) <span class="sc">|&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, recording_date_time, species_code, species_common_name) <span class="sc">|&gt;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">max</span>(individual_order)) <span class="sc">|&gt;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> species_code, <span class="at">values_from =</span> count, <span class="at">values_fill =</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span>(location<span class="sc">:</span>species_common_name), <span class="at">names_to =</span> <span class="st">"species"</span>, <span class="at">values_to =</span> <span class="st">"count"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, <span class="at">year =</span> <span class="fu">year</span>(recording_date_time), species) <span class="sc">|&gt;</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_count =</span> <span class="fu">sum</span>(count)) <span class="sc">|&gt;</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, year) <span class="sc">|&gt;</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">shannon_index =</span> <span class="fu">diversity</span>(total_count, <span class="at">index =</span> <span class="st">"shannon"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(year), <span class="at">y =</span> shannon_index, <span class="at">fill =</span> <span class="fu">factor</span>(year))) <span class="sc">+</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">alpha =</span> <span class="fl">0.6</span>, <span class="at">colour =</span> <span class="st">"grey"</span>) <span class="sc">+</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Shannon diversity index per location"</span>) <span class="sc">+</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">title =</span> <span class="st">"Year"</span>)) <span class="sc">+</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">option =</span> <span class="st">"cividis"</span>)</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>shannon_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shannon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-shannon-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shannon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11: Shannon diversity index over years
+Figure&nbsp;13: Shannon diversity index over years
 </figcaption>
 </figure>
 </div>
@@ -842,12 +914,90 @@ Figure&nbsp;11: Shannon diversity index over years
 </div>
 </section>
 </section>
-<section id="discussion" class="level1 unnumbered">
-
+<section id="discussion" class="level1">
+<h1>Discussion</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tot_a <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(data_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"legacy"</span>,<span class="st">"single_visit_3_max"</span>,<span class="st">"single_visit_0_max"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(data_type <span class="sc">==</span> <span class="st">"single_visit_0_max"</span> <span class="sc">&amp;</span> year <span class="sc">&lt;</span> <span class="dv">2023</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>,<span class="st">"amphibian"</span>,<span class="st">"abiotic"</span>,<span class="st">"insect"</span>,<span class="st">"unknown"</span>), <span class="at">zerofill =</span> F)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>mP0 <span class="ot">&lt;-</span> <span class="fu">glm</span>(abundance <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> results, <span class="at">family =</span> poisson)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>mP1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(abundance <span class="sc">~</span> year, <span class="at">data =</span> results, <span class="at">family =</span> poisson)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>mP2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(abundance <span class="sc">~</span> year <span class="sc">+</span> data_type, <span class="at">data =</span> results, <span class="at">family =</span> poisson)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>mP3 <span class="ot">&lt;-</span> <span class="fu">gam</span>(abundance <span class="sc">~</span> <span class="fu">s</span>(year), <span class="at">data =</span> results, <span class="at">family =</span> poisson)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>mP4 <span class="ot">&lt;-</span> <span class="fu">gam</span>(abundance <span class="sc">~</span> <span class="fu">s</span>(year) <span class="sc">+</span> data_type, <span class="at">data =</span> results, <span class="at">family =</span> poisson)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>mP5 <span class="ot">&lt;-</span> <span class="fu">glm.nb</span>(abundance <span class="sc">~</span> year, <span class="at">data =</span> results)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>mP6 <span class="ot">&lt;-</span> <span class="fu">glm.nb</span>(abundance <span class="sc">~</span> year <span class="sc">+</span> data_type, <span class="at">data =</span> results)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>mP7 <span class="ot">&lt;-</span> <span class="fu">zeroinfl</span>(abundance <span class="sc">~</span> year <span class="sc">|</span> <span class="dv">1</span>, <span class="at">data =</span> results, <span class="at">dist =</span> <span class="st">"poisson"</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>mP8 <span class="ot">&lt;-</span> <span class="fu">zeroinfl</span>(abundance <span class="sc">~</span> year <span class="sc">|</span> <span class="dv">1</span> <span class="sc">+</span> data_type, <span class="at">data =</span> results, <span class="at">dist =</span> <span class="st">"poisson"</span>)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>mP9 <span class="ot">&lt;-</span> <span class="fu">zeroinfl</span>(abundance <span class="sc">~</span> year <span class="sc">|</span> <span class="dv">1</span>, <span class="at">data =</span> results, <span class="at">dist =</span> <span class="st">"negbin"</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>mP10 <span class="ot">&lt;-</span> <span class="fu">zeroinfl</span>(abundance <span class="sc">~</span> year <span class="sc">|</span> <span class="dv">1</span> <span class="sc">+</span> data_type, <span class="at">data =</span> results, <span class="at">dist =</span> <span class="st">"negbin"</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>mP11 <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(abundance <span class="sc">~</span> year <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> location), <span class="at">ziformula =</span> <span class="sc">~</span><span class="dv">1</span>, <span class="at">family =</span> <span class="fu">poisson</span>(), <span class="at">data =</span> results)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>mP12 <span class="ot">&lt;-</span> <span class="fu">glmmTMB</span>(abundance <span class="sc">~</span> year <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> location) <span class="sc">+</span> data_type, <span class="at">ziformula =</span> <span class="sc">~</span><span class="dv">1</span>, <span class="at">family =</span> <span class="fu">poisson</span>(), <span class="at">data =</span> results)</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>mP13 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(abundance <span class="sc">~</span> year <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> location), <span class="at">data =</span> results, <span class="at">family =</span> <span class="st">"poisson"</span>)</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>mP14 <span class="ot">&lt;-</span> <span class="fu">glmer</span>(abundance <span class="sc">~</span> year <span class="sc">+</span> data_type <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> location), <span class="at">data =</span> results, <span class="at">family =</span> <span class="st">"poisson"</span>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(mP0, mP1, mP2, mP3, mP4, mP5, mP6, mP7, mP8, mP9, mP10, mP11, mP12, mP13, mP14) <span class="sc">|&gt;</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(AIC)</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="fu">BIC</span>(mP0, mP1, mP2, mP3, mP4, mP5, mP6, mP7, mP8, mP9, mP10, mP11, mP12, mP13, mP14)</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="fu">model.sel</span>(mP0, mP1, mP2, mP3, mP4, mP5, mP6, mP7, mP8, mP9, mP10, mP11, mP12, mP13, mP14)</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Add prediction with confidence intervals</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>prediction <span class="ot">&lt;-</span> <span class="fu">predict</span>(mP14, <span class="at">type =</span> <span class="st">"response"</span>, <span class="at">se.fit =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Add predictions and confidence intervals to the results dataset</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">predicted =</span> prediction<span class="sc">$</span>fit,</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower_ci =</span> prediction<span class="sc">$</span>fit <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> prediction<span class="sc">$</span>se.fit,</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper_ci =</span> prediction<span class="sc">$</span>fit <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> prediction<span class="sc">$</span>se.fit</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarize raw data</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>raw_summary <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean_abundance =</span> <span class="fu">mean</span>(abundance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarize predictions and confidence intervals</span></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>predicted_summary <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_predicted =</span> <span class="fu">mean</span>(predicted, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">lower_ci =</span> <span class="fu">mean</span>(lower_ci, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">upper_ci =</span> <span class="fu">mean</span>(upper_ci, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot with confidence intervals</span></span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Raw data points</span></span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">data =</span> results, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> abundance), <span class="at">alpha =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> raw_summary, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> mean_abundance), <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Model predictions</span></span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> predicted_summary, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> mean_predicted), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Confidence intervals</span></span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(</span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> predicted_summary,</span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">ymin =</span> lower_ci, <span class="at">ymax =</span> upper_ci),</span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"red"</span>, <span class="at">alpha =</span> <span class="fl">0.2</span></span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Trend of Abundance Over Years with Confidence Intervals"</span>,</span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Mean Abundance"</span></span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#ecoregions</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> tot_a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Discussion</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-abrahms2023climate" class="csl-entry" role="listitem">
 Abrahms, Briana, Neil H Carter, TJ Clark-Wolf, Kaitlyn M Gaynor, Erik Johansson, Alex McInturff, Anna C Nisi, Kasim Rafiq, and Leigh West. 2023. <span>“Climate Change as a Global Amplifier of Human–Wildlife Conflict.”</span> <em>Nature Climate Change</em> 13 (3): 224–34.
 </div>
