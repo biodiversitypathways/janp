@@ -50,7 +50,13 @@ library(broom)
 library(lme4)
 library(pwr)
 library(ggeffects)
+library(MuMIn)
+library(mgcv)
 library(emmeans)
+library(MASS)
+library(pscl)
+library(segmented)
+library(glmmTMB)
 
 wt_auth()
 
@@ -68,21 +74,21 @@ load('janp.RData')
 
 janp_aru_projects <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
   filter(grepl('Jasper National Park', project)) |>
-  select(project_id) |>
+  dplyr::select(project_id) |>
   pull()
 
 # All projects associated with a single-visit ARU deployment with no abundance cap
 janp_0max <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
   filter(grepl('Jasper NP - EI', project)) |>
   filter(!grepl('2021|2022',project)) |>
-  select(project_id) |>
+  dplyr::select(project_id) |>
   pull()
 
 # All projects associated with a single-visit ARU deployment with an abundance cap of 3
 janp_3max <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
   filter(grepl('Jasper NP - EI', project)) |>
   filter(grepl('2021|2022',project)) |>
-  select(project_id) |>
+  dplyr::select(project_id) |>
   pull()
 
 janp_project_lists <- list(
@@ -108,7 +114,7 @@ janp_aru <- imap_dfr(
 mpb <- wildrtrax::wt_download_report(project_id = 2129, sensor_id = "ARU", weather_cols = TRUE, reports = "main")
 
 # Bind legacy data with acoustic data
-janp_main <- bind_rows(old_s, janp_aru) |>
+janp_main <- bind_rows(old_s_max, janp_aru) |>
   group_by(location) |>
   fill(ecoregion, .direction = "down") |>
   ungroup() |>
@@ -128,23 +134,23 @@ We respectfully acknowledge that Jasper National Park is located in Treaty 6 and
 
 # Introduction
 
-Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (@allan2017recent). The repercussions of habitat fragmentation (@fahrig2003effects) and loss (@hanski2011habitat), climate change (@mantyka2012interactions, @sattar2021review, @abrahms2023climate), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in managed regions in Canada (@lemieux2011state). Wildfire activity has significantly impacted montane bird monitoring in Jasper National Park. Two of the park’s three long-term monitoring transects have been burned, while the third is undergoing wildfire risk reduction efforts. To ensure comprehensive ecological integrity reporting, an assessment is needed to determine whether additional transects should be established during this transition period.
+Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (@allan2017recent). The repercussions of habitat fragmentation (@fahrig2003effects) and loss (@hanski2011habitat), climate change (@mantyka2012interactions, @sattar2021review, @abrahms2023climate), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in managed regions in Canada (@lemieux2011state). Wildfire activity has significantly impacted montane bird monitoring in Jasper National Park. In 2023, two of the park’s three montane long-term monitoring transects have been burned, while the third is undergoing wildfire risk reduction efforts.
 
 In 2007, Jasper National Park initiated a program incorporating autonomous recording units (ARUs) for passive acoustic monitoring (PAM) of the Park's wildlife. ARUs are compact environmental sensors that are designed to passively record the environment (@aru-overview), capturing vocalizing species like birds and amphibians, which is growing in use across the globe (@lots-of-pam). This technology enables resource managers to conduct prolonged surveys with minimal human interference. The subsequent data collected by these units contribute valuable information to ecological integrity metrics such as species richness, diversity, occupancy, and trends over time. This data aids decision-making and management within the Park. Given the rapid and ease of accumulating data from these units, maintaining a high standard of data integrity is paramount to ensure future data interoperability and sharing. [WildTrax](https://www.wildtrax.ca) is an online platform developed by the [Alberta Biodiversity Monitoring Institute (**ABMI**)](https://abmi.ca) for users of environmental sensors to help addresses these big data challenges by providing solutions to standardize, harmonize, and share data.
 
-The project will analyze Jasper’s bird point count data from 2007 to 2024, assessing trends in species and guild abundance while accounting for the clustering of survey points within transects. Separate analyses will be conducted for montane/sub-alpine and alpine ecoregions to align with Ecological Integrity reporting requirements, determing time-to-first-detection usability in analysis. To enhance accessibility and reproducibility, the findings will be presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations will be developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. The objectives of this report are to:
+The project will analyze Jasper’s bird point count data from 2007 to 2024, assessing trends in species and guild abundance while accounting for the clustering of survey points within transects. Separate analyses will be conducted for montane and sub-alpine and alpine ecoregions to align with Ecological Integrity reporting requirements, determining time-to-first-detection usability in analysis. To enhance accessibility and reproducibility, the findings will be presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations will be developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. The objectives of this report are to:
 
 -   Describe the data management and processing procedures for the acoustic data collected from 2007 to 2024;
--   Comparing tagging methods on count species and individuals heard on recordings;
--   Define straightforward methods for evaluating species presence, species richness, and species occupancy over time at various locations;
--   Offer recommendations for ongoing monitoring approaches to contribute to the assessment of ecological integrity in forest ecosystems;
+-   Comparing data processing methods on count of species and individuals heard on recordings;
+-   Report on transects in montane/sub-alpine and alpine ecoregions, including time-to-first-detection where possible, with key metrics such as the percentage of bird species and guilds declining by ≥2.5% in both montane/sub-alpine and alpine regions.
+-   Recommendations for prioritizing previous years’ data for re-transcription to 1SPT, determine the best approach for annual reporting, e.g. baseline comparisons or 10-year trend assessments, adjust methods for evaluating species trends against thresholds, and review guilds and traits used in assessments
 -   Facilitate data publication to the public, resource managers, academic institutions, and any other relevant agencies
 
 # Methods
 
-## Data collection
+## Data and processing
 
-Songbird data is collected using autonomous recording units (ARUs), deployed by field staff to capture one 10-minute recording per point count annually. Surveys are scheduled consistently each breeding season in June and early July, starting at dawn. Technicians walk transects containing ten points, each spaced at least 300 m apart to prevent duplicate detections. At each site, the ARU is set up, and technicians move 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording.
+Songbird data was collected using autonomous recording units (ARUs), deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting at dawn. Technicians walked transects containing ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each location, the ARU is set up, and technicians move 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording. Recordings were then clipped and organized to only include the 10-minute count.
 
 ```{r}
 #| echo: false
@@ -158,7 +164,7 @@ Songbird data is collected using autonomous recording units (ARUs), deployed by 
 
 janp_locs <- janp_main |>
   mutate(year = lubridate::year(recording_date_time)) |>
-  select(location, latitude, longitude, year, ecoregion) |>
+  dplyr::select(location, latitude, longitude, year, ecoregion) |>
   drop_na(latitude) |>
   distinct() |>
   mutate(type = case_when(grepl('BAT',location) ~ "Bat", TRUE ~ "Bird")) |>
@@ -212,6 +218,7 @@ leaflet() %>%
 
 
 ```
+
 ```{r}
 #| warning: false
 #| echo: true
@@ -235,7 +242,7 @@ datatable(locs_summary,
 
 ## Location correlation
 
-To assess whether bird survey locations in Jasper National Park can be treated as independent, we evaluated spatial connectivity using a distance-based neighbor analysis implemented with the `sf` and `spdep` R packages. Locations were classified based on their ecoregion, with a threshold of 500 m for alpine sites and 300 m for all other ecoregions. Using the `dnearneigh()` function from `spdep`, we identified spatial relationships between survey points within these thresholds. We then calculated the number of connected locations for each point and determined the percentage of isolated locations with no neighbors. The distribution of connections was summarized to assess spatial clustering, providing insight into whether survey sites should be modeled as independent or if spatial autocorrelation should be accounted for in further analysis.
+To assess whether bird survey locations in Jasper National Park can be treated as independent, we evaluated spatial connectivity using a distance-based neighbour analysis implemented with the `sf` and `spdep` R packages. Locations were classified based on their ecoregion, with a threshold of 500 m for alpine sites and 300 m for all other ecoregions. Using the `dnearneigh()` function from `spdep`, we identified spatial relationships between survey points within these thresholds. We then calculated the number of connected locations for each point and determined the percentage of isolated locations with no neighbours. The distribution of connections was summarized to assess spatial clustering, providing insight into whether survey sites should be modeled as independent or if spatial autocorrelation should be accounted for in further analysis.
 
 ```{r}
 #| warning: false
@@ -278,9 +285,8 @@ sum(neighbor_counts == 0) / length(neighbor_counts) * 100
 #| tbl-cap: Locations distances
 
 
-jj <- wt_location_distances(janp_main) |> filter(location_from %in% multiaru, distance < 300) |> inner_join(janp_main |> select(location, ecoregion) |> distinct(), by = c("location_from" = "location"))
+jj <- wt_location_distances(janp_main) |> filter(location_from %in% multiaru, distance < 300) |> inner_join(janp_main |> dplyr::select(location, ecoregion) |> distinct(), by = c("location_from" = "location"))
 ```
-
 
 ## Data quality control
 
@@ -374,7 +380,7 @@ kable(verified_tags)
 #| tbl-cap: TMTT tags
 
 tmtt_tags <- janp_main |>
-  select(location, recording_date_time, species_code, individual_count) |>
+  dplyr::select(location, recording_date_time, species_code, individual_count) |>
   distinct() |>
   filter(individual_count == "TMTT")
 
@@ -382,15 +388,47 @@ kable(head(tmtt_tags))
 
 ```
 
-## Analysis
+## Methods
 
-To analyze trends in bird abundance in Jasper National Park from 2007–2024, we utilized bird point count data to assess changes in abundance at the species and guild levels. Observations were grouped by transects within the montane / sub-alpine and alpine ecoregions to address spatial clustering and ensure results aligned with Ecological Integrity reporting requirements. Point count data were first filtered to include only observations from 2007–2024. Each observation was classified by species and functional guild based on established ecological trait databases @tbl-guilds. The dataset was split by ecoregion (montane/sub-alpine and alpine) using georeferenced transect locations. A variable representing time-to-first-detection (TTFD) was included when available, to control for potential biases in detectability. Trends in abundance were assessed separately for species and guilds using generalized linear mixed-effects models (GLMMs) implemented in the lme4 package (Bates et al., 2015) in R (R Core Team, 2023). Count data were modeled using a Poisson distribution or a negative binomial distribution where overdispersion was evident. Models included fixed effects for year, ecoregion, and their interaction, while accounting for spatial clustering using random intercepts for transects. Separate models were fitted for montane/sub-alpine and alpine ecoregions to facilitate region-specific comparisons.
+To analyze trends in bird abundance in Jasper National Park from 2007 to 2024, we utilized point count data to evaluate changes at the species and guild levels. Abundance was defined as the count of individuals detected during point counts, rather than as a density x area relationship. Observations were first filtered to include only data from the study period and were classified by species and functional guilds using established ecological trait databases (`tbl-guilds`). Spatial clustering was addressed by grouping data by individual locations and transects. Georeferenced transect locations were used to define these strata. A time-to-first-detection (TTFD) variable was included, when available, to control for potential biases in detectability.
+
+Community composition in Jasper National Park was analyzed using multivariate statistical approaches. Species-level observations were aggregated into a species-by-location matrix, with abundances recorded as the maximum individual order for each location and transect. Ecoregions were categorized into Alpine and Montane groups, with the latter further divided into Upper Subalpine, Lower Subalpine, and Montane zones. Redundancy analysis (RDA) was conducted using the vegan package in R to quantify the variation in community composition explained by ecoregions and visualize species-environment relationships with ordination plots. Differences in composition between Alpine and Montane groups were tested using permutational multivariate analysis of variance (PERMANOVA) with Bray-Curtis dissimilarity and 999 permutations under a reduced model. 
+
+Generalized linear mixed-effects models (GLMMs) were implemented in R (R Core Team, 2023) using the `lme4` package (Bates et al., 2015) to analyze abundance trends. Count data were modeled using a Poisson distribution or a negative binomial distribution in cases of overdispersion. Models included year, ecoregion, and their interaction as fixed effects, and location and transect as random effects to account for spatial clustering. Separate models were fitted for montane/subalpine and alpine ecoregions to facilitate region-specific analyses. Model selection was based on Akaike Information Criterion (AIC) to identify the best-fit models.
+
+To evaluate trends, we used the Mann-Kendall test to assess the statistical significance of observed changes and Sen's Slope to estimate the magnitude of these trends over time. Functional diversity was assessed at the guild level using Rao’s Q, allowing us to explore changes in functional diversity across the study period. Breakpoint analysis was performed using the `segmented` package in R to identify significant shifts in abundance trends over time. Segmented models were fitted to detect structural changes that might warrant separating trend analysis into distinct phases. This ensured that important changes in abundance were not obscured by analyzing overall trends.
+
+Ecoregional assessments were conducted by grouping abundance data for alpine and montane (upper subalpine, lower subalpine, and montane) ecoregions into singular datasets. Guild-level trends were similarly analyzed using Rao’s Q to detect changes in functional diversity.
+
+```{r}
+
+#| eval: false
+#| include: true
+
+# Jasper species
+mdm <- c("AMPI","AMRO","BRSP","CHSP","DEJU","GCKI","HETH","FOSP","OCWA","RCKI","SWTH","VATH","WAVI","WCSP","WTSP","GCSP","YRWA","RBNU","LISP","MOCH")
+
+comp <- janp_main |>
+  mutate(year = lubridate::year(recording_date_time)) |>
+  group_by(location, recording_date_time) |>
+  mutate(unique_data_types = n_distinct(data_type)) |>
+  ungroup() |>
+  filter(unique_data_types == 2, species_code %in% mdm) |>
+  group_by(year, location, recording_date_time, data_type, species_code) |>
+  summarise(mean = mean(individual_order)) |>
+  ggplot(aes(x = data_type, y = mean, group = data_type)) +
+  geom_boxplot() +
+  facet_wrap(~species_code) +
+  theme_bw()
+
+
+```
 
 # Results
 
 ## Ecoregional analysis
 
-A redundancy analysis (RDA) was conducted using the `vegan` R package to assess how species composition varies across ecoregions and locations. RDA is a constrained ordination method that allows us to examine relationships between community composition and explanatory variables while preserving the structure of the species abundance data. The response matrix (comm_matrix) contains species data with the first two columns removed to retain only species abundance information. The predictor variables, ecoregion and location, represent environmental and spatial gradients that may influence species distributions. By running the RDA, we can determine how much variation in community composition is explained by these factors and visualize species-environment relationships through ordination plots. @fig-community shows the relationship between species and ecoregion.
+@fig-community shows the relationship between species and ecoregion. The RDA can determine how much variation in community composition is explained by these factors and visualize species-environment relationships through ordination plots. The PERMANOVA test was performed using Bray-Curtis dissimilarity to assess whether community composition significantly differed between ecoregion groups. The analysis revealed a significant difference in community composition between alpine and montane groups. The ecoregion grouping explained approximately 27.85% of the variation in community composition, while residual variation accounted for 72.15%. These findings indicate a substantial divergence in species composition between ecoregion groups for subsequent analyses looking at trend differences between these areas.
 
 ```{r}
 #| warning: false
@@ -404,7 +442,7 @@ A redundancy analysis (RDA) was conducted using the `vegan` R package to assess 
 comm_matrix <- janp_main |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
   wt_replace_tmtt(calc = "round") |>
-  select(-ecoregion) |>
+  dplyr::select(-ecoregion) |>
   inner_join(locs_summary, by = c("location" = "Location")) |>
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
                                ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
@@ -420,9 +458,6 @@ multi_type <- comm_matrix  %>%
   drop_na()
 
 t3 <- rda(comm_matrix[,-c(1:2)] ~ ecoregion + location, data = multi_type)
-# Print the results of a permutation test for the constrained ordination
-#ordi <- ordistep(t3)
-# Set up the output - scores first
 t3scores <- scores(t3, display = "sites") %>%
 as.data.frame() %>%
 rownames_to_column("site") %>%
@@ -453,12 +488,29 @@ plot_RDA <- ggplot(data = t3scores, aes(x = RDA1, y = RDA2)) +
         plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
 
 plot_RDA
+```
 
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: true
+#| include: true
+#| label: permanova
+#| tbl-cap: PERMANOVA test
+
+comm_matrix_data <- comm_matrix[, -c(1:2)] # Exclude location and ecoregion columns
+ecoregion_group <- comm_matrix$ecoregion
+
+# Perform PERMANOVA
+permanova_result <- adonis2(comm_matrix_data ~ ecoregion_group, data = comm_matrix, method = "bray", permutations = 999)
+
+print(permanova_result)
 ```
 
 ## Guild analysis
 
-Here are the species guilds listed in @tbl-guilds, with activity patterns illustrated in @fig-spp-activity-nesting, @fig-spp-activity-dietary, and @fig-spp-activity-migratory, categorized by nesting, dietary, and migratory guilds. A notable pattern emerges across all three guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion.
+Activity patterns across nesting, dietary and migratory guilds are illustrated in @fig-spp-activity-nesting, @fig-spp-activity-dietary, and @fig-spp-activity-migratory, respectively. A notable pattern emerges across all three guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion.
 
 ```{r}
 #| warning: false
@@ -499,7 +551,7 @@ guild_activity <- janp_main |>
   filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
   filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
-  select(location, recording_date_time, species_common_name, species_code, individual_count) |>
+  dplyr::select(location, recording_date_time, species_common_name, species_code, individual_count) |>
   mutate(julian = lubridate::yday(recording_date_time),
          month= month(recording_date_time),
          year = factor(year(recording_date_time))) |>
@@ -582,7 +634,6 @@ guild_activity |>
 
 ```
 
-
 ```{r}
 #| warning: false
 #| echo: false
@@ -603,14 +654,14 @@ guild_trend <- janp_main |>
   filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
   filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
   mutate(year = year(recording_date_time)) |>
-  select(location, year, species_code, individual_order, individual_count) |>
+  dplyr::select(location, year, species_code, individual_order, individual_count) |>
   group_by(location, year, species_code) |>
   summarise(individual_order = mean(individual_order)) |>
   ungroup() |>
   mutate(year = round(year,0)) |>
   inner_join(guilds, by = "species_code") |>
   pivot_longer(cols = c(dietary_guild, habitat_guild, migratory_guild), names_to = "guild_type", values_to = "guild_value") |>
-  inner_join(locs_summary |> select(Location, ecoregion), by = c("location" = "Location")) |>
+  inner_join(locs_summary |> dplyr::select(Location, ecoregion), by = c("location" = "Location")) |>
   group_by(ecoregion, year, guild_type, guild_value) |>
   summarise(total_abundance = sum(individual_order),  
             sample_size = n_distinct(location)) |>
@@ -622,16 +673,30 @@ guild_trend <- janp_main |>
   )) 
 
 guild_trend |>
-  ggplot(aes(x = year, y = normalized_count, colour = guild_value)) +
+  ggplot(aes(x = year, y = total_abundance, colour = guild_value)) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm") +
   facet_grid(ecoregion ~ guild_type) +
   scale_colour_viridis_d(option = "cividis", alpha = 0.7) + 
   theme_bw() +
-  labs(x = "Year", y = "Normalized count of mean number of individuals per location")
+  labs(x = "Year", y = "Total abundance of individuals per location")
+
+guild_trend_clean <- guild_trend %>%
+  group_by(ecoregion, year) %>%
+  summarise(total_abundance = sum(total_abundance, na.rm = TRUE),
+            sample_size = sum(sample_size, na.rm = TRUE),
+            .groups = "drop")
+
+# Pivot the data to make 'year' columns with abundance values
+guild_trend_wide <- guild_trend_clean %>%
+  pivot_wider(names_from = year, values_from = total_abundance, values_fill = 0) %>%
+  arrange(ecoregion)
+
 
 
 ```
+
+## Model summary
 
 ## Abundance trend analysis
 
@@ -657,7 +722,7 @@ z <- locs_summary |>
   filter(sum == 17)
 
 # Jasper species
-mdm <- c("AMRO","BRSP","CHSP","DEJU","GCKI","HETH","FOSP","OCWA","RCKI","SWTH","VATH","WAVI","WCSP","WTSP","GCSP","YRWA")
+mdm <- c("AMPI","AMRO","BRSP","CHSP","DEJU","GCKI","HETH","FOSP","OCWA","RCKI","SWTH","VATH","WAVI","WCSP","WTSP","GCSP","YRWA","RBNU","LISP","MOCH")
 
 tot_a <- janp_main |>
   filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
@@ -674,7 +739,7 @@ prop_a <- nrow(tot_a_mdm) / nrow(tot_a)
 plot_mdm <- 
   tot_a_mdm |>
   mutate(year = year(recording_date_time)) |>
-  select(location, data_type, year, species_code, individual_order, individual_count) |>
+  dplyr::select(location, data_type, year, species_code, individual_order, individual_count) |>
   group_by(location, data_type, year, species_code) |>
   summarise(individual_order = mean(individual_order)) |>
   ungroup() |>
@@ -685,15 +750,35 @@ plot_mdm <-
     sample_size = n_distinct(location)
   ) |>
   ungroup() |>
-  mutate(normalized_count = total_abundance / sample_size)
+  mutate(normalized_count = total_abundance / sample_size) |>
+  inner_join(wt_get_species() |> dplyr::select(species_code, species_common_name), by = "species_code") |>
+  inner_join(guilds, by = "species_common_name")
 
 plot_mdm |>
-  ggplot(aes(x = year, y = normalized_count, colour = species_code)) +
+  ggplot(aes(x = year, y = normalized_count, colour = dietary_guild)) +
   geom_point() + 
   geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") + 
   scale_colour_viridis_d(option = "cividis", alpha = 0.7) +
   theme_bw() +
-  facet_wrap(~species_code) +
+  facet_wrap(~species_code.x) +
+  labs(x = "Year", y = "Normalized count of mean number of individuals per location")
+
+plot_mdm |>
+  ggplot(aes(x = year, y = normalized_count, colour = migratory_guild)) +
+  geom_point() + 
+  geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") + 
+  scale_colour_viridis_d(option = "cividis", alpha = 0.7) +
+  theme_bw() +
+  facet_wrap(~species_code.x) +
+  labs(x = "Year", y = "Normalized count of mean number of individuals per location")
+
+plot_mdm |>
+  ggplot(aes(x = year, y = normalized_count, colour = habitat_guild)) +
+  geom_point() + 
+  geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") + 
+  scale_colour_viridis_d(option = "cividis", alpha = 0.7) +
+  theme_bw() +
+  facet_wrap(~species_code.x) +
   labs(x = "Year", y = "Normalized count of mean number of individuals per location")
 
 ```
@@ -711,13 +796,13 @@ plot_mdm |>
 
 datatable(
   plot_mdm |>
-    group_by(species_code) |>
+    group_by(species_code.x) |>
     summarise(models = list(
       lm(normalized_count ~ year + data_type, data = cur_data())
     )) |>
     mutate(model_summary = map(models, tidy)) |>
     unnest(model_summary) |>
-    select(-models) |>
+    dplyr::select(-models) |>
     mutate(across(where(is.numeric), round, 2)),
   options = list(
     searching = TRUE,
@@ -748,7 +833,7 @@ count_annual_mdm <- tot_a_mdm |>
     ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"
   )) |>
   mutate(year = year(recording_date_time)) |>
-  select(location, ecoregion, year, species_code, individual_order, individual_count) |>
+  dplyr::select(location, ecoregion, year, species_code, individual_order, individual_count) |>
   group_by(location, ecoregion, year, species_code) |>
   summarise(individual_order = max(individual_order), .groups = "drop") |>
   mutate(year = round(year, 0)) |>
@@ -793,13 +878,6 @@ ggplot(count_annual_mdm, aes(x = year, y = normalized_count, colour = ecoregion)
 
 
 ```
-
-```{r}
-
-
-
-```
-
 
 The mean time to first detection was stable throughout the years and methods used (see @fig-mean-time-ttfd)
 
@@ -901,7 +979,7 @@ spp_rich_location <- janp_main |>
   filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
   filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
-  select(location, year, species_code) |>
+  dplyr::select(location, year, species_code) |>
   distinct() |>
   group_by(location, year) |>
   summarise(species_count = n_distinct(species_code)) |>
@@ -938,8 +1016,8 @@ spp_rich_location |>
 
 shannon_d <- janp_main |> 
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
-  inner_join(wt_get_species() |> select(species_code, species_class, species_order), by = "species_code") |>
-  select(location, recording_date_time, species_code, species_common_name, individual_order, individual_count) |>
+  inner_join(wt_get_species() |> dplyr::select(species_code, species_class, species_order), by = "species_code") |>
+  dplyr::select(location, recording_date_time, species_code, species_common_name, individual_order, individual_count) |>
   distinct() |>
   group_by(location, recording_date_time, species_code, species_common_name) |>
   summarise(count = max(individual_order)) |>
@@ -964,7 +1042,88 @@ shannon_d <- janp_main |>
 shannon_d
 ```
 
-
 # Discussion
 
+```{r}
+#| eval: false
+#| include: true
 
+tot_a <- janp_main |>
+  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
+  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F)
+
+mP0 <- glm(abundance ~ 1, data = results, family = poisson)
+mP1 <- glm(abundance ~ year, data = results, family = poisson)
+mP2 <- glm(abundance ~ year + data_type, data = results, family = poisson)
+mP3 <- gam(abundance ~ s(year), data = results, family = poisson)
+mP4 <- gam(abundance ~ s(year) + data_type, data = results, family = poisson)
+mP5 <- glm.nb(abundance ~ year, data = results)
+mP6 <- glm.nb(abundance ~ year + data_type, data = results)
+mP7 <- zeroinfl(abundance ~ year | 1, data = results, dist = "poisson")
+mP8 <- zeroinfl(abundance ~ year | 1 + data_type, data = results, dist = "poisson")
+mP9 <- zeroinfl(abundance ~ year | 1, data = results, dist = "negbin")
+mP10 <- zeroinfl(abundance ~ year | 1 + data_type, data = results, dist = "negbin")
+mP11 <- glmmTMB(abundance ~ year + (1 | location), ziformula = ~1, family = poisson(), data = results)
+mP12 <- glmmTMB(abundance ~ year + (1 | location) + data_type, ziformula = ~1, family = poisson(), data = results)
+mP13 <- glmer(abundance ~ year + (1 | location), data = results, family = "poisson")
+mP14 <- glmer(abundance ~ year + data_type + (1 | location), data = results, family = "poisson")
+
+
+AIC(mP0, mP1, mP2, mP3, mP4, mP5, mP6, mP7, mP8, mP9, mP10, mP11, mP12, mP13, mP14) |>
+  arrange(AIC)
+BIC(mP0, mP1, mP2, mP3, mP4, mP5, mP6, mP7, mP8, mP9, mP10, mP11, mP12, mP13, mP14)
+model.sel(mP0, mP1, mP2, mP3, mP4, mP5, mP6, mP7, mP8, mP9, mP10, mP11, mP12, mP13, mP14)
+
+# Add prediction with confidence intervals
+prediction <- predict(mP14, type = "response", se.fit = TRUE)
+
+# Add predictions and confidence intervals to the results dataset
+results <- results %>%
+  mutate(
+    predicted = prediction$fit,
+    lower_ci = prediction$fit - 1.96 * prediction$se.fit,
+    upper_ci = prediction$fit + 1.96 * prediction$se.fit
+  )
+
+# Summarize raw data
+raw_summary <- results %>%
+  group_by(year) %>%
+  summarize(mean_abundance = mean(abundance, na.rm = TRUE))
+
+# Summarize predictions and confidence intervals
+predicted_summary <- results %>%
+  group_by(year) %>%
+  summarize(
+    mean_predicted = mean(predicted, na.rm = TRUE),
+    lower_ci = mean(lower_ci, na.rm = TRUE),
+    upper_ci = mean(upper_ci, na.rm = TRUE)
+  )
+
+# Plot with confidence intervals
+ggplot() +
+  # Raw data points
+  geom_jitter(data = results, aes(x = year, y = abundance), alpha = 0.1) +
+  geom_point(data = raw_summary, aes(x = year, y = mean_abundance), color = "blue", size = 2, alpha = 0.7) +
+  # Model predictions
+  geom_line(data = predicted_summary, aes(x = year, y = mean_predicted), color = "red", size = 1) +
+  # Confidence intervals
+  geom_ribbon(
+    data = predicted_summary,
+    aes(x = year, ymin = lower_ci, ymax = upper_ci),
+    fill = "red", alpha = 0.2
+  ) +
+  labs(
+    title = "Trend of Abundance Over Years with Confidence Intervals",
+    x = "Year",
+    y = "Mean Abundance"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+#ecoregions
+
+results <- tot_a
+```
