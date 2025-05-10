@@ -114,7 +114,7 @@ janp_aru <- imap_dfr(
 mpb <- wildrtrax::wt_download_report(project_id = 2129, sensor_id = "ARU", weather_cols = TRUE, reports = "main")
 
 # Bind legacy data with acoustic data
-janp_main <- bind_rows(old_s_max, janp_aru) |>
+janp_main <- bind_rows(old_s_mean, janp_aru) |>
   group_by(location) |>
   fill(ecoregion, .direction = "down") |>
   ungroup() |>
@@ -123,6 +123,8 @@ janp_main <- bind_rows(old_s_max, janp_aru) |>
 ```
 
 # Abstract
+
+Since 2007, Jasper National Park has conducted passive acoustic monitoring as part of its ecological integrity monitoring program. After 17 years, we sought to analyze trends and extract insights from these data to inform ongoing monitoring and establish robust practices for future species monitoring. Our objective was to assess whether the species and guild thresholds shifted by ±2.5% in the alpine and montane ecoregions. Data management and processing were conducted in WildTrax, where legacy datasets from multiple methodologies were combined and harmonized. We evaluated whether the sampling locations were independent and then conducted trend analyse to examine changes in species counts over time across guilds and ecoregions.
 
 ::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
 This report is dynamically generated, meaning its results may evolve with the addition of new data or further analyses. For the most recent updates, refer to the publication date and feel free to reach out to the authors.
@@ -148,7 +150,7 @@ The project will analyze Jasper’s bird point count data from 2007 to 2024, ass
 
 # Methods
 
-## Data and processing
+## Data collection
 
 Songbird data was collected using autonomous recording units (ARUs), deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting at dawn. Technicians walked transects containing ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each location, the ARU is set up, and technicians move 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording. Recordings were then clipped and organized to only include the 10-minute count.
 
@@ -159,7 +161,7 @@ Songbird data was collected using autonomous recording units (ARUs), deployed by
 #| message: false
 #| include: true
 #| fig-align: center
-#| fig-cap: Locations from Jasper National Park ARU Monitoring Program
+#| fig-cap: Locations from Jasper National Park ARU Monitoring Program. Includes acoustic monitoring locations for other collaborative projects. Ecoregions were not classified for Other sites but only EI Monitoring locations.
 #| label: fig-aru-monitoring-locations
 
 janp_locs <- janp_main |>
@@ -167,10 +169,30 @@ janp_locs <- janp_main |>
   dplyr::select(location, latitude, longitude, year, ecoregion) |>
   drop_na(latitude) |>
   distinct() |>
-  mutate(type = case_when(grepl('BAT',location) ~ "Bat", TRUE ~ "Bird")) |>
-  sf::st_as_sf(coords = c("longitude","latitude"), crs = 4326)
+  dplyr::mutate(type = case_when(grepl('BAT', location) ~ "Bat", TRUE ~ "Bird")) |>
+  sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
 
-locs_summary <- janp_locs |>
+# Create mpb_in_janp
+mpb_sf <- mpb |>
+  mutate(year = year(recording_date_time)) |>
+  dplyr::select(location, year, latitude, longitude) |>
+  distinct() |>
+  drop_na(latitude, longitude) |>
+  sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
+mpb_in_janp <- st_intersection(mpb_sf, janp_shp)
+
+# Combine
+janp_locs_map <- janp_locs |> 
+  bind_rows(mpb_in_janp) |>
+  dplyr::select(location, year, ecoregion, geometry) |>
+  mutate(ecoregion = case_when(
+    grepl("^JANP", location) ~ "Other ARU Monitoring", 
+    grepl("MPB", location) ~ "Mountain Pine Beetle Project", 
+    TRUE ~ ecoregion
+  ))
+
+# Generate summary table
+locs_summary <- janp_locs_map |>
   st_drop_geometry() |>
   group_by(location, ecoregion, year) |>
   distinct() |>
@@ -180,13 +202,10 @@ locs_summary <- janp_locs |>
   pivot_wider(names_from = year, values_from = value, values_fill = 0) |>
   rename('Location' = location)
 
-janp_shp <- read_sf('assets/National_Parks_and_National_Park_Reserves_of_Canada_Legislative_Boundaries.shp') |>
-  filter(grepl('JASPER',adminAreaN))
-janp_shp <- st_transform(janp_shp, st_crs(janp_locs)) |> st_make_valid()
-
+# Map visualization
 pal <- colorFactor(
   palette = "Set3", 
-  domain = janp_locs$ecoregion
+  domain = janp_locs_map$ecoregion
 )
 
 leaflet() %>%
@@ -199,8 +218,8 @@ leaflet() %>%
     popup = ~paste("Park:", adminAreaN)
   ) %>%
   addCircleMarkers(
-    data = janp_locs,
-    popup = ~paste("Location:", janp_locs$location, "<br>"),
+    data = janp_locs_map,
+    popup = ~paste("Location:", location, "<br>"),
     fillColor = ~pal(ecoregion),  
     fillOpacity = 1,
     color = "black", 
@@ -209,12 +228,13 @@ leaflet() %>%
   addLegend(
     "topright",
     pal = pal,
-    values = janp_locs$ecoregion,
+    values = janp_locs_map$ecoregion,
     title = "Ecoregion",
     opacity = 1
   ) %>%
   addMeasure(primaryLengthUnit = "meters", primaryAreaUnit = "sqmeters") %>%
   addMiniMap(position = "bottomleft")
+
 
 
 ```
@@ -249,7 +269,7 @@ To assess whether bird survey locations in Jasper National Park can be treated a
 #| echo: false
 #| message: false
 #| eval: false
-#| include: false
+#| include: true
 #| code-fold: true
 
 janp_locs_sf <- janp_locs %>%
@@ -288,7 +308,7 @@ sum(neighbor_counts == 0) / length(neighbor_counts) * 100
 jj <- wt_location_distances(janp_main) |> filter(location_from %in% multiaru, distance < 300) |> inner_join(janp_main |> dplyr::select(location, ecoregion) |> distinct(), by = c("location_from" = "location"))
 ```
 
-## Data quality control
+## Data management, processing and quality control
 
 Before adopting WildTrax, analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the initial noise removed. Transcription methods varied over time @tbl-transcriptions, affecting data consistency. To ensure comparability, abundance analyses used the maximum value of each species which made estimated trend consistent across years. We used generalized linear mixed models for time-to-first detection and the differences it posed across years to account for detection probability differences. We also verified tags @tbl-verified and accounted for "too many to tag" individual (see @tbl-tmtt).
 
@@ -303,7 +323,6 @@ Before adopting WildTrax, analysts excluded the initial 20 seconds to 1.5 minute
 #| code-fold: true
 #| tbl-cap: Transcription method by year with re-transcribed data being conducted from 2007 - 2012.
 
-# Create the data frame
 transcription_table <- tibble(
   Years = c("2007-2020", "2021-2022", "2023-2024", "2011"),
   `Transcription Method` = c(
@@ -332,6 +351,9 @@ transcription_table <- tibble(
   )
 )
 
+transcription_table
+
+
 # Render the datatable
 datatable(transcription_table, 
           options = list(
@@ -352,7 +374,7 @@ datatable(transcription_table,
 #| eval: true
 #| include: true
 #| label: tbl-verified
-#| tbl-cap: Proportion of tags verified
+#| tbl-cap: Proportion of tags verified. NA evaluated tags were from legacy acoustic data, not including re-transcriptions for method comparison in WildTrax.
 
 all_tags <- janp_main |>
   tally() |>
@@ -377,22 +399,29 @@ kable(verified_tags)
 #| eval: true
 #| include: true
 #| label: tbl-tmtt
-#| tbl-cap: TMTT tags
+#| tbl-cap: Too many to count (TMTT) tags in WildTrax
 
 tmtt_tags <- janp_main |>
   dplyr::select(location, recording_date_time, species_code, individual_count) |>
   distinct() |>
   filter(individual_count == "TMTT")
 
-kable(head(tmtt_tags))
+datatable(tmtt_tags, 
+          options = list(
+            searching = TRUE,  
+            paging = TRUE,    
+            pageLength = 10   
+          )) |>
+  formatStyle(columns = colnames(tmtt_tags), 
+              backgroundColor = styleEqual(c("NA"), "lightgray"))  
 
 ```
 
-## Methods
+## Analyses
 
-To analyze trends in bird abundance in Jasper National Park from 2007 to 2024, we utilized point count data to evaluate changes at the species and guild levels. Abundance was defined as the count of individuals detected during point counts, rather than as a density x area relationship. Observations were first filtered to include only data from the study period and were classified by species and functional guilds using established ecological trait databases (`tbl-guilds`). Spatial clustering was addressed by grouping data by individual locations and transects. Georeferenced transect locations were used to define these strata. A time-to-first-detection (TTFD) variable was included, when available, to control for potential biases in detectability.
+To analyze trends in bird abundance in Jasper National Park from 2007 to 2024, we utilized point count data to evaluate changes at the species and guild levels. Abundance was defined as the count of individuals detected during point counts, rather than as a density x area relationship. Observations were first filtered to include only data from the study period and were classified by species and functional guilds using established ecological trait databases (`tbl-guilds`). Spatial clustering was addressed by grouping data by individual locations and transects. Georeferenced transect locations were used to define these strata. A time-to-first-detection (TTFD) was examined to control for potential biases in detectability by comparing the mean TTFD of between each of the methods.
 
-Community composition in Jasper National Park was analyzed using multivariate statistical approaches. Species-level observations were aggregated into a species-by-location matrix, with abundances recorded as the maximum individual order for each location and transect. Ecoregions were categorized into Alpine and Montane groups, with the latter further divided into Upper Subalpine, Lower Subalpine, and Montane zones. Redundancy analysis (RDA) was conducted using the vegan package in R to quantify the variation in community composition explained by ecoregions and visualize species-environment relationships with ordination plots. Differences in composition between Alpine and Montane groups were tested using permutational multivariate analysis of variance (PERMANOVA) with Bray-Curtis dissimilarity and 999 permutations under a reduced model. 
+Community composition in Jasper National Park was analyzed using multivariate statistical approaches. Species-level observations were aggregated into a species-by-location matrix, with abundances recorded as the maximum individual order for each location and transect. Ecoregions were categorized into Alpine and Montane groups, with the latter further divided into Upper Subalpine, Lower Subalpine, and Montane zones. Redundancy analysis (RDA) was conducted using the vegan package in R to quantify the variation in community composition explained by ecoregions and visualize species-environment relationships with ordination plots. Differences in composition between Alpine and Montane groups were tested using permutational multivariate analysis of variance (PERMANOVA) with Bray-Curtis dissimilarity and 999 permutations under a reduced model.
 
 Generalized linear mixed-effects models (GLMMs) were implemented in R (R Core Team, 2023) using the `lme4` package (Bates et al., 2015) to analyze abundance trends. Count data were modeled using a Poisson distribution or a negative binomial distribution in cases of overdispersion. Models included year, ecoregion, and their interaction as fixed effects, and location and transect as random effects to account for spatial clustering. Separate models were fitted for montane/subalpine and alpine ecoregions to facilitate region-specific analyses. Model selection was based on Akaike Information Criterion (AIC) to identify the best-fit models.
 
@@ -1127,3 +1156,7 @@ ggplot() +
 
 results <- tot_a
 ```
+
+## Future incorporation of multi-day deployment datasets
+
+As noted in @fig-all-projects, there are many more historical and ongoing monitoring datasets that do fall outside the realm 
