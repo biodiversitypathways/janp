@@ -53,7 +53,6 @@ library(ggeffects)
 library(modifiedmk)
 library(MuMIn)
 library(mgcv)
-library(emmeans)
 library(MASS)
 library(pscl)
 library(segmented)
@@ -318,6 +317,14 @@ coords <- st_coordinates(janp_locs_sf)
 neighbours <- knn2nb(knearneigh(coords, k = 1, longlat = TRUE))
 weights <- nb2listw(neighbours, style = "W", zero.policy = TRUE)
 moran_test <- moran.test(janp_locs_sf$n, listw = weights, zero.policy = TRUE)
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: true
+#| include: false
 
 print(moran_test)
 
@@ -455,7 +462,6 @@ Finally, breakpoint analysis was performed using the `segmented` package (@segme
 
 
 ```{r}
-
 #| eval: false
 #| include: true
 
@@ -475,6 +481,7 @@ comp <- janp_main |>
   facet_wrap(~species_code) +
   theme_bw()
 
+comp
 
 ```
 
@@ -564,7 +571,7 @@ print(permanova_result)
 
 ## Guild analysis
 
-Activity patterns across nesting, dietary and migratory guilds are illustrated in @fig-spp-activity-nesting, @fig-spp-activity-dietary, and @fig-spp-activity-migratory, respectively. A notable pattern emerges across all three guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion.
+Activity patterns across nesting, dietary and migratory guilds are illustrated in @fig-spp-activity-guilds. A notable pattern emerges across all four guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion.
 
 ```{r}
 #| warning: false
@@ -578,6 +585,29 @@ Activity patterns across nesting, dietary and migratory guilds are illustrated i
 #| tbl-cap: Guilds
 
 guilds <- read_csv("jasper_guilds.csv")
+
+guild_activity <- janp_main |>
+  filter(data_type %in% c("legacy", "single_visit_3_max", "single_visit_0_max")) |>
+  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
+  wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "unknown"), zerofill = T) |>
+  dplyr::select(location, recording_date_time, species_common_name, species_code, individual_count) |>
+  mutate(julian = lubridate::yday(recording_date_time),
+         month = month(recording_date_time),
+         year = factor(year(recording_date_time))) |>
+  inner_join(guilds, by = "species_code") |>
+  group_by(species_code) |>
+  add_tally() |>
+  ungroup() |>
+  group_by(julian, species_code) |>
+  add_tally() |>
+  ungroup() |>
+  arrange(species_code) |>
+  mutate(recording_date_time = as.POSIXct(recording_date_time)) |>
+  mutate(species_code = factor(species_code, levels = sort(unique(species_code)))) |>
+  inner_join(locs_summary, by = c("location" = "Location")) |>
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"))
+
 
 datatable(guilds, 
           options = list(
@@ -601,77 +631,99 @@ datatable(guilds,
 #| cap-location: margin
 #| code-fold: true
 
-guild_activity <- janp_main |>
-  filter(data_type %in% c("legacy", "single_visit_3_max", "single_visit_0_max")) |>
-  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
-  wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "unknown"), zerofill = T) |>
-  dplyr::select(location, recording_date_time, species_common_name, species_code, individual_count) |>
-  mutate(julian = lubridate::yday(recording_date_time),
-         month = month(recording_date_time),
-         year = factor(year(recording_date_time))) |>
-  inner_join(guilds, by = "species_code") |>
-  group_by(species_code) |>
-  add_tally() |>
-  ungroup() |>
-  dplyr::rename(`Nesting habitat` = habitat_guild) |>
-  group_by(julian, species_code) |>
-  add_tally() |>
-  ungroup() |>
-  arrange(species_code) |>
-  mutate(recording_date_time = as.POSIXct(recording_date_time)) |>
-  mutate(species_code = factor(species_code, levels = sort(unique(species_code)))) |>
-  inner_join(locs_summary, by = c("location" = "Location")) |>
-  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
-                               ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"))
-
-ui <- fluidPage(
-  selectInput("guild_type", "Choose Guild Type", 
-              choices = c("trait" = "trait",
-                          "Nesting habitat" = "Nesting habitat", 
-                          "Dietary Guild" = "dietary_guild", 
-                          "Migratory Guild" = "migratory_guild"),
-              selected = "habitat_guild"),  # Set default value
-  plotOutput("guild_plot")
-)
-
-server <- function(input, output) {
-  
-  output$guild_plot <- renderPlot({    
-    
-    selected_column <- input$guild_type
-    
-    if (!(selected_column %in% colnames(guild_activity))) {
-      stop("Selected guild type column not found in data.")
-    }
-    
-    guild_data <- guild_activity |> 
-      dplyr::select(julian, ecoregion, !!sym(selected_column)) |> 
-      filter(!is.na(!!sym(selected_column)))
-    
-    ggplot(guild_data, aes(x = julian, y = !!sym(selected_column), fill = !!sym(selected_column))) + 
+ggplot(guild_activity, aes(x = julian, y = habitat_guild, fill = habitat_guild)) + 
       geom_density_ridges(alpha = 0.7) +
       scale_fill_viridis_d(option = "cividis") +
       facet_wrap(~ecoregion) +
       theme_bw() +
       xlab("Day of Year") + 
       ylab("Species")
-  })
-  
-}
-
-# Run the Shiny app
-shinyApp(ui = ui, server = server)
 
 ```
 
 ```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap: Seasonal detection activity of by migratory guild and ecoregion
+#| label: fig-spp-activity-migratory
+#| cap-location: margin
+#| code-fold: true
 
-library(dplyr)
-library(tidyr)
-library(FD)
-library(Kendall)
-library(lme4)
-library(segmented)
+ggplot(guild_activity, aes(x = julian, y = migratory_guild, fill = migratory_guild)) + 
+      geom_density_ridges(alpha = 0.7) +
+      scale_fill_viridis_d(option = "cividis") +
+      facet_wrap(~ecoregion) +
+      theme_bw() +
+      xlab("Day of Year") + 
+      ylab("Species")
+
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap: Seasonal detection activity of by trait and ecoregion
+#| label: fig-spp-activity-trait
+#| cap-location: margin
+#| code-fold: true
+
+ggplot(guild_activity, aes(x = julian, y = trait, fill = trait)) + 
+      geom_density_ridges(alpha = 0.7) +
+      scale_fill_viridis_d(option = "cividis") +
+      facet_wrap(~ecoregion) +
+      theme_bw() +
+      xlab("Day of Year") + 
+      ylab("Species")
+
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap: Seasonal detection activity of by dietary guild and ecoregion
+#| label: fig-spp-activity-dietary
+#| cap-location: margin
+#| code-fold: true
+
+ggplot(guild_activity, aes(x = julian, y = dietary_guild, fill = dietary_guild)) + 
+      geom_density_ridges(alpha = 0.7) +
+      scale_fill_viridis_d(option = "cividis") +
+      facet_wrap(~ecoregion) +
+      theme_bw() +
+      xlab("Day of Year") + 
+      ylab("Species")
+
+```
+
+Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap: Mean functional diversity (Rao's Q) over time
+#| label: fig-raos-q
+#| cap-location: margin
+#| code-fold: true
 
 abund_sp <- janp_main %>%
   group_by(location, year, species_code) %>%
@@ -713,7 +765,7 @@ lm_trend  <- lm(meanRao ~ year, data = yearly_rao)
 mix_trend <- lmer(RaoQ ~ year + (1|location), data = loc_year_rao)
 seg       <- segmented(lm(meanRao ~ year, data = yearly_rao), seg.Z = ~ year)
 
-list(
+res_raos_q <- list(
   yearly_rao   = yearly_rao,
   mann_kendall = mk,
   lm_trend     = summary(lm_trend),
@@ -721,10 +773,39 @@ list(
   breakpoints  = seg$psi
 )
 
+yearly_rao <- yearly_rao |>
+  mutate(
+    lm_fit = predict(lm_trend, newdata = yearly_rao),
+    mix_fit = predict(mix_trend, newdata = yearly_rao, re.form = NA),
+    seg_fit = predict(seg, newdata = yearly_rao)
+  )
+
+ggplot(yearly_rao, aes(x = year, y = meanRao)) +
+  geom_point(color = "blue", size = 2) +  # Points for yearly Rao
+  geom_line(aes(y = lm_fit), color = "red", size = 1.2, linetype = "dashed") +  # Linear trend
+  geom_line(aes(y = mix_fit), color = "purple", size = 1.2, linetype = "dotted") +  # Mixed-effects trend
+  geom_line(aes(y = seg_fit), color = "green", size = 1.2) +  # Segmented trend
+  labs(
+    title = "Trends in Mean Rao's Q",
+    subtitle = "Mann-Kendall Test, Linear Model, Mixed Effects, and Segmented Trends",
+    x = "Year",
+    y = "Mean Rao's Quadratic Entropy"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 12),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12)
+  )
 
 ```
 
-Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time. The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.
+```{r}
+
+print(res_raos_q)
+
+```
 
 ## Species richness and diversity trends
 
@@ -1196,7 +1277,7 @@ results <- all_species_data %>%
 
 ```{r}
 #| eval: false
-#| include: true
+#| include: false
 
 tot_a <- janp_main |>
   filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
@@ -1277,8 +1358,4 @@ ggplot() +
 
 results <- tot_a
 ```
-
-## Future incorporation of multi-day deployment datasets
-
-As noted in @fig-locations, there are many more historical and ongoing monitoring datasets that do fall outside the realm of the typical EI monitoring.
 
