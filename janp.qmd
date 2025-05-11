@@ -126,7 +126,7 @@ janp_main <- bind_rows(old_s_mean, janp_aru) |>
 
 # Abstract
 
-Since 2007, Jasper National Park has conducted passive acoustic monitoring as part of its ecological integrity monitoring program. After 17 years, we sought to analyze trends and extract insights from these data to inform ongoing monitoring and establish robust practices for future species monitoring. Our objective was to assess whether the abundance (count) of species and guild thresholds shifted by ±2.5% in the alpine and montane ecoregions, respectively. Data management and processing were conducted in WildTrax, where legacy datasets from multiple methodologies were combined and harmonized. We evaluated whether the sampling locations were independent and then conducted trend analyse to examine changes in species counts over time across guilds and ecoregions.
+Since 2007, Jasper National Park has conducted passive acoustic monitoring as part of its ecological integrity monitoring program. After 17 years, we sought to analyze trends and extract insights from these data to inform ongoing monitoring and establish robust practices for future species monitoring. Our objective was to assess whether the abundance (count) of species and guild thresholds shifted by ±2.5% in the alpine and montane ecoregions, respectively. Data management and processing were conducted in WildTrax, where legacy datasets from multiple methodologies were combined and harmonized. We evaluated whether the sampling locations were independent and then conducted trend analyses to examine changes in species counts over time across guilds and ecoregions.
 
 ::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
 This report is dynamically generated, meaning its results may evolve with the addition of new data or further analyses. For the most recent updates, refer to the publication date and feel free to reach out to the authors.
@@ -324,9 +324,9 @@ moran_test <- moran.test(janp_locs_sf$n, listw = weights, zero.policy = TRUE)
 #| echo: false
 #| message: false
 #| eval: true
-#| include: false
+#| include: true  # Change this to true to display the output
 
-print(moran_test)
+moran_test
 
 ```
 
@@ -765,14 +765,6 @@ lm_trend  <- lm(meanRao ~ year, data = yearly_rao)
 mix_trend <- lmer(RaoQ ~ year + (1|location), data = loc_year_rao)
 seg       <- segmented(lm(meanRao ~ year, data = yearly_rao), seg.Z = ~ year)
 
-res_raos_q <- list(
-  yearly_rao   = yearly_rao,
-  mann_kendall = mk,
-  lm_trend     = summary(lm_trend),
-  mix_trend    = summary(mix_trend),
-  breakpoints  = seg$psi
-)
-
 yearly_rao <- yearly_rao |>
   mutate(
     lm_fit = predict(lm_trend, newdata = yearly_rao),
@@ -781,15 +773,19 @@ yearly_rao <- yearly_rao |>
   )
 
 ggplot(yearly_rao, aes(x = year, y = meanRao)) +
-  geom_point(color = "blue", size = 2) +  # Points for yearly Rao
-  geom_line(aes(y = lm_fit), color = "red", size = 1.2, linetype = "dashed") +  # Linear trend
-  geom_line(aes(y = mix_fit), color = "purple", size = 1.2, linetype = "dotted") +  # Mixed-effects trend
-  geom_line(aes(y = seg_fit), color = "green", size = 1.2) +  # Segmented trend
+  geom_point(color = "#213b6e", size = 2) +  # Points for yearly Rao
+  geom_line(aes(y = lm_fit, color = "Linear Model"), size = 1.2, linetype = "dashed") +
+  geom_line(aes(y = mix_fit, color = "Mixed Effects"), size = 1.2, linetype = "dotted") +
+  geom_line(aes(y = seg_fit, color = "Segmented Trend"), size = 1.2) +  # Segmented trend
+  scale_color_manual(values = c("Linear Model" = "#b1a570", 
+                                "Mixed Effects" = "#6c6e72", 
+                                "Segmented Trend" = "#d9c55c")) +  # Custom color mapping
   labs(
     title = "Trends in Mean Rao's Q",
     subtitle = "Mann-Kendall Test, Linear Model, Mixed Effects, and Segmented Trends",
     x = "Year",
-    y = "Mean Rao's Quadratic Entropy"
+    y = "Mean Rao's Quadratic Entropy",
+    color = "Trend Type"  # Legend title
   ) +
   theme_minimal() +
   theme(
@@ -803,7 +799,7 @@ ggplot(yearly_rao, aes(x = year, y = meanRao)) +
 
 ```{r}
 
-print(res_raos_q)
+res_raos_q
 
 ```
 
@@ -892,7 +888,7 @@ shannon_d
 
 ## Abundance trend analysis
 
-The trend in species abundance is summarized in @fig-normalized-count-mdm-year.
+This section presents the normalized species abundance trends, with plots illustrating changes over time across dietary, migratory, and habitat guilds (@fig-normalized-count-mdm-year) and annual counts broken down by ecoregions such as Alpine and Montane (@fig-annual-count), complemented by a table summarizing linear model outputs for species trends (@tbl-normalized-count-mdm-year).
 
 ```{r}
 #| warning: false
@@ -945,33 +941,6 @@ plot_mdm <-
   mutate(normalized_count = total_abundance / sample_size) |>
   inner_join(wt_get_species() |> dplyr::select(species_code, species_common_name), by = "species_code") |>
   inner_join(guilds, by = "species_common_name")
-
-plot_mdm |>
-  ggplot(aes(x = year, y = normalized_count, colour = dietary_guild)) +
-  geom_point() + 
-  geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") + 
-  scale_colour_viridis_d(option = "cividis", alpha = 0.7) +
-  theme_bw() +
-  facet_wrap(~species_code.x) +
-  labs(x = "Year", y = "Normalized count of mean number of individuals per location")
-
-plot_mdm |>
-  ggplot(aes(x = year, y = normalized_count, colour = migratory_guild)) +
-  geom_point() + 
-  geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") + 
-  scale_colour_viridis_d(option = "cividis", alpha = 0.7) +
-  theme_bw() +
-  facet_wrap(~species_code.x) +
-  labs(x = "Year", y = "Normalized count of mean number of individuals per location")
-
-plot_mdm |>
-  ggplot(aes(x = year, y = normalized_count, colour = habitat_guild)) +
-  geom_point() + 
-  geom_smooth(aes(x = as.numeric(as.character(year))), method = "lm") + 
-  scale_colour_viridis_d(option = "cividis", alpha = 0.7) +
-  theme_bw() +
-  facet_wrap(~species_code.x) +
-  labs(x = "Year", y = "Normalized count of mean number of individuals per location")
 
 ```
 
@@ -1071,7 +1040,7 @@ ggplot(count_annual_mdm, aes(x = year, y = normalized_count, colour = ecoregion)
 
 ```
 
-The mean time to first detection was stable throughout the years and methods used (see @fig-mean-time-ttfd)
+The mean time to first detection was stable throughout the years and methods used (see @fig-mean-time-ttfd).
 
 ```{r}
 #| warning: false
@@ -1151,7 +1120,53 @@ ggplot(prediction_data, aes(x = data_type, y = predicted_mean_detection, fill = 
 
 ```
 
-Analysis setup for trend.
+```{r}
+#| eval: false
+#| include: false
+
+tot_a_filtered <- janp_main |>
+  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
+  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
+  group_by(location, ecoregion, year, recording_date_time, species_code) |>
+  mutate(abundance = max(individual_order)) |>
+  ungroup() |>
+  inner_join(guilds |> dplyr::select(species_code, trait, dietary_guild, habitat_guild, migratory_guild), by = "species_code")
+
+results_mmkh <- tot_a_filtered %>%
+  filter(species_code %in% mdm) %>%
+  group_by(species_code) %>%
+  summarise(
+    trend_vi = list(mmkh(abundance, ci = 0.95)),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    vi_p_trend = map_dbl(trend_vi, ~ if ("new P-value" %in% names(.x)) {
+      .x["new P-value"]
+    } else {
+      NA_real_
+    }),
+    vi_z = map_dbl(trend_vi, ~ if ("Corrected Zc" %in% names(.x)) {
+      .x["Corrected Zc"]
+    } else {
+      NA_real_
+    }),
+    vi_sens = map_dbl(trend_vi, ~ if ("Sen's slope" %in% names(.x)) {
+      .x["Sen's slope"]
+    } else {
+      NA_real_
+    })
+  ) %>%
+  dplyr::select(species_code, vi_p_trend, vi_z, vi_sens)
+
+print(results_mmkh)
+
+```
+
+We analyzed species abundance trends over time using the Mann-Kendall trend test (MMKH) with a 95% confidence interval. Statistically significant p-values (p < 0.05) were found for several species, including AMRO (0.0285), BRSP (0.0246), FOSP (0.0409), GCKI (0.0498), GCSP (0.0504), WAVI (0.00629), RCKI (0.0246), and YRWA (0.0252), indicating significant trends in abundance. The Z-scores, which reflect trend strength, varied across species, with WAVI showing the highest Z-score (2.73), indicating a particularly strong trend. Other species like AMPI (1.81), AMRO (2.19), and BRSP (2.25) showed moderate trends, while species like HETH (1.51), RBNU (1.41), and WCSP (1.40) had weaker trends. Despite significant trends, the Sen's slope (vi_sens) was consistently zero for all species, indicating that there was no measurable directional change in abundance over the study period. Thus, while trends are present, they do not reflect actual increases or decreases in species abundance.
+
 
 ```{r}
 #| warning: false
@@ -1160,202 +1175,273 @@ Analysis setup for trend.
 #| message: false
 #| include: true
 #| results: hide
-#| fig-align: center
-#| fig-cap: Analysess
-#| label: fig-analyses
-#| cap-location: bottom
 #| code-fold: true
 
-janp_main_mean <- bind_rows(old_s_mean, janp_aru) |>
-  group_by(location) |>
-  fill(ecoregion, .direction = "down") |>
-  ungroup() |>
-  mutate(year = year(recording_date_time))
+models <- list(
+  mP0 = function(data) glm(abundance ~ 1, data = data, family = poisson),
+  mP1 = function(data) glm(abundance ~ year, data = data, family = poisson),
+  mP2 = function(data) glm(abundance ~ year + data_type, data = data, family = poisson),
+  mP3 = function(data) gam(abundance ~ s(year), data = data, family = poisson),
+  mP4 = function(data) gam(abundance ~ s(year) + data_type, data = data, family = poisson),
+  mP5 = function(data) glm.nb(abundance ~ year, data = data),
+  mP6 = function(data) glm.nb(abundance ~ year + data_type, data = data),
+  mP7 = function(data) zeroinfl(abundance ~ year | 1, data = data, dist = "poisson"),
+  mP8 = function(data) zeroinfl(abundance ~ year | 1 + data_type, data = data, dist = "poisson"),
+  mP9 = function(data) zeroinfl(abundance ~ year | 1, data = data, dist = "negbin"),
+  mP10 = function(data) zeroinfl(abundance ~ year | 1 + data_type, data = data, dist = "negbin"),
+  mP11 = function(data) glmmTMB(abundance ~ year + (1 | location), ziformula = ~1, family = poisson(), data = data),
+  mP12 = function(data) glmmTMB(abundance ~ year + (1 | location) + data_type, ziformula = ~1, family = poisson(), data = data),
+  mP13 = function(data) glmer(abundance ~ year + (1 | location), data = data, family = "poisson"),
+  mP14 = function(data) glmer(abundance ~ year + data_type + (1 | location), data = data, family = "poisson")
+)
 
-janp_main_max <- bind_rows(old_s_max, janp_aru) |>
-  group_by(location) |>
-  fill(ecoregion, .direction = "down") |>
-  ungroup() |>
-  mutate(year = year(recording_date_time))
-
-janp_main_3_mean <- bind_rows(old_s_3_mean, janp_aru) |>
-  group_by(location) |>
-  fill(ecoregion, .direction = "down") |>
-  ungroup() |>
-  mutate(year = year(recording_date_time))
-
----------- # Mean all
+best_models_with_plot <- function(species_code) {
+  species_data <- tot_a_filtered |>
+    group_by(location, year, recording_date_time) |>
+    mutate(abundance = ifelse(species_code == !!species_code, abundance, 0)) |>
+    ungroup() |>
+    filter(species_code == !!species_code)
   
-compare_means <- function(data) {
-    data %>%
-      group_by(species_code) %>%
-      summarise(
-        wilcox_p = wilcox.test(mean ~ data_type, data = cur_data())$p.value
-      )
+  fitted_models <- map(models, possibly( ~ {
+    model <- .x(species_data)
+    if (!is.null(model)) {
+      cat("Fitting model:", deparse(substitute(.x)), "\n")
+      print(summary(model))
+    } else {
+      cat("Fitting model failed:", deparse(substitute(.x)), "\n")
+    }
+    model
+  }, NULL))
+  
+  aic_values <- map_dfr(names(fitted_models),
+                        ~ tibble(
+                          model = .x,
+                          AIC = if (!is.null(fitted_models[[.x]]))
+                            AIC(fitted_models[[.x]])
+                          else
+                            Inf
+                        ))
+  
+  best_model_name <- aic_values |>
+    filter(AIC == min(AIC, na.rm = TRUE)) |>
+    pull(model)
+  
+  if (!is.null(fitted_models[[best_model_name]])) {
+    best_model <- fitted_models[[best_model_name]]
+    
+    predicted_values <- predict(best_model, newdata = species_data, type = "response")
+    
+    species_data$predicted_abundance <- ifelse(
+      length(predicted_values) == nrow(species_data),
+      predicted_values,
+      rep(NA, nrow(species_data))
+    )
+    
+    trend_result <- if (length(unique(species_data$abundance)) > 1) {
+      tryCatch({
+        mk <- mmkh(species_data$abundance, ci = 0.95)
+        list(
+          p_trend = if ("newPvalue" %in% rownames(as.data.frame(mk))) {
+            as.data.frame(mk)["newPvalue", "mmkh.mean", drop = TRUE]
+          } else {
+            NA_real_
+          },
+          z = if ("CorrectedZc" %in% rownames(as.data.frame(mk))) {
+            as.data.frame(mk)["CorrectedZc", "mmkh.mean", drop = TRUE]
+          } else {
+            NA_real_
+          },
+          sens = if ("Sensslope" %in% rownames(as.data.frame(mk))) {
+            as.data.frame(mk)["Sensslope", "mmkh.mean", drop = TRUE]
+          } else {
+            NA_real_
+          }
+        )
+      }, error = function(e)
+        list(
+          p_trend = NA,
+          z = NA,
+          sens = NA
+        ))
+    } else {
+      list(p_trend = NA,
+           z = NA,
+           sens = NA)
+    }
+    
+    p <- ggplot(species_data, aes(x = year)) +
+      geom_point(aes(y = abundance),
+                 color = "black",
+                 alpha = 0.5) +
+      geom_line(aes(y = predicted_abundance),
+                color = "blue",
+                size = 1) +
+      labs(
+        title = paste(species_code, "Best Fit Model:", best_model_name),
+        x = "Year",
+        y = "Abundance"
+      ) +
+      theme_minimal() +
+      theme(legend.position = "none")
+    
+    # Return the result as a tibble along with the ggplot and trend analysis
+    tibble(
+      species_code = species_code,
+      name = best_model_name,
+      AIC = aic_values |> filter(model == best_model_name) |> pull(AIC),
+      summary = list(summary(best_model)),
+      plot = list(p),
+      vi_p_trend = trend_result$p_trend,
+      vi_z = trend_result$z,
+      vi_sens = trend_result$sens
+    )
+  } else {
+    tibble(
+      species_code = species_code,
+      name = NA,
+      AIC = Inf,
+      summary = "No valid model",
+      plot = NA,
+      vi_p_trend = NA_real_,
+      vi_z = NA_real_,
+      vi_sens = NA_real_
+    )
   }
+}
 
-# Apply the function to each scenario
-results_mean <- janp_main_mean |>
-  group_by(location, recording_date_time) |>
-  mutate(unique_data_types = n_distinct(data_type)) |>
-  ungroup() |>
-  filter(unique_data_types == 2, species_code %in% mdm) |>
-  group_by(year, location, recording_date_time, data_type, species_code) |>
-  summarise(mean = mean(individual_order)) |>
-  compare_means()
+# Create a trend_models tibble with the ggplots for each species
+trend_models <- tibble(species_code = mdm) %>%
+  mutate(best_model = map(species_code, best_models_with_plot)) %>%
+  unnest(best_model, names_sep = "_")
 
-results_max <- janp_main_max |>
-  group_by(location, recording_date_time) |>
-  mutate(unique_data_types = n_distinct(data_type)) |>
-  ungroup() |>
-  filter(unique_data_types == 2, species_code %in% mdm) |>
-  group_by(year, location, recording_date_time, data_type, species_code) |>
-  summarise(mean = mean(individual_order)) |>
-  compare_means()
+```
 
-results_3_mean <- janp_main_3_mean |>
-  group_by(location, recording_date_time) |>
-  mutate(unique_data_types = n_distinct(data_type)) |>
-  ungroup() |>
-  filter(unique_data_types == 2, species_code %in% mdm) |>
-  group_by(year, location, recording_date_time, data_type, species_code) |>
-  summarise(mean = mean(individual_order)) |>
-  compare_means()
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
 
-# Combine results for comparison
-all_results <- bind_rows(
-  results_mean %>% mutate(scenario = "mean"),
-  results_max %>% mutate(scenario = "max"),
-  results_3_mean %>% mutate(scenario = "3_mean")
-) |>
-  arrange(scenario)
+kable(trend_models |> arrange(species_code) |> dplyr::select(-c(best_model_species_code, best_model_summary, best_model_plot)), caption = "Trend Models Summary", format = "html")
 
------------#
+```
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+#| message: false
+#| include: true
+#| results: hide
+#| code-fold: true
+
+tot_a_filtered_trait <- tot_a_filtered |>
+  group_by(location, year, ecoregion, recording_date_time, trait) |>
+  summarise(sum = sum(abundance)) |>
+  ungroup()
+
+tot_a_filtered_nesting <- tot_a_filtered |>
+  group_by(location, year, ecoregion, recording_date_time, habitat_guild) |>
+  summarise(sum = sum(abundance)) |>
+  ungroup()
+
+tot_a_filtered_migratory <- tot_a_filtered |>
+  group_by(location, year, ecoregion, recording_date_time, migratory_guild) |>
+  summarise(sum = sum(abundance)) |>
+  ungroup()
+
+tot_a_filtered_dietary <- tot_a_filtered |>
+  group_by(location, year, ecoregion, recording_date_time, dietary_guild) |>
+  summarise(sum = sum(abundance)) |>
+  ungroup()
+
+best_models_with_plot_guild <- function(guild_data, guild_col) {
   
-  
-full_grid <- janp_main_mean %>%
-  distinct(year, data_type, location, recording_date_time) %>%
-  expand_grid(species_code = unique(janp_main_mean$species_code))
-
-all_species_data <- janp_main_mean %>%
-  filter(!(data_type == "single_visit_0_max|multi_day" & year < 2023)) %>%
-  group_by(year, data_type, location, recording_date_time, species_code) %>%
-  summarise(mean = mean(individual_order, na.rm = TRUE), .groups = "drop") %>%
-  right_join(full_grid, by = c("year", "data_type", "location", "recording_date_time", "species_code")) %>%
-  mutate(mean = ifelse(is.na(mean), 0, mean))
-
-results <- all_species_data %>%
-  group_by(species_code) %>%
-  summarise(
-    trend_vi = list(mmkh(mean, ci = 0.95)),
-    .groups = "drop"
-  ) %>%
-  mutate(
-    vi_p_trend = map_dbl(trend_vi, ~ if ("newPvalue" %in% rownames(as.data.frame(.x))) {
-      as.data.frame(.x)["newPvalue", "mmkh.mean", drop = TRUE]
-    } else {
-      NA_real_
-    }),
-    vi_z = map_dbl(trend_vi, ~ if ("CorrectedZc" %in% rownames(as.data.frame(.x))) {
-      as.data.frame(.x)["CorrectedZc", "mmkh.mean", drop = TRUE]
-    } else {
-      NA_real_
-    }),
-    vi_sens = map_dbl(trend_vi, ~ if ("Sensslope" %in% rownames(as.data.frame(.x))) {
-      as.data.frame(.x)["Sensslope", "mmkh.mean", drop = TRUE]
-    } else {
-      NA_real_
+  guild_results <- unique(guild_data[[guild_col]]) %>%
+    map(function(guild) {
+      filtered_data <- guild_data %>%
+        filter(.data[[guild_col]] == guild) %>%
+        mutate(abundance = sum) # Use the summed abundance
+      
+      # Fit models to the filtered guild data
+      fitted_models <- map(models, possibly(~ {
+        model <- .x(filtered_data)
+        if (!is.null(model)) {
+          cat("Fitting model for guild:", guild, "\n")
+          print(summary(model))
+        }
+        model
+      }, NULL))
+      
+      # Extract AIC values
+      aic_values <- map_dfr(
+        names(fitted_models),
+        ~ tibble(model = .x, AIC = if (!is.null(fitted_models[[.x]])) AIC(fitted_models[[.x]]) else Inf)
+      )
+      
+      # Select the best model
+      best_model_name <- aic_values %>%
+        filter(AIC == min(AIC, na.rm = TRUE)) %>%
+        pull(model)
+      
+      if (!is.null(fitted_models[[best_model_name]])) {
+        best_model <- fitted_models[[best_model_name]]
+        predicted_values <- predict(best_model, newdata = filtered_data, type = "response")
+        
+        filtered_data$predicted_abundance <- ifelse(length(predicted_values) == nrow(filtered_data),
+                                                    predicted_values,
+                                                    rep(NA, nrow(filtered_data)))
+        
+        # Create a plot for the guild
+        p <- ggplot(filtered_data, aes(x = year)) +
+          geom_point(aes(y = abundance), color = "black", alpha = 0.5) +
+          geom_line(aes(y = predicted_abundance), color = "blue", size = 1) +
+          labs(title = paste("Guild:", guild, "| Best Fit Model:", best_model_name),
+               x = "Year", y = "Abundance") +
+          theme_minimal()
+        
+        return(tibble(
+          guild = guild,
+          model_name = best_model_name,
+          AIC = aic_values %>% filter(model == best_model_name) %>% pull(AIC),
+          summary = list(summary(best_model)),
+          plot = list(p)
+        ))
+      } else {
+        return(tibble(
+          guild = guild,
+          model_name = NA,
+          AIC = Inf,
+          summary = "No valid model",
+          plot = NA
+        ))
+      }
     })
-  ) %>%
-  dplyr::select(species_code, vi_p_trend, vi_z, vi_sens)
+  
+  bind_rows(guild_results)
+}
+
+# Run for guilds
+trend_models_trait <- best_models_with_plot_guild(tot_a_filtered_trait |> filter(!is.na(trait)), "trait")
+trend_models_habitat <- best_models_with_plot_guild(tot_a_filtered_nesting, "habitat_guild")
+trend_models_migratory <- best_models_with_plot_guild(tot_a_filtered_migratory, "migratory_guild")
+trend_models_dietary <- best_models_with_plot_guild(tot_a_filtered_dietary, "dietary_guild")
 
 
+```
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+
+kable(bind_rows(trend_models_trait, trend_models_habitat, trend_models_dietary) |> dplyr::select(guild, model_name, AIC), caption = "Trend Models Summary", format = "html")
 
 ```
 
 # Discussion
 
-```{r}
-#| eval: false
-#| include: false
-
-tot_a <- janp_main |>
-  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
-  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
-  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F)
-
-mP0 <- glm(abundance ~ 1, data = results, family = poisson)
-mP1 <- glm(abundance ~ year, data = results, family = poisson)
-mP2 <- glm(abundance ~ year + data_type, data = results, family = poisson)
-mP3 <- gam(abundance ~ s(year), data = results, family = poisson)
-mP4 <- gam(abundance ~ s(year) + data_type, data = results, family = poisson)
-mP5 <- glm.nb(abundance ~ year, data = results)
-mP6 <- glm.nb(abundance ~ year + data_type, data = results)
-mP7 <- zeroinfl(abundance ~ year | 1, data = results, dist = "poisson")
-mP8 <- zeroinfl(abundance ~ year | 1 + data_type, data = results, dist = "poisson")
-mP9 <- zeroinfl(abundance ~ year | 1, data = results, dist = "negbin")
-mP10 <- zeroinfl(abundance ~ year | 1 + data_type, data = results, dist = "negbin")
-mP11 <- glmmTMB(abundance ~ year + (1 | location), ziformula = ~1, family = poisson(), data = results)
-mP12 <- glmmTMB(abundance ~ year + (1 | location) + data_type, ziformula = ~1, family = poisson(), data = results)
-mP13 <- glmer(abundance ~ year + (1 | location), data = results, family = "poisson")
-mP14 <- glmer(abundance ~ year + data_type + (1 | location), data = results, family = "poisson")
-
-
-AIC(mP0, mP1, mP2, mP3, mP4, mP5, mP6, mP7, mP8, mP9, mP10, mP11, mP12, mP13, mP14) |>
-  arrange(AIC)
-BIC(mP0, mP1, mP2, mP3, mP4, mP5, mP6, mP7, mP8, mP9, mP10, mP11, mP12, mP13, mP14)
-model.sel(mP0, mP1, mP2, mP3, mP4, mP5, mP6, mP7, mP8, mP9, mP10, mP11, mP12, mP13, mP14)
-
-# Add prediction with confidence intervals
-prediction <- predict(mP14, type = "response", se.fit = TRUE)
-
-# Add predictions and confidence intervals to the results dataset
-results <- results %>%
-  mutate(
-    predicted = prediction$fit,
-    lower_ci = prediction$fit - 1.96 * prediction$se.fit,
-    upper_ci = prediction$fit + 1.96 * prediction$se.fit
-  )
-
-# Summarize raw data
-raw_summary <- results %>%
-  group_by(year) %>%
-  summarize(mean_abundance = mean(abundance, na.rm = TRUE))
-
-# Summarize predictions and confidence intervals
-predicted_summary <- results %>%
-  group_by(year) %>%
-  summarize(
-    mean_predicted = mean(predicted, na.rm = TRUE),
-    lower_ci = mean(lower_ci, na.rm = TRUE),
-    upper_ci = mean(upper_ci, na.rm = TRUE)
-  )
-
-# Plot with confidence intervals
-ggplot() +
-  # Raw data points
-  geom_jitter(data = results, aes(x = year, y = abundance), alpha = 0.1) +
-  geom_point(data = raw_summary, aes(x = year, y = mean_abundance), color = "blue", size = 2, alpha = 0.7) +
-  # Model predictions
-  geom_line(data = predicted_summary, aes(x = year, y = mean_predicted), color = "red", size = 1) +
-  # Confidence intervals
-  geom_ribbon(
-    data = predicted_summary,
-    aes(x = year, ymin = lower_ci, ymax = upper_ci),
-    fill = "red", alpha = 0.2
-  ) +
-  labs(
-    title = "Trend of Abundance Over Years with Confidence Intervals",
-    x = "Year",
-    y = "Mean Abundance"
-  ) +
-  theme_minimal()
-
-```
-
-```{r}
-#ecoregions
-
-results <- tot_a
-```
-
+Discussion here.
