@@ -202,7 +202,7 @@ div.csl-indent {
 </div>
 <section id="abstract" class="level1">
 <h1>Abstract</h1>
-<p>Since 2007, Jasper National Park has conducted passive acoustic monitoring as part of its ecological integrity monitoring program. After 17 years, we sought to analyze trends and extract insights from these data to inform ongoing monitoring and establish robust practices for future species monitoring. Our objective was to assess whether the abundance (count) of species and guild thresholds shifted by ±2.5% in the alpine and montane ecoregions, respectively. Data management and processing were conducted in WildTrax, where legacy datasets from multiple methodologies were combined and harmonized. We evaluated whether the sampling locations were independent and then conducted trend analyses to examine changes in species counts over time across guilds and ecoregions.</p>
+<p>Since 2007, Jasper National Park has conducted passive acoustic monitoring as part of its ecological integrity monitoring program. After 17 years, we sought to analyze trends and extract insights from these data to inform ongoing monitoring and establish robust practices for future species monitoring. Our objective was to assess whether the abundance (count) of species and guilds shifted by ±2.5% in the alpine and montane ecoregions, respectively. Data management and processing were conducted in WildTrax, where legacy datasets from multiple methodologies were combined and harmonized. We evaluated whether the sampling locations were independent and then conducted trend analyses to examine changes in species counts over time across guilds and ecoregions.</p>
 <div class="callout callout-style-default callout-note callout-titled" style="background-color: #f4f4f4; padding: 20px;">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -464,7 +464,7 @@ Warning
 </div>
 <p>We analyzed bird abundance trends in Jasper National Park from 2007 to 2024 across multiple scales, including individual species, specific locations, grouped transects, ecoregions, and functional guilds. This multi-level approach allowed us to assess patterns of abundance while accounting for ecological and functional groupings. All analyses took place in R 4.4.2 ‘Pile of Leaves’. Observations were first filtered to include only data from the EI monitoring sites containing ecoregional classification, with species being classified into functional guilds using an ecological trait database (see <a href="#tbl-guilds" class="quarto-xref">Table&nbsp;5</a>). Spatial clustering was addressed by grouping data by individual locations and transects (see Section <a href="#sec-location-correlation">Location correlation</a>). To address potential biases in detectability, we used time-to-first-detection (TTFD) to model detectability differences across species, locations, and sampling methods, following the approach outlined in <span class="citation" data-cites="solymos2013calibrating">Sólymos et al. (<a href="#ref-solymos2013calibrating" role="doc-biblioref">2013</a>)</span>. By integrating offsets based on detectability into our final models, we controlled for variability in detection probabilities across methods, ensuring that observed trends in species abundance reflected true ecological patterns rather than methodological artifacts.</p>
 <p>A redundancy analysis (RDA) was conducted using the <code>vegan</code> package (<span class="citation" data-cites="vegan2025">Oksanen et al. (<a href="#ref-vegan2025" role="doc-biblioref">2025</a>)</span>) to quantify the variation in community composition explained by ecoregions and to visualize species–ecoregion relationships with ordination plots (see <span class="citation" data-cites="Rao1964">C. Radhakrishna Rao (<a href="#ref-Rao1964" role="doc-biblioref">1964</a>)</span>). Species‑level observations were aggregated into a species‑by‑location matrix, with abundances recorded as the maximum count of each species at each location and transect. Ecoregions were categorized into Alpine and Montane groups, with the latter further divided into Upper Subalpine, Lower Subalpine, and Montane zones for all subsequent analyses. Differences in composition between Alpine and Montane groups were tested using permutational multivariate analysis of variance (PERMANOVA; <span class="citation" data-cites="Anderson2001">Anderson (<a href="#ref-Anderson2001" role="doc-biblioref">2001</a>)</span>) on Bray–Curtis dissimilarities with 999 permutations under a reduced model.</p>
-<p>Generalized linear mixed‑effects models (GLMMs, <span class="citation" data-cites="bates2015parsimonious">Bates, Kliegl, et al. (<a href="#ref-bates2015parsimonious" role="doc-biblioref">2015</a>)</span>) were implemented in R using the <code>lme4</code> package (<span class="citation" data-cites="bates2015lme4">Bates, Mächler, et al. (<a href="#ref-bates2015lme4" role="doc-biblioref">2015</a>)</span>) to analyze abundance trends for 20 species (AMPI, AMRO, BRSP, CHSP, DEJU, GCKI, HETH, FOSP, OCWA, RCKI, SWTH, VATH, WAVI, WCSP, WTSP, GCSP, YRWA, RBNU, LISP, MOCH that were the most abundant and represented different guilds for the single-species analyses. Count data were modeled with a Poisson distribution or a negative binomial distribution when overdispersion was detected. Models included year, ecoregion, and their interaction as fixed effects, and location and transect as random effects to account for spatial clustering. Separate models were fitted for montane/subalpine versus alpine ecoregions to enable region‑specific inference. Model selection was based on Akaike’s Information Criterion (AIC; <span class="citation" data-cites="akaike1974">Akaike (<a href="#ref-akaike1974" role="doc-biblioref">1974</a>)</span>).</p>
+<p>Generalized linear mixed‑effects models (GLMMs, <span class="citation" data-cites="bates2015parsimonious">Bates, Kliegl, et al. (<a href="#ref-bates2015parsimonious" role="doc-biblioref">2015</a>)</span>) were implemented in R using the <code>lme4</code> package (<span class="citation" data-cites="bates2015lme4">Bates, Mächler, et al. (<a href="#ref-bates2015lme4" role="doc-biblioref">2015</a>)</span>) to analyze abundance trends for 20 species (AMPI, AMRO, BRSP, CHSP, DEJU, GCKI, HETH, FOSP, OCWA, RCKI, SWTH, VATH, WAVI, WCSP, WTSP, GCSP, YRWA, RBNU, LISP, MOCH that were the most abundant and represented different guilds for the single-species analyses. Count data were modeled with a Poisson distribution or a negative binomial distribution when overdispersion was detected. With year and data_type (transcription methodology) as fixed effects, location was included as a random effect in the models. Separate models were fitted for montane/subalpine versus alpine ecoregions. Model selection was based on minimum values of Akaike’s Information Criterion (AIC; <span class="citation" data-cites="akaike1974">Akaike (<a href="#ref-akaike1974" role="doc-biblioref">1974</a>)</span>).</p>
 <p>To evaluate trend significance we applied the Mann–Kendall test (<span class="citation" data-cites="mann1945non">Mann (<a href="#ref-mann1945non" role="doc-biblioref">1945a</a>)</span>, <span class="citation" data-cites="hamed1998">Hamed and Rao (<a href="#ref-hamed1998" role="doc-biblioref">1998</a>)</span>; non‑parametric and sensitive to monotonic trends <span class="citation" data-cites="birds6010014">(<a href="#ref-birds6010014" role="doc-biblioref">Suthar, Biggs, and Anderson 2025</a>)</span>) and estimated trend magnitude with Sen’s Slope (<span class="citation" data-cites="Sen01121968">Pranab Kumar Sen (<a href="#ref-Sen01121968" role="doc-biblioref">1968</a>)</span>; <span class="citation" data-cites="dawood2017spatio">Dawood (<a href="#ref-dawood2017spatio" role="doc-biblioref">2017</a>)</span>) using the <code>mmkh()</code> function from the <code>modifiedmk</code> package. Functional diversity was quantified with Rao’s Q (<span class="citation" data-cites="rao1982diversity">C. R. Rao (<a href="#ref-rao1982diversity" role="doc-biblioref">1982</a>)</span>; <span class="citation" data-cites="laliberte2010adistance">Laliberté and Legendre (<a href="#ref-laliberte2010adistance" role="doc-biblioref">2010</a>)</span>) using the <code>dbFD()</code> function in the <code>FD</code> package (<span class="citation" data-cites="FDpackage">Laliberté, Legendre, and Shipley (<a href="#ref-FDpackage" role="doc-biblioref">2014</a>)</span>) to examine shifts in guild‑level trait diversity over time. Species richness, representing the count of unique species, was summarized per location and plotted over time to assess local biodiversity dynamics (<a href="#fig-spp-rich-locs" class="quarto-xref">Figure&nbsp;11</a>). Shannon’s diversity index, which incorporates species richness and evenness, was calculated annually to analyze temporal changes in community structure (<a href="#fig-shannon" class="quarto-xref">Figure&nbsp;12</a>). These metrics provide complementary perspectives on biodiversity trends across locations and years.</p>
 <p>Finally, breakpoint analysis was performed using the <code>segmented</code> package (<span class="citation" data-cites="segmented2008">Muggeo (<a href="#ref-segmented2008" role="doc-biblioref">2008</a>)</span>) to identify significant shifts in abundance trends. Segmented models detected structural changes in trend slopes, ensuring that phase‑specific dynamics were not masked by overall trend estimates (see <span class="citation" data-cites="smith2015change">Smith et al. (<a href="#ref-smith2015change" role="doc-biblioref">2015</a>)</span>).</p>
 <div class="cell">
@@ -573,7 +573,7 @@ Table&nbsp;5: Guilds
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-nesting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-nesting-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -587,7 +587,7 @@ Figure&nbsp;6: Seasonal detection activity of by nesting guild and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-migratory" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-migratory" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-migratory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-migratory-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -601,7 +601,7 @@ Figure&nbsp;7: Seasonal detection activity of by migratory guild and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-trait" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-trait" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-trait-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-trait-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -615,7 +615,7 @@ Figure&nbsp;8: Seasonal detection activity of by trait and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-dietary" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-dietary" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-dietary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-dietary-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -630,7 +630,7 @@ Figure&nbsp;9: Seasonal detection activity of by dietary guild and ecoregion
 <p>Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (<a href="#fig-raos-q" class="quarto-xref">Figure&nbsp;10</a>). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.</p>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-raos-q" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-raos-q" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-raos-q-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-raos-q-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -758,7 +758,7 @@ psi1.year      NA 2009 1.74819</code></pre>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spp-rich-locs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-rich-locs-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -801,7 +801,7 @@ Figure&nbsp;11: Species richness by year
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>shannon_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shannon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-shannon-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -905,7 +905,7 @@ Table&nbsp;6: Linear models of species trends using normalized mean count per lo
 <span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-annual-count" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-annual-count" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-annual-count-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-annual-count-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -985,7 +985,7 @@ Figure&nbsp;13: Annual count of medium-distance migrants
 <span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a><span class="co"># qqline(residuals(reduced_model_log))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-mean-time-ttfd" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-mean-time-ttfd" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mean-time-ttfd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-mean-time-ttfd-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
