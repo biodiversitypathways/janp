@@ -460,8 +460,13 @@ To evaluate trend significance we applied the Mann–Kendall test (@mann1945non,
 Finally, breakpoint analysis was performed using the `segmented` package (@segmented2008) to identify significant shifts in abundance trends. Segmented models detected structural changes in trend slopes, ensuring that phase‑specific dynamics were not masked by overall trend estimates (see @smith2015change).
 
 ```{r}
-#| eval: false
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: true
 #| include: true
+#| label: fig-comp
+#| fig-cap: Comp
 
 # Jasper species
 mdm <- c("AMPI","AMRO","BRSP","CHSP","DEJU","GCKI","HETH","FOSP","OCWA","RCKI","SWTH","VATH","WAVI","WCSP","WTSP","GCSP","YRWA","RBNU","LISP","MOCH")
@@ -476,7 +481,6 @@ comp <- janp_main |>
   summarise(mean = mean(individual_order)) |>
   ggplot(aes(x = data_type, y = mean, group = data_type)) +
   geom_boxplot() +
-  facet_wrap(~species_code) +
   theme_bw()
 
 comp
