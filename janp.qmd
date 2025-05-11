@@ -63,7 +63,7 @@ library(shiny)
 wt_auth()
 
 load('janp.RData')
-#save.image('janp.RData')
+save.image('janp.RData')
 ```
 
 ```{r}
@@ -266,7 +266,6 @@ datatable(locs_summary,
 
 To assess spatial autocorrelation among bird survey locations in Jasper National Park, we examined the spatial relationship between survey points based on total species abundance per location and year. Given that survey points are approximately 300 meters apart, we used the `knearneigh()` function to identify the nearest neighbours within this threshold. This function calculates the closest neighboring survey points for each location. We then constructed a spatial weight matrix using the `knn2nb()` function and calculated Moran's *I* statistic using `moran.test` to determine whether spatial autocorrelation exists in the abundance of species across survey locations. A significant Moran's *I* suggests that survey locations are not independent and that spatial autocorrelation should be accounted for in further analyses. We also conducted further analyses grouping locations from each transect (`r paste(unique(janp_transects$transect_name), collapse = ", ")`).
 
-
 ```{r}
 #| warning: false
 #| echo: false
@@ -459,7 +458,6 @@ Generalized linear mixed‑effects models (GLMMs, @bates2015parsimonious) were i
 To evaluate trend significance we applied the Mann–Kendall test (@mann1945non, @hamed1998; non‑parametric and sensitive to monotonic trends [@birds6010014]) and estimated trend magnitude with Sen’s Slope (@Sen01121968; @dawood2017spatio) using the `mmkh()` function from the `modifiedmk` package. Functional diversity was quantified with Rao’s Q (@rao1982diversity; @laliberte2010adistance) using the `dbFD()` function in the `FD` package (@FDpackage) to examine shifts in guild‑level trait diversity over time. Species richness, representing the count of unique species, was summarized per location and plotted over time to assess local biodiversity dynamics (@fig-spp-rich-locs). Shannon’s diversity index, which incorporates species richness and evenness, was calculated annually to analyze temporal changes in community structure (@fig-shannon). These metrics provide complementary perspectives on biodiversity trends across locations and years.
 
 Finally, breakpoint analysis was performed using the `segmented` package (@segmented2008) to identify significant shifts in abundance trends. Segmented models detected structural changes in trend slopes, ensuring that phase‑specific dynamics were not masked by overall trend estimates (see @smith2015change).
-
 
 ```{r}
 #| eval: false
@@ -1165,8 +1163,7 @@ print(results_mmkh)
 
 ```
 
-We analyzed species abundance trends over time using the Mann-Kendall trend test (MMKH) with a 95% confidence interval. Statistically significant p-values (p < 0.05) were found for several species, including AMRO (0.0285), BRSP (0.0246), FOSP (0.0409), GCKI (0.0498), GCSP (0.0504), WAVI (0.00629), RCKI (0.0246), and YRWA (0.0252), indicating significant trends in abundance. The Z-scores, which reflect trend strength, varied across species, with WAVI showing the highest Z-score (2.73), indicating a particularly strong trend. Other species like AMPI (1.81), AMRO (2.19), and BRSP (2.25) showed moderate trends, while species like HETH (1.51), RBNU (1.41), and WCSP (1.40) had weaker trends. Despite significant trends, the Sen's slope (vi_sens) was consistently zero for all species, indicating that there was no measurable directional change in abundance over the study period. Thus, while trends are present, they do not reflect actual increases or decreases in species abundance.
-
+We analyzed species abundance trends over time using the Mann-Kendall trend test (MMKH) with a 95% confidence interval. Statistically significant p-values (p \< 0.05) were found for several species, including AMRO (0.0285), BRSP (0.0246), FOSP (0.0409), GCKI (0.0498), GCSP (0.0504), WAVI (0.00629), RCKI (0.0246), and YRWA (0.0252), indicating significant trends in abundance. The Z-scores, which reflect trend strength, varied across species, with WAVI showing the highest Z-score (2.73), indicating a particularly strong trend. Other species like AMPI (1.81), AMRO (2.19), and BRSP (2.25) showed moderate trends, while species like HETH (1.51), RBNU (1.41), and WCSP (1.40) had weaker trends. Despite significant trends, the Sen's slope (vi_sens) was consistently zero for all species, indicating that there was no measurable directional change in abundance over the study period. Thus, while trends are present, they do not reflect actual increases or decreases in species abundance.
 
 ```{r}
 #| warning: false
@@ -1318,18 +1315,23 @@ trend_models <- tibble(species_code = mdm) %>%
 
 ```{r}
 #| warning: false
-#| echo: true
+#| echo: false
 #| eval: true
 #| message: false
 #| include: true
+#| results: markup
 
-kable(trend_models |> arrange(species_code) |> dplyr::select(-c(best_model_species_code, best_model_summary, best_model_plot)), caption = "Trend Models Summary", format = "html")
-
+datatable(
+  trend_models |> 
+    arrange(species_code) |> 
+    dplyr::select(-c(best_model_species_code, best_model_summary, best_model_plot)),
+  caption = "Trend Models Summary"
+)
 ```
 
 ```{r}
 #| warning: false
-#| echo: true
+#| echo: false
 #| eval: false
 #| message: false
 #| include: true
@@ -1393,6 +1395,37 @@ best_models_with_plot_guild <- function(guild_data, guild_col) {
                                                     predicted_values,
                                                     rep(NA, nrow(filtered_data)))
         
+        # Perform Mann-Kendall Test and Sen's Slope
+        trend_result <- if (length(unique(filtered_data$abundance)) > 1) {
+          tryCatch({
+            mk <- mmkh(filtered_data$abundance, ci = 0.95)
+            list(
+              p_trend = if ("newPvalue" %in% rownames(as.data.frame(mk))) {
+                as.data.frame(mk)["newPvalue", "mmkh.mean", drop = TRUE]
+              } else {
+                NA_real_
+              },
+              z = if ("CorrectedZc" %in% rownames(as.data.frame(mk))) {
+                as.data.frame(mk)["CorrectedZc", "mmkh.mean", drop = TRUE]
+              } else {
+                NA_real_
+              },
+              sens = if ("Sensslope" %in% rownames(as.data.frame(mk))) {
+                as.data.frame(mk)["Sensslope", "mmkh.mean", drop = TRUE]
+              } else {
+                NA_real_
+              }
+            )
+          }, error = function(e)
+            list(
+              p_trend = NA,
+              z = NA,
+              sens = NA
+            ))
+        } else {
+          list(p_trend = NA, z = NA, sens = NA)
+        }
+        
         # Create a plot for the guild
         p <- ggplot(filtered_data, aes(x = year)) +
           geom_point(aes(y = abundance), color = "black", alpha = 0.5) +
@@ -1406,6 +1439,9 @@ best_models_with_plot_guild <- function(guild_data, guild_col) {
           model_name = best_model_name,
           AIC = aic_values %>% filter(model == best_model_name) %>% pull(AIC),
           summary = list(summary(best_model)),
+          p_trend = trend_result$p_trend,
+          z = trend_result$z,
+          sens = trend_result$sens,
           plot = list(p)
         ))
       } else {
@@ -1414,6 +1450,9 @@ best_models_with_plot_guild <- function(guild_data, guild_col) {
           model_name = NA,
           AIC = Inf,
           summary = "No valid model",
+          p_trend = NA,
+          z = NA,
+          sens = NA,
           plot = NA
         ))
       }
@@ -1421,6 +1460,7 @@ best_models_with_plot_guild <- function(guild_data, guild_col) {
   
   bind_rows(guild_results)
 }
+
 
 # Run for guilds
 trend_models_trait <- best_models_with_plot_guild(tot_a_filtered_trait |> filter(!is.na(trait)), "trait")
@@ -1433,15 +1473,21 @@ trend_models_dietary <- best_models_with_plot_guild(tot_a_filtered_dietary, "die
 
 ```{r}
 #| warning: false
-#| echo: true
+#| echo: false
 #| eval: true
 #| message: false
 #| include: true
-
-kable(bind_rows(trend_models_trait, trend_models_habitat, trend_models_dietary) |> dplyr::select(guild, model_name, AIC), caption = "Trend Models Summary", format = "html")
+#| results: markup
+ 
+datatable(
+  bind_rows(trend_models_trait, trend_models_habitat, trend_models_dietary) |> 
+    dplyr::select(guild, model_name, AIC, p_trend, z, sens),
+  caption = "Guild Trend Models Summary"
+)
+  
 
 ```
 
 # Discussion
 
-Discussion here.
+Stay tuned for the discussion.
