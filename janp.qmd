@@ -780,7 +780,7 @@ ggplot(yearly_rao, aes(x = year, y = meanRao)) +
                                 "Segmented Trend" = "#d9c55c")) +  # Custom color mapping
   labs(
     title = "Trends in Mean Rao's Q",
-    subtitle = "Mann-Kendall Test, Linear Model, Mixed Effects, and Segmented Trends",
+    subtitle = "Linear Model, Mixed Effects, and Segmented Trends",
     x = "Year",
     y = "Mean Rao's Quadratic Entropy",
     color = "Trend Type"  # Legend title
@@ -886,7 +886,7 @@ shannon_d
 
 ## Abundance trend analysis
 
-This section presents the normalized species abundance trends, with plots illustrating changes over time across dietary, migratory, and habitat guilds (@fig-normalized-count-mdm-year) and annual counts broken down by ecoregions such as Alpine and Montane (@fig-annual-count), complemented by a table summarizing linear model outputs for species trends (@tbl-normalized-count-mdm-year).
+This section presents the normalized species abundance trends, with plots illustrating changes over time across dietary, migratory, and habitat guilds and annual counts broken down by alpine and montane ecoregions (@fig-annual-count), complemented by a table summarizing linear model outputs for species trends (@tbl-normalized-count-mdm-year).
 
 ```{r}
 #| warning: false
@@ -1126,11 +1126,16 @@ tot_a_filtered <- janp_main |>
   filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
   filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
-  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
-                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
+  mutate(ecoregion = case_when(
+    ecoregion %in% c("Alpine") ~ "Alpine",
+    ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"
+  )) |>
   group_by(location, ecoregion, year, recording_date_time, species_code) |>
-  mutate(abundance = max(individual_order)) |>
+  mutate(individual_order = ifelse(is.na(individual_order), 0, individual_order),
+         individual_order = ifelse(is.infinite(individual_order), 0, individual_order),  
+         abundance = max(individual_order, na.rm = TRUE)) |>
   ungroup() |>
+  filter(is.finite(abundance)) |>
   inner_join(guilds |> dplyr::select(species_code, trait, dietary_guild, habitat_guild, migratory_guild), by = "species_code")
 
 results_mmkh <- tot_a_filtered %>%
@@ -1158,9 +1163,20 @@ results_mmkh <- tot_a_filtered %>%
     })
   ) %>%
   dplyr::select(species_code, vi_p_trend, vi_z, vi_sens)
+```
 
-print(results_mmkh)
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: markup
 
+datatable(
+  results_mmkh,
+  caption = "Trend Models Summary"
+)
 ```
 
 We analyzed species abundance trends over time using the Mann-Kendall trend test (MMKH) with a 95% confidence interval. Statistically significant p-values (p \< 0.05) were found for several species, including AMRO (0.0285), BRSP (0.0246), FOSP (0.0409), GCKI (0.0498), GCSP (0.0504), WAVI (0.00629), RCKI (0.0246), and YRWA (0.0252), indicating significant trends in abundance. The Z-scores, which reflect trend strength, varied across species, with WAVI showing the highest Z-score (2.73), indicating a particularly strong trend. Other species like AMPI (1.81), AMRO (2.19), and BRSP (2.25) showed moderate trends, while species like HETH (1.51), RBNU (1.41), and WCSP (1.40) had weaker trends. Despite significant trends, the Sen's slope (vi_sens) was consistently zero for all species, indicating that there was no measurable directional change in abundance over the study period. Thus, while trends are present, they do not reflect actual increases or decreases in species abundance.
