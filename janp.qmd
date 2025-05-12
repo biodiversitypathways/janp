@@ -40,16 +40,13 @@ library(sf)
 library(ggridges)
 library(scales)
 library(kableExtra)
+library(ggrepel)
 library(plotly)
 library(DT)
 library(lubridate)
 library(spdep)
 library(vegan)
-library(ggrepel)
-library(broom)
 library(lme4)
-library(pwr)
-library(ggeffects)
 library(modifiedmk)
 library(MuMIn)
 library(mgcv)
@@ -58,12 +55,12 @@ library(pscl)
 library(segmented)
 library(glmmTMB)
 library(FD)
-library(shiny)
+library(broom)
 
 wt_auth()
 
 load('janp.RData')
-save.image('janp.RData')
+#save.image('janp.RData')
 ```
 
 ```{r}
@@ -449,7 +446,7 @@ datatable(tmtt_tags,
 For the purpose of these analyses abundance was defined as the count of individuals detected during point counts, rather than as a density x area relationship.
 :::
 
-We analyzed bird abundance trends in Jasper National Park from 2007 to 2024 across multiple scales, including individual species, specific locations, grouped transects, ecoregions, and functional guilds. This multi-level approach allowed us to assess patterns of abundance while accounting for ecological and functional groupings. All analyses took place in R 4.4.2 'Pile of Leaves'. Observations were first filtered to include only data from the EI monitoring sites containing ecoregional classification, with species being classified into functional guilds using an ecological trait database (see @tbl-guilds). Spatial clustering was addressed by grouping data by individual locations and transects (see Section [Location correlation](#sec-location-correlation)). To address potential biases in detectability, we used time-to-first-detection (TTFD) to model detectability differences across species, locations, and sampling methods, following the approach outlined in @solymos2013calibrating. By integrating offsets based on detectability into our final models, we controlled for variability in detection probabilities across methods, ensuring that observed trends in species abundance reflected true ecological patterns rather than methodological artifacts.
+We analyzed bird abundance trends in Jasper National Park from 2007 to 2024 across multiple scales, including individual species, specific locations, grouped transects, ecoregions, and functional guilds. This multi-level approach allowed us to assess patterns of abundance while accounting for ecological and functional groupings. All analyses took place in R 4.4.2 'Pile of Leaves'. Observations were first filtered to include only data from the EI monitoring sites containing ecoregional classification, with species being classified into functional guilds using an ecological trait database (see @tbl-guilds). Spatial clustering was addressed by grouping data by individual locations and transects (see Section [Location correlation](#sec-location-correlation)). To address potential biases in detectability, we used time-to-first-detection (TTFD) in a count-removal framework (@farnsworth) to model detectability differences across species, locations, and sampling methods, following the approach outlined in @solymos2013calibrating. By integrating offsets based on detectability into our final models, we controlled for variability in detection probabilities across methods, ensuring that observed trends in species abundance reflected true ecological patterns rather than methodological artifacts.
 
 A redundancy analysis (RDA) was conducted using the `vegan` package (@vegan2025) to quantify the variation in community composition explained by ecoregions and to visualize species–ecoregion relationships with ordination plots (see @Rao1964). Species‑level observations were aggregated into a species‑by‑location matrix, with abundances recorded as the maximum count of each species at each location and transect. Ecoregions were categorized into Alpine and Montane groups, with the latter further divided into Upper Subalpine, Lower Subalpine, and Montane zones for all subsequent analyses. Differences in composition between Alpine and Montane groups were tested using permutational multivariate analysis of variance (PERMANOVA; @Anderson2001) on Bray–Curtis dissimilarities with 999 permutations under a reduced model.
 
@@ -488,6 +485,10 @@ comp
 ```
 
 # Results
+
+::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
+Some of these analyses are still a work-in-progress. Check back soon for updates and additional details.
+:::
 
 ## Ecoregional analysis
 
@@ -890,7 +891,7 @@ shannon_d
 
 ## Abundance trend analysis
 
-This section presents the normalized species abundance trends, with plots illustrating changes over time across dietary, migratory, and habitat guilds and annual counts broken down by alpine and montane ecoregions (@fig-annual-count), complemented by a table summarizing linear model outputs for species trends (@tbl-normalized-count-mdm-year).
+This section presents the normalized species abundance trends for twenty specis, with plots illustrating changes over time across dietary, migratory, and habitat guilds and annual counts broken down by alpine and montane ecoregions (@fig-annual-count), complemented by a table summarizing linear model outputs for species trends (@tbl-normalized-count-mdm-year) using the total number of unique individuals identified in each ecoregion and year. The primary objective was to identify any significant trends in species abundance changes over time while accounting for survey effort, measured as the number of locations surveyed annually. We observed approximately a significant 3% and 1% increase overall in species abundance over the study period, with an R^2 of 0.804 and 0.370 for the alpine and montane ecoregions, respectively. 
 
 ```{r}
 #| warning: false
@@ -902,8 +903,8 @@ This section presents the normalized species abundance trends, with plots illust
 #| fig-align: center
 #| fig-width: 8
 #| fig-height: 8
-#| fig-cap: Normalized count abundance of mean number of medium-distance migrants by year
-#| label: fig-normalized-count-mdm-year
+#| fig-cap: Normalized count of mean number of individuals detected for twenty species by year
+#| label: fig-normalized-count-mdm-year-alpine
 #| cap-location: margin
 
 z <- locs_summary |>
@@ -929,12 +930,12 @@ prop_a <- nrow(tot_a_mdm) / nrow(tot_a)
 plot_mdm <- 
   tot_a_mdm |>
   mutate(year = year(recording_date_time)) |>
-  dplyr::select(location, data_type, year, species_code, individual_order, individual_count) |>
-  group_by(location, data_type, year, species_code) |>
+  dplyr::select(location, data_type, ecoregion, year, species_code, individual_order, individual_count) |>
+  group_by(location, data_type, ecoregion, year, species_code) |>
   summarise(individual_order = mean(individual_order)) |>
   ungroup() |>
   mutate(year = round(year,0)) |>
-  group_by(year, data_type, species_code) |>
+  group_by(year, location, ecoregion, data_type, species_code) |>
   summarise(
     total_abundance = sum(individual_order),  
     sample_size = n_distinct(location)
@@ -942,9 +943,67 @@ plot_mdm <-
   ungroup() |>
   mutate(normalized_count = total_abundance / sample_size) |>
   inner_join(wt_get_species() |> dplyr::select(species_code, species_common_name), by = "species_code") |>
-  inner_join(guilds, by = "species_common_name")
+  inner_join(guilds, by = "species_common_name") |>
+  mutate(ecoregion = case_when(
+    ecoregion == "Alpine" ~ "Alpine",
+    ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"
+  ))
+
+plot_mdm_alpine <- plot_mdm %>%
+  filter(ecoregion == "Alpine")
+
+# Plot for Alpine
+ggplot(plot_mdm_alpine, aes(x = year, y = normalized_count, colour = species_code.x)) +
+  geom_smooth(method = "lm") +
+  geom_point(size = 2) +
+  labs(
+    x = "Year",
+    y = "Normalized Count",
+    title = "Normalized Count of Medium-Distance Migrants in Alpine Ecoregion",
+    colour = "Species Code"
+  ) +
+  scale_colour_viridis_d(option = "cividis") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  facet_wrap(~species_code.x)
 
 ```
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-width: 8
+#| fig-height: 8
+#| fig-cap: Normalized count of mean number of individuals detected for twenty species by year
+#| label: fig-normalized-count-mdm-year-montane
+#| cap-location: margin
+
+plot_mdm_montane <- plot_mdm %>%
+  filter(ecoregion == "Montane")
+
+# Plot for montane
+ggplot(plot_mdm_montane, aes(x = year, y = normalized_count, colour = species_code.x)) +
+  geom_smooth(method = "lm") +
+  geom_point(size = 2) +
+  labs(
+    x = "Year",
+    y = "Normalized Count",
+    title = "Normalized Count in Montane Ecoregion",
+    colour = "Species Code"
+  ) +
+  scale_colour_viridis_d(option = "cividis") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  facet_wrap(~species_code.x)
+
+
+```
+
 
 ```{r}
 #| warning: false
@@ -984,7 +1043,7 @@ datatable(
 #| include: true
 #| results: hide
 #| fig-align: center
-#| fig-cap: Annual count of medium-distance migrants 
+#| fig-cap: Annual count of twenty bird species in Jasper 
 #| label: fig-annual-count
 #| cap-location: bottom
 #| code-fold: true
@@ -1014,7 +1073,8 @@ lm_results <- count_annual_mdm %>%
     tibble(
       ecoregion = unique(.x$ecoregion),
       slope = coef(model)[2],
-      p_value = summary(model)$coefficients[2, 4]
+      p_value = summary(model)$coefficients[2, 4],
+      r_squared = summary(model)$r.squared
     )
   })
 
@@ -1042,7 +1102,7 @@ ggplot(count_annual_mdm, aes(x = year, y = normalized_count, colour = ecoregion)
 
 ```
 
-The mean time to first detection was stable throughout the years and methods used (see @fig-mean-time-ttfd).
+The mean time to first detection remained stable across years and methods used, with no significant effect of year detected in the mixed-effects model comparison (\( p = 0.12 \)). Predicted mean detection times varied slightly among data types, with legacy data exhibiting the shortest detection time (\( 1.51 \times 10^2 \) seconds), followed by `single_visit_0_max` (\( 1.57 \times 10^2 \) seconds), and `single_visit_3_max` (\( 1.79 \times 10^2 \) seconds). These differences are visualized in Figure @fig-mean-time-ttfd, where detection times increase with the use of single-visit methods.
 
 ```{r}
 #| warning: false
@@ -1052,7 +1112,7 @@ The mean time to first detection was stable throughout the years and methods use
 #| include: true
 #| results: hide
 #| fig-align: center
-#| fig-cap: Mean time of first detection across years
+#| fig-cap: Mean predicted time of first detection across years using different processing methods
 #| label: fig-mean-time-ttfd
 #| cap-location: bottom
 #| code-fold: true
@@ -1065,27 +1125,10 @@ mean_ttfd <- janp_main |>
   ungroup() |>
   mutate(mean_detection_log = log(mean_ttfd$mean_detection + 1))
 
-# mean_ttfd |>
-#   ggplot(aes(x = factor(year), y = mean_detection, fill = factor(year))) +  # Convert year to factor
-#   geom_boxplot() +
-#   theme_bw() +
-#   xlab("Year") + ylab("Mean time of first detection") +
-#   scale_fill_viridis_d(option = "cividis")
-
-# ggplot(mean_ttfd, aes(x = factor(year), y = mean_detection, fill = data_type)) +
-#   geom_boxplot() +
-#   facet_wrap(~ data_type) +
-#   theme_bw() +
-#   xlab("Year") + ylab("Mean time to first detection") +
-#   scale_fill_viridis_d(option = "cividis")
-
 mean_ttfd_model_mixed <- lmer(mean_detection ~ year + data_type + (1 | species_code) + (1 | location), data = mean_ttfd)
 reduced_model_log <- lmer(mean_detection_log ~ data_type + (1 | species_code) + (1 | location), data = mean_ttfd)
 model_ttfd_anova <- anova(mean_ttfd_model_mixed, reduced_model)
 p_ttfd <- model_ttfd_anova$`Pr(>Chisq)`[2]
-
-# glmm_nb <- glmer.nb(mean_detection ~ data_type + (1 | species_code) + (1 | location), data = mean_ttfd)
-# fixed_effects <- fixef(glmm_nb)
 
  prediction_data <- data.frame(
   data_type = c("legacy", "single_visit_0_max", "single_visit_3_max")
@@ -1109,18 +1152,9 @@ ggplot(prediction_data, aes(x = data_type, y = predicted_mean_detection, fill = 
   scale_fill_viridis_d(option = "cividis") +
   ggtitle("Predicted Mean Detection Time by Data Type")
 
-# preds <- ggpredict(reduced_model, terms = c("data_type"))
-# ggplot(preds, aes(x = x, y = predicted, color = group)) +
-#   geom_line() +
-#   geom_point() +
-#   theme_minimal() +
-#   labs(x = "Year", y = "Predicted mean detection time", color = "Data Type")
-# emmeans_reduced <- emmeans(reduced_model_log, pairwise ~ data_type)
-# plot(emmeans_reduced$emmeans)
-# qqnorm(residuals(reduced_model_log))
-# qqline(residuals(reduced_model_log))
-
 ```
+
+We then examined the abundance trend of these twenty species using the maximum count of individuals heard at each survey using the Mann-Kendall test and Sen's slope to examine the significance and magnitude of the trend of the abundance of each species over the study period. The results are summarized in @tbl-mk-sens.
 
 ```{r}
 #| eval: false
@@ -1167,6 +1201,18 @@ results_mmkh <- tot_a_filtered %>%
     })
   ) %>%
   dplyr::select(species_code, vi_p_trend, vi_z, vi_sens)
+
+results_with_plots <- results_mmkh %>%
+  mutate(
+    trend_plot = map(species_code, ~ {
+      species_data <- tot_a_filtered %>% filter(species_code == .x)
+      ggplot(species_data, aes(x = year, y = abundance)) +
+        geom_point() +
+        geom_smooth(method = "lm", se = FALSE) +
+        labs(title = paste("Trend for", .x), x = "Year", y = "Abundance") +
+        theme_minimal()
+    })
+  )
 ```
 
 ```{r}
@@ -1176,14 +1222,19 @@ results_mmkh <- tot_a_filtered %>%
 #| message: false
 #| include: true
 #| results: markup
+#| label: tbl-mk-sens
+#| collapse: true
+#| code-fold: true
+#| tbl-cap: Mann-Kendall and Sen's slope species abundance trends
 
 datatable(
-  results_mmkh,
+  results_mmkh |>
+  mutate(across(where(is.numeric), round, 2)),
   caption = "Trend Models Summary"
 )
 ```
 
-We analyzed species abundance trends over time using the Mann-Kendall trend test (MMKH) with a 95% confidence interval. Statistically significant p-values (p \< 0.05) were found for several species, including AMRO (0.0285), BRSP (0.0246), FOSP (0.0409), GCKI (0.0498), GCSP (0.0504), WAVI (0.00629), RCKI (0.0246), and YRWA (0.0252), indicating significant trends in abundance. The Z-scores, which reflect trend strength, varied across species, with WAVI showing the highest Z-score (2.73), indicating a particularly strong trend. Other species like AMPI (1.81), AMRO (2.19), and BRSP (2.25) showed moderate trends, while species like HETH (1.51), RBNU (1.41), and WCSP (1.40) had weaker trends. Despite significant trends, the Sen's slope (vi_sens) was consistently zero for all species, indicating that there was no measurable directional change in abundance over the study period. Thus, while trends are present, they do not reflect actual increases or decreases in species abundance.
+We analyzed species abundance trends over time using the Mann-Kendall trend test with a 95% confidence interval. Statistically significant p-values (p \< 0.05) were found for several species, including AMRO (0.0285), BRSP (0.0246), FOSP (0.0409), GCKI (0.0498), GCSP (0.0504), WAVI (0.00629), RCKI (0.0246), and YRWA (0.0252), indicating significant trends in abundance. The Z-scores, which reflect trend strength, varied across species, with WAVI showing the highest Z-score (2.73), indicating a particularly strong trend. Other species like AMPI (1.81), AMRO (2.19), and BRSP (2.25) showed moderate trends, while species like HETH (1.51), RBNU (1.41), and WCSP (1.40) had weaker trends. Despite significant trends, the Sen's slope (vi_sens) was consistently zero for all species, indicating that there was no measurable directional change in abundance over the study period. We then proceeding with conduct a model selection workflow to examine best-fit linear models of various distributions (see @tbl-linear-models) on both single species and guild models. For the single species models we used the mean count of individuals.
 
 ```{r}
 #| warning: false
@@ -1340,11 +1391,16 @@ trend_models <- tibble(species_code = mdm) %>%
 #| message: false
 #| include: true
 #| results: markup
+#| label: tbl-linear-models
+#| collapse: true
+#| code-fold: true
+#| tbl-cap: Best-fit linear models, Mann-Kendall and Sen's slope for trend of twenty species in Jasper National Park
 
 datatable(
   trend_models |> 
     arrange(species_code) |> 
-    dplyr::select(-c(best_model_species_code, best_model_summary, best_model_plot)),
+    dplyr::select(-c(best_model_species_code, best_model_summary, best_model_plot)) |>
+  mutate(across(where(is.numeric), round, 2)),
   caption = "Trend Models Summary"
 )
 ```
@@ -1498,16 +1554,23 @@ trend_models_dietary <- best_models_with_plot_guild(tot_a_filtered_dietary, "die
 #| message: false
 #| include: true
 #| results: markup
+#| label: tbl-linear-models-guilds
+#| collapse: true
+#| code-fold: true
+#| tbl-cap: Best-fit linear models, Mann-Kendall and Sen's slope for guilds of twenty species in Jasper National Park
  
 datatable(
   bind_rows(trend_models_trait, trend_models_habitat, trend_models_dietary) |> 
-    dplyr::select(guild, model_name, AIC, p_trend, z, sens),
+    dplyr::select(guild, model_name, AIC, p_trend, z, sens) |>
+    dplyr::mutate(across(where(is.numeric), round, 2)),
   caption = "Guild Trend Models Summary"
 )
-  
 
 ```
+### Transect-level grouping
+
+Stay tuned for more results.
 
 # Discussion
 
-Stay tuned for the discussion.
+Stay tuned for the discussion!
