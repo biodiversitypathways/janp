@@ -18,6 +18,7 @@ nocite: '@*'
 toc: true
 toc-depth: 3
 toc-expand: true
+prefer-html: true
 toc-location: left
 styles: styles.css
 github: https://github.com/biodiversitypathways/janp
@@ -1415,21 +1416,37 @@ datatable(
 #| code-fold: true
 
 tot_a_filtered_trait <- tot_a_filtered |>
+  mutate(ecoregion = case_when(
+    ecoregion %in% c("Alpine") ~ "Alpine",
+    ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"
+  )) |>
   group_by(location, year, ecoregion, recording_date_time, trait) |>
   summarise(sum = sum(abundance)) |>
   ungroup()
 
 tot_a_filtered_nesting <- tot_a_filtered |>
+  mutate(ecoregion = case_when(
+    ecoregion %in% c("Alpine") ~ "Alpine",
+    ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"
+  )) |>
   group_by(location, year, ecoregion, recording_date_time, habitat_guild) |>
   summarise(sum = sum(abundance)) |>
   ungroup()
 
 tot_a_filtered_migratory <- tot_a_filtered |>
+  mutate(ecoregion = case_when(
+    ecoregion %in% c("Alpine") ~ "Alpine",
+    ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"
+  )) |>
   group_by(location, year, ecoregion, recording_date_time, migratory_guild) |>
   summarise(sum = sum(abundance)) |>
   ungroup()
 
 tot_a_filtered_dietary <- tot_a_filtered |>
+  mutate(ecoregion = case_when(
+    ecoregion %in% c("Alpine") ~ "Alpine",
+    ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"
+  )) |>
   group_by(location, year, ecoregion, recording_date_time, dietary_guild) |>
   summarise(sum = sum(abundance)) |>
   ungroup()
@@ -1514,29 +1531,28 @@ best_models_with_plot_guild <- function(guild_data, guild_col) {
           guild = guild,
           model_name = best_model_name,
           AIC = aic_values %>% filter(model == best_model_name) %>% pull(AIC),
-          summary = list(summary(best_model)),
+          summary = list(summary(best_model)),  # Always a list
           p_trend = trend_result$p_trend,
           z = trend_result$z,
           sens = trend_result$sens,
-          plot = list(p)
+          plot = list(p)  # Always a list
         ))
       } else {
         return(tibble(
           guild = guild,
           model_name = NA,
           AIC = Inf,
-          summary = "No valid model",
+          summary = list(NULL),  # Ensure it's a list for consistency
           p_trend = NA,
           z = NA,
           sens = NA,
-          plot = NA
+          plot = list(NULL)  # Ensure it's a list for consistency
         ))
       }
     })
   
   bind_rows(guild_results)
 }
-
 
 # Run for guilds
 trend_models_trait <- best_models_with_plot_guild(tot_a_filtered_trait |> filter(!is.na(trait)), "trait")
@@ -1567,7 +1583,60 @@ datatable(
 )
 
 ```
-### Transect-level grouping
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap: Trend of guilds for twenty bird species in Jasper 
+#| label: fig-annual-trend-guild-nesting
+#| cap-location: bottom
+#| code-fold: true
+
+# Plot
+ggplot(tot_a_filtered_nesting, aes(x = year, y = sum, colour = ecoregion)) +
+  geom_smooth(method = "lm") +
+  geom_point(size = 2) +
+  scale_colour_manual(values = c("Alpine" = "#71706D", "Montane" = "#001F42")) +
+  labs(x = "Year", y = "Abundance", colour = "Ecoregion") +
+  scale_x_continuous(breaks = unique(count_annual_mdm$year)) +
+  theme_bw() +
+  facet_wrap(~ecoregion) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+```
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| fig-align: center
+#| fig-cap: Trend of guilds for twenty bird species in Jasper 
+#| label: fig-annual-trend-guild-dietary
+#| cap-location: bottom
+#| code-fold: true
+
+# Plot
+ggplot(tot_a_filtered_dietary, aes(x = year, y = sum, colour = ecoregion)) +
+  geom_smooth(method = "lm") +
+  geom_point(size = 2) +
+  scale_colour_manual(values = c("Alpine" = "#71706D", "Montane" = "#001F42")) +
+  labs(x = "Year", y = "Abundance", colour = "Ecoregion") +
+  theme_bw() +
+  facet_wrap(~ecoregion) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+### Transect-level analysis
 
 Stay tuned for more results.
 
