@@ -8,7 +8,7 @@
 
 <meta name="author" content="Alex MacPhail">
 <meta name="author" content="Brenda Shepherd">
-<meta name="dcterms.date" content="2025-05-12">
+<meta name="dcterms.date" content="2025-05-27">
 
 <title>Report on the use of passive acoustic monitoring for analysis of bird trends in Jasper National Park</title>
 <style>
@@ -186,7 +186,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 12, 2025</p>
+      <p class="date">May 27, 2025</p>
     </div>
   </div>
   
@@ -321,52 +321,53 @@ Figure&nbsp;2: WildTrax Acoustic Processing Interface (Version 1)
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>transcription_table <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Years =</span> <span class="fu">c</span>(<span class="st">"2007-2020"</span>, <span class="st">"2021-2022"</span>, <span class="st">"2023-2024"</span>, <span class="st">"2011"</span>),</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Years =</span> <span class="fu">c</span>(<span class="st">"2007-2020"</span>, <span class="st">"2021-2022"</span>, <span class="st">"2023-2024"</span>, <span class="st">"2007-2011"</span>),</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Transcription Method</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0-3.33, 3.33-6.66, 6.66-10 min"</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 SPT - Species per task or recording (Every new individual is tagged within the 600s recording)."</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 SPT - Species per task or recording (Every new individual is tagged within the 600s recording)."</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 SPT - Species per task or recording (Every new individual is tagged within the 600s recording)."</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 SPT - Species per task or recording (Every new individual is tagged within the 10 minute recording)."</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 SPT - Species per task or recording (Every new individual is tagged within the 10 minute recording)."</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1 SPT - Species per task or recording (Every new individual is tagged within the 10 minute recording). Re-transcription."</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  ),</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Bin Method</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Abundance re-starts for each 3.33-minute bin"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Unbinned on WildTrax* (Forced into bins for analysis)"</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Unbinned on WildTrax* (Forced into bins for analysis)"</span>,</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Unbinned on WildTrax*"</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Time of first detection over 10 minute period"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Time of first detection over 10 minute period"</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Time of first detection over 10 minute period. Re-transcription."</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  ),</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Method Details</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"No cap on abundance; abundance re-starts for each bin, no total abundance for the 10-min recording"</span>,</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Counts per bin include only new individuals detected; individuals not re-counted across bins"</span>,</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Counts per bin include only new individuals detected; individuals not re-counted across bins"</span>,</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"No cap on abundance"</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Time of first detection over 10 minute period"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Time of first detection over 10 minute period"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Time of first detection over 10 minute period. Re-transcription."</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  ),</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Max Species</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Max # of Individuals</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"No cap"</span>,</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Maximum of 3 individuals per 10-minute recording"</span>,</span>
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"No cap"</span>,</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"No cap"</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"No cap. Re-transcription."</span></span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>transcription_table</span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 4 × 5</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="do">##   Years     `Transcription Method`   `Bin Method` `Method Details` `Max Species`</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;     &lt;chr&gt;                    &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;        </span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 2007-2020 0-3.33, 3.33-6.66, 6.66… Abundance r… No cap on abund… No cap       </span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 2021-2022 1 SPT - Species per tas… Unbinned on… Counts per bin … Maximum of 3…</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 2023-2024 1 SPT - Species per tas… Unbinned on… Counts per bin … No cap       </span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 2011      1 SPT - Species per tas… Unbinned on… No cap on abund… No cap</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="do">##   Years     `Transcription Method`                 `Bin Method` `Method Details`</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;     &lt;chr&gt;                                  &lt;chr&gt;        &lt;chr&gt;           </span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 2007-2020 0-3.33, 3.33-6.66, 6.66-10 min         Abundance r… No cap on abund…</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 2021-2022 1 SPT - Species per task or recording… Time of fir… Time of first d…</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 2023-2024 1 SPT - Species per task or recording… Time of fir… Time of first d…</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 2007-2011 1 SPT - Species per task or recording… Time of fir… Time of first d…</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 1 more variable: `Max # of Individuals` &lt;chr&gt;</span></span>
 <span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Render the datatable</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(transcription_table, </span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>          <span class="at">options =</span> <span class="fu">list</span>(</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>            <span class="at">searching =</span> <span class="cn">TRUE</span>,  </span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>            <span class="at">paging =</span> <span class="cn">TRUE</span>,    </span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>            <span class="at">pageLength =</span> <span class="dv">10</span>   </span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>          )) <span class="sc">|&gt;</span></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(<span class="at">columns =</span> <span class="fu">colnames</span>(transcription_table), </span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>              <span class="at">backgroundColor =</span> <span class="fu">styleEqual</span>(<span class="fu">c</span>(<span class="st">"NA"</span>), <span class="st">"lightgray"</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Render the datatable</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(transcription_table, </span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>          <span class="at">options =</span> <span class="fu">list</span>(</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>            <span class="at">searching =</span> <span class="cn">TRUE</span>,  </span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>            <span class="at">paging =</span> <span class="cn">TRUE</span>,    </span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>            <span class="at">pageLength =</span> <span class="dv">10</span>   </span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>          )) <span class="sc">|&gt;</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(<span class="at">columns =</span> <span class="fu">colnames</span>(transcription_table), </span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>              <span class="at">backgroundColor =</span> <span class="fu">styleEqual</span>(<span class="fu">c</span>(<span class="st">"NA"</span>), <span class="st">"lightgray"</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div id="tbl-transcriptions" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -376,7 +377,7 @@ Table&nbsp;2: Transcription method by year with re-transcribed data being conduc
 <div aria-describedby="tbl-transcriptions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <div class="datatables html-widget html-fill-item" id="htmlwidget-0c6c75d0317226d44baa" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-0c6c75d0317226d44baa">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["2007-2020","2021-2022","2023-2024","2011"],["0-3.33, 3.33-6.66, 6.66-10 min","1 SPT - Species per task or recording (Every new individual is tagged within the 600s recording).","1 SPT - Species per task or recording (Every new individual is tagged within the 600s recording).","1 SPT - Species per task or recording (Every new individual is tagged within the 600s recording)."],["Abundance re-starts for each 3.33-minute bin","Unbinned on WildTrax* (Forced into bins for analysis)","Unbinned on WildTrax* (Forced into bins for analysis)","Unbinned on WildTrax*"],["No cap on abundance; abundance re-starts for each bin, no total abundance for the 10-min recording","Counts per bin include only new individuals detected; individuals not re-counted across bins","Counts per bin include only new individuals detected; individuals not re-counted across bins","No cap on abundance"],["No cap","Maximum of 3 individuals per 10-minute recording","No cap","No cap"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Years<\/th>\n      <th>Transcription Method<\/th>\n      <th>Bin Method<\/th>\n      <th>Method Details<\/th>\n      <th>Max Species<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":true,"paging":true,"pageLength":10,"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Years","targets":1},{"name":"Transcription Method","targets":2},{"name":"Bin Method","targets":3},{"name":"Method Details","targets":4},{"name":"Max Species","targets":5}],"order":[],"autoWidth":false,"orderClasses":false,"rowCallback":"function(row, data, displayNum, displayIndex, dataIndex) {\nvar value=data[1]; $(this.api().cell(row, 1).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[2]; $(this.api().cell(row, 2).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[3]; $(this.api().cell(row, 3).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[4]; $(this.api().cell(row, 4).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[5]; $(this.api().cell(row, 5).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\n}"},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":["options.rowCallback"],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-0c6c75d0317226d44baa">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["2007-2020","2021-2022","2023-2024","2007-2011"],["0-3.33, 3.33-6.66, 6.66-10 min","1 SPT - Species per task or recording (Every new individual is tagged within the 10 minute recording).","1 SPT - Species per task or recording (Every new individual is tagged within the 10 minute recording).","1 SPT - Species per task or recording (Every new individual is tagged within the 10 minute recording). Re-transcription."],["Abundance re-starts for each 3.33-minute bin","Time of first detection over 10 minute period","Time of first detection over 10 minute period","Time of first detection over 10 minute period. Re-transcription."],["No cap on abundance; abundance re-starts for each bin, no total abundance for the 10-min recording","Time of first detection over 10 minute period","Time of first detection over 10 minute period","Time of first detection over 10 minute period. Re-transcription."],["No cap","Maximum of 3 individuals per 10-minute recording","No cap","No cap. Re-transcription."]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Years<\/th>\n      <th>Transcription Method<\/th>\n      <th>Bin Method<\/th>\n      <th>Method Details<\/th>\n      <th>Max # of Individuals<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":true,"paging":true,"pageLength":10,"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Years","targets":1},{"name":"Transcription Method","targets":2},{"name":"Bin Method","targets":3},{"name":"Method Details","targets":4},{"name":"Max # of Individuals","targets":5}],"order":[],"autoWidth":false,"orderClasses":false,"rowCallback":"function(row, data, displayNum, displayIndex, dataIndex) {\nvar value=data[1]; $(this.api().cell(row, 1).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[2]; $(this.api().cell(row, 2).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[3]; $(this.api().cell(row, 3).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[4]; $(this.api().cell(row, 4).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[5]; $(this.api().cell(row, 5).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\n}"},"selection":{"mode":"multiple","selected":null,"target":"row","selectable":null}},"evals":["options.rowCallback"],"jsHooks":[]}</script>
 </div>
 </div>
 </figure>
@@ -592,7 +593,7 @@ Table&nbsp;5: Guilds
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
+<div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-nesting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-nesting-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -606,7 +607,7 @@ Figure&nbsp;6: Seasonal detection activity of by nesting guild and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-migratory" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
+<div id="fig-spp-activity-migratory" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-migratory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-migratory-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -620,7 +621,7 @@ Figure&nbsp;7: Seasonal detection activity of by migratory guild and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-trait" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
+<div id="fig-spp-activity-trait" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-trait-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-trait-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -634,7 +635,7 @@ Figure&nbsp;8: Seasonal detection activity of by trait and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-dietary" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
+<div id="fig-spp-activity-dietary" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-dietary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-dietary-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -649,7 +650,7 @@ Figure&nbsp;9: Seasonal detection activity of by dietary guild and ecoregion
 <p>Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (<a href="#fig-raos-q" class="quarto-xref">Figure&nbsp;10</a>). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.</p>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-raos-q" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
+<div id="fig-raos-q" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-raos-q-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-raos-q-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -777,7 +778,7 @@ psi1.year      NA 2009 1.74819</code></pre>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
+<div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spp-rich-locs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-rich-locs-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -820,7 +821,7 @@ Figure&nbsp;11: Species richness by year
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>shannon_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
+<div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shannon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-shannon-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -838,7 +839,7 @@ Figure&nbsp;12: Shannon diversity index over years
 <p>This section presents the normalized species abundance trends for twenty specis, with plots illustrating changes over time across dietary, migratory, and habitat guilds and annual counts broken down by alpine and montane ecoregions (<a href="#fig-annual-count" class="quarto-xref">Figure&nbsp;15</a>), complemented by a table summarizing linear model outputs for species trends (<a href="#tbl-normalized-count-mdm-year" class="quarto-xref">Table&nbsp;6</a>) using the total number of unique individuals identified in each ecoregion and year. The primary objective was to identify any significant trends in species abundance changes over time while accounting for survey effort, measured as the number of locations surveyed annually. We observed approximately a significant 3% and 1% increase overall in species abundance over the study period, with an R^2 of 0.804 and 0.370 for the alpine and montane ecoregions, respectively.</p>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-normalized-count-mdm-year-alpine" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
+<div id="fig-normalized-count-mdm-year-alpine" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-normalized-count-mdm-year-alpine-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-normalized-count-mdm-year-alpine-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
@@ -852,7 +853,7 @@ Figure&nbsp;13: Normalized count of mean number of individuals detected for twen
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-normalized-count-mdm-year-montane" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
+<div id="fig-normalized-count-mdm-year-montane" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-normalized-count-mdm-year-montane-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-normalized-count-mdm-year-montane-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="768">
@@ -953,7 +954,7 @@ Table&nbsp;6: Linear models of species trends using normalized mean count per lo
 <span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">show.legend =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-annual-count" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
+<div id="fig-annual-count" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-annual-count-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-annual-count-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -1005,7 +1006,7 @@ Figure&nbsp;15: Annual count of twenty bird species in Jasper
 <span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Predicted Mean Detection Time by Data Type"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-mean-time-ttfd" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
+<div id="fig-mean-time-ttfd" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-mean-time-ttfd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-mean-time-ttfd-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -1220,7 +1221,7 @@ Table&nbsp;9: Best-fit linear models, Mann-Kendall and Sen’s slope for guilds 
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-annual-trend-guild-nesting" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
+<div id="fig-annual-trend-guild-nesting" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-annual-trend-guild-nesting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-annual-trend-guild-nesting-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -1246,7 +1247,7 @@ Figure&nbsp;17: Trend of guilds for twenty bird species in Jasper
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-annual-trend-guild-dietary" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
+<div id="fig-annual-trend-guild-dietary" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-annual-trend-guild-dietary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-annual-trend-guild-dietary-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">

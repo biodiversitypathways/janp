@@ -165,7 +165,6 @@ Songbird data was collected using autonomous recording units (ARUs), deployed by
 #| label: fig-aru-monitoring-locations
 
 janp_locs <- janp_main |>
-  mutate(year = lubridate::year(recording_date_time)) |>
   dplyr::select(location, latitude, longitude, year, ecoregion) |>
   drop_na(latitude) |>
   distinct() |>
@@ -234,8 +233,6 @@ leaflet() %>%
   ) %>%
   addMeasure(primaryLengthUnit = "meters", primaryAreaUnit = "sqmeters") %>%
   addMiniMap(position = "bottomleft")
-
-
 
 ```
 
@@ -345,30 +342,30 @@ Before adopting WildTrax, analysts excluded the initial 20 seconds to 1.5 minute
 #| tbl-cap: Transcription method by year with re-transcribed data being conducted from 2007 - 2012.
 
 transcription_table <- tibble(
-  Years = c("2007-2020", "2021-2022", "2023-2024", "2011"),
+  Years = c("2007-2020", "2021-2022", "2023-2024", "2007-2011"),
   `Transcription Method` = c(
     "0-3.33, 3.33-6.66, 6.66-10 min",
-    "1 SPT - Species per task or recording (Every new individual is tagged within the 600s recording).",
-    "1 SPT - Species per task or recording (Every new individual is tagged within the 600s recording).",
-    "1 SPT - Species per task or recording (Every new individual is tagged within the 600s recording)."
+    "1 SPT - Species per task or recording (Every new individual is tagged within the 10 minute recording).",
+    "1 SPT - Species per task or recording (Every new individual is tagged within the 10 minute recording).",
+    "1 SPT - Species per task or recording (Every new individual is tagged within the 10 minute recording). Re-transcription."
   ),
   `Bin Method` = c(
     "Abundance re-starts for each 3.33-minute bin",
-    "Unbinned on WildTrax* (Forced into bins for analysis)",
-    "Unbinned on WildTrax* (Forced into bins for analysis)",
-    "Unbinned on WildTrax*"
+    "Time of first detection over 10 minute period",
+    "Time of first detection over 10 minute period",
+    "Time of first detection over 10 minute period. Re-transcription."
   ),
   `Method Details` = c(
     "No cap on abundance; abundance re-starts for each bin, no total abundance for the 10-min recording",
-    "Counts per bin include only new individuals detected; individuals not re-counted across bins",
-    "Counts per bin include only new individuals detected; individuals not re-counted across bins",
-    "No cap on abundance"
+    "Time of first detection over 10 minute period",
+    "Time of first detection over 10 minute period",
+    "Time of first detection over 10 minute period. Re-transcription."
   ),
-  `Max Species` = c(
+  `Max # of Individuals` = c(
     "No cap",
     "Maximum of 3 individuals per 10-minute recording",
     "No cap",
-    "No cap"
+    "No cap. Re-transcription."
   )
 )
 
@@ -892,7 +889,7 @@ shannon_d
 
 ## Abundance trend analysis
 
-This section presents the normalized species abundance trends for twenty specis, with plots illustrating changes over time across dietary, migratory, and habitat guilds and annual counts broken down by alpine and montane ecoregions (@fig-annual-count), complemented by a table summarizing linear model outputs for species trends (@tbl-normalized-count-mdm-year) using the total number of unique individuals identified in each ecoregion and year. The primary objective was to identify any significant trends in species abundance changes over time while accounting for survey effort, measured as the number of locations surveyed annually. We observed approximately a significant 3% and 1% increase overall in species abundance over the study period, with an R^2 of 0.804 and 0.370 for the alpine and montane ecoregions, respectively. 
+This section presents the normalized species abundance trends for twenty specis, with plots illustrating changes over time across dietary, migratory, and habitat guilds and annual counts broken down by alpine and montane ecoregions (@fig-annual-count), complemented by a table summarizing linear model outputs for species trends (@tbl-normalized-count-mdm-year) using the total number of unique individuals identified in each ecoregion and year. The primary objective was to identify any significant trends in species abundance changes over time while accounting for survey effort, measured as the number of locations surveyed annually. We observed approximately a significant 3% and 1% increase overall in species abundance over the study period, with an R\^2 of 0.804 and 0.370 for the alpine and montane ecoregions, respectively.
 
 ```{r}
 #| warning: false
@@ -960,7 +957,7 @@ ggplot(plot_mdm_alpine, aes(x = year, y = normalized_count, colour = species_cod
   labs(
     x = "Year",
     y = "Normalized Count",
-    title = "Normalized Count of Medium-Distance Migrants in Alpine Ecoregion",
+    title = "Normalized Count of Species Abundance in Alpine Ecoregion",
     colour = "Species Code"
   ) +
   scale_colour_viridis_d(option = "cividis") +
@@ -994,7 +991,7 @@ ggplot(plot_mdm_montane, aes(x = year, y = normalized_count, colour = species_co
   labs(
     x = "Year",
     y = "Normalized Count",
-    title = "Normalized Count in Montane Ecoregion",
+    title = "Normalized Count of Species Abundance in Montane Ecoregion",
     colour = "Species Code"
   ) +
   scale_colour_viridis_d(option = "cividis") +
@@ -1004,7 +1001,6 @@ ggplot(plot_mdm_montane, aes(x = year, y = normalized_count, colour = species_co
 
 
 ```
-
 
 ```{r}
 #| warning: false
@@ -1094,7 +1090,7 @@ ggplot(count_annual_mdm, aes(x = year, y = normalized_count, colour = ecoregion)
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   geom_text(data = lm_results, 
             aes(x = 2008, 
-                y = ifelse(ecoregion == "Alpine", 1.7, 1.55),  # Offset text
+                y = ifelse(ecoregion == "Alpine", 1.7, 1.55), 
                 label = paste0("Ecoregion: ", ecoregion, 
                                "\nSlope: ", round(slope, 2), 
                                "\nP-value: ", round(p_value, 4))),
@@ -1103,7 +1099,7 @@ ggplot(count_annual_mdm, aes(x = year, y = normalized_count, colour = ecoregion)
 
 ```
 
-The mean time to first detection remained stable across years and methods used, with no significant effect of year detected in the mixed-effects model comparison (\( p = 0.12 \)). Predicted mean detection times varied slightly among data types, with legacy data exhibiting the shortest detection time (\( 1.51 \times 10^2 \) seconds), followed by `single_visit_0_max` (\( 1.57 \times 10^2 \) seconds), and `single_visit_3_max` (\( 1.79 \times 10^2 \) seconds). These differences are visualized in Figure @fig-mean-time-ttfd, where detection times increase with the use of single-visit methods.
+The mean time to first detection remained stable across years and methods used, with no significant effect of year detected in the mixed-effects model comparison (( p = 0.12 )). Predicted mean detection times varied slightly among data types, with legacy data exhibiting the shortest detection time (( 1.51 \times 10\^2 ) seconds), followed by `single_visit_0_max` (( 1.57 \times 10\^2 ) seconds), and `single_visit_3_max` (( 1.79 \times 10\^2 ) seconds). These differences are visualized in Figure @fig-mean-time-ttfd, where detection times increase with the use of single-visit methods.
 
 ```{r}
 #| warning: false
