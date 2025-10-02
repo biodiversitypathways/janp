@@ -11,7 +11,9 @@ author:
   - name: "Alex MacPhail"
     affiliation: "Biodiversity Pathways Ltd."
   - name: "Brenda Shepherd"
-    affiliation: "Parks Canada"
+    affiliation: "Jasper National Park, Parks Canada"
+  - name: "Nina Veselka"
+    affiliation: "Jasper National Park, Parks Canada"
 editor: visual
 bibliography: references.bib
 nocite: '@*'
@@ -112,6 +114,8 @@ janp_aru <- imap_dfr(
 
 # Mountain Pine Beetle
 mpb <- wildrtrax::wt_download_report(project_id = 2129, sensor_id = "ARU", weather_cols = TRUE, reports = "main")
+
+janp_main <- read_csv("./main_temp.csv")
 
 # Bind legacy data with acoustic data
 janp_main <- bind_rows(old_s_mean, janp_aru) |>
