@@ -74,20 +74,20 @@ load('janp.RData')
 #| eval: false
 #| include: true
 
-janp_aru_projects <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
+janp_aru_projects <- wildrtrax::wt_get_projects(sensor = 'ARU') |>
   filter(grepl('Jasper National Park', project)) |>
   dplyr::select(project_id) |>
   pull()
 
 # All projects associated with a single-visit ARU deployment with no abundance cap
-janp_0max <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
+janp_0max <- wildrtrax::wt_get_projects(sensor = 'ARU') |>
   filter(grepl('Jasper NP - EI', project)) |>
   filter(!grepl('2021|2022',project)) |>
   dplyr::select(project_id) |>
   pull()
 
 # All projects associated with a single-visit ARU deployment with an abundance cap of 3
-janp_3max <- wildrtrax::wt_get_download_summary(sensor = 'ARU') |>
+janp_3max <- wildrtrax::wt_get_projects(sensor = 'ARU') |>
   filter(grepl('Jasper NP - EI', project)) |>
   filter(grepl('2021|2022',project)) |>
   dplyr::select(project_id) |>
@@ -115,10 +115,10 @@ janp_aru <- imap_dfr(
 # Mountain Pine Beetle
 mpb <- wildrtrax::wt_download_report(project_id = 2129, sensor_id = "ARU", weather_cols = TRUE, reports = "main")
 
-janp_main <- read_csv("./main_temp.csv")
+janp_aru <- read_csv("./main_temp.csv")
 
 # Bind legacy data with acoustic data
-janp_main <- bind_rows(old_s_mean, janp_aru) |>
+janp_main <- bind_rows(old_s_max, janp_aru) |>
   group_by(location) |>
   fill(ecoregion, .direction = "down") |>
   ungroup() |>
@@ -651,7 +651,7 @@ ggplot(guild_activity, aes(x = julian, y = migratory_guild, fill = migratory_gui
 #| cap-location: margin
 #| code-fold: true
 
-ggplot(guild_activity, aes(x = julian, y = trait, fill = trait)) + 
+ggplot(guild_activity |> filter(!is.na(trait)), aes(x = julian, y = trait, fill = trait)) + 
       geom_density_ridges(alpha = 0.7) +
       scale_fill_viridis_d(option = "cividis") +
       facet_wrap(~ecoregion) +
@@ -725,7 +725,7 @@ nonzero   <- rowSums(a_mat2) > 0
 a_mat3    <- a_mat2[nonzero, , drop = FALSE]
 sites3    <- abund_sp[nonzero, c("location","year")]
 
-fd <- dbFD(x = trait_mat2, a = a_mat3, calc.FRic = FALSE, calc.CWM = FALSE, messages = FALSE)
+fd <- dbFD(x = trait_mat2, a = a_mat3, calc.FRic = TRUE, calc.CWM = FALSE, messages = FALSE)
 
 loc_year_rao <- sites3 %>%
   mutate(RaoQ = fd$RaoQ)
@@ -862,694 +862,54 @@ shannon_d
 
 ## Abundance
 
-This section presents the normalized species abundance trends for twenty specis, with plots illustrating changes over time across dietary, migratory, and habitat guilds and annual counts broken down by alpine and montane ecoregions (@fig-annual-count), complemented by a table summarizing linear model outputs for species trends (@tbl-normalized-count-mdm-year) using the total number of unique individuals identified in each ecoregion and year. The primary objective was to identify any significant trends in species abundance changes over time while accounting for survey effort, measured as the number of locations surveyed annually. We observed approximately a significant 3% and 1% increase overall in species abundance over the study period, with an R\^2 of 0.804 and 0.370 for the alpine and montane ecoregions, respectively.
+Abundance trends.
 
 ```{r}
-#| warning: false
-#| echo: false
-#| eval: true
-#| message: false
-#| include: true
-#| results: hide
-#| fig-align: center
-#| fig-width: 8
-#| fig-height: 8
-#| fig-cap: Normalized count of mean number of individuals detected for twenty species by year
-#| label: fig-normalized-count-mdm-year-alpine
-#| cap-location: margin
 
-z <- locs_summary |>
-  rowwise() |>
-  mutate(sum = sum(across(`2007`:`2024`))) |>
-  filter(sum == 17)
+simp <- tot_a_filtered |> filter(species_code %in% mdm)
+all_lambda <- list()
 
-# Jasper species
-mdm <- c("AMPI","AMRO","BRSP","CHSP","DEJU","GCKI","HETH","FOSP","OCWA","RCKI","SWTH","VATH","WAVI","WCSP","WTSP","GCSP","YRWA","RBNU","LISP","MOCH")
+for(sp in mdm){
+  simp <- tot_a_filtered %>% filter(species_code == sp)
+  
+  if(nrow(simp) < 5) next
+  
+  fit <- svabu(individual_order ~ year + ecoregion | 1,
+               data = simp, mixture = "P")
+  
+  pred_grid <- expand.grid(year = unique(simp$year),
+                           ecoregion = unique(simp$ecoregion))
+  
+  pred_grid$lambda <- predict(fit, newdata = pred_grid, type = "response")
+  
+  lambda_year <- pred_grid %>%
+    group_by(year) %>%
+    summarise(lambda_hat = mean(lambda)) %>%
+    mutate(species_code = sp)
+  
+  all_lambda[[sp]] <- lambda_year
+}
 
-tot_a <- janp_main |>
-  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
-  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
-  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F)
+lambda_all <- bind_rows(all_lambda)
 
-prop_tidy <- nrow(tot_a) / nrow(janp_main)
-
-tot_a_mdm <- tot_a |>
-  filter(species_code %in% mdm)
-
-prop_a <- nrow(tot_a_mdm) / nrow(tot_a)
-
-plot_mdm <- 
-  tot_a_mdm |>
-  mutate(year = year(recording_date_time)) |>
-  dplyr::select(location, data_type, ecoregion, year, species_code, individual_order, individual_count) |>
-  group_by(location, data_type, ecoregion, year, species_code) |>
-  summarise(individual_order = mean(individual_order)) |>
-  ungroup() |>
-  mutate(year = round(year,0)) |>
-  group_by(year, location, ecoregion, data_type, species_code) |>
-  summarise(
-    total_abundance = sum(individual_order),  
-    sample_size = n_distinct(location)
-  ) |>
-  ungroup() |>
-  mutate(normalized_count = total_abundance / sample_size) |>
-  inner_join(wt_get_species() |> dplyr::select(species_code, species_common_name), by = "species_code") |>
-  inner_join(guilds, by = "species_common_name") |>
-  mutate(ecoregion = case_when(
-    ecoregion == "Alpine" ~ "Alpine",
-    ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"
-  ))
-
-plot_mdm_alpine <- plot_mdm %>%
-  filter(ecoregion == "Alpine")
-
-# Plot for Alpine
-ggplot(plot_mdm_alpine, aes(x = year, y = normalized_count, colour = species_code.x)) +
-  geom_smooth(method = "lm") +
-  geom_point(size = 2) +
-  labs(
-    x = "Year",
-    y = "Normalized Count",
-    title = "Normalized Count of Species Abundance in Alpine Ecoregion",
-    colour = "Species Code"
-  ) +
-  scale_colour_viridis_d(option = "cividis") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  facet_wrap(~species_code.x)
+ggplot() +
+  geom_point(data = tot_a_filtered %>% filter(species_code %in% mdm),
+             aes(x = year, y = individual_order), alpha = 0.3, color = "gray") +
+  geom_line(data = lambda_all, aes(x = year, y = lambda_hat), color = "blue", size = 1.1) +
+  facet_wrap(~ species_code, scales = "free_y") +
+  labs(x = "Year", y = "Estimated Abundance (λ̂)", title = "Detection-Corrected Abundance Trends") +
+  theme_bw()
 
 ```
 
 ```{r}
-#| warning: false
-#| echo: false
-#| eval: true
-#| message: false
-#| include: true
-#| results: hide
-#| fig-align: center
-#| fig-width: 8
-#| fig-height: 8
-#| fig-cap: Normalized count of mean number of individuals detected for twenty species by year
-#| label: fig-normalized-count-mdm-year-montane
-#| cap-location: margin
 
-plot_mdm_montane <- plot_mdm %>%
-  filter(ecoregion == "Montane")
-
-# Plot for montane
-ggplot(plot_mdm_montane, aes(x = year, y = normalized_count, colour = species_code.x)) +
-  geom_smooth(method = "lm") +
-  geom_point(size = 2) +
-  labs(
-    x = "Year",
-    y = "Normalized Count",
-    title = "Normalized Count of Species Abundance in Montane Ecoregion",
-    colour = "Species Code"
-  ) +
-  scale_colour_viridis_d(option = "cividis") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  facet_wrap(~species_code.x)
-
-
-```
-
-```{r}
-#| warning: false
-#| echo: true
-#| eval: true
-#| message: false
-#| include: true
-#| label: tbl-normalized-count-mdm-year
-#| collapse: true
-#| code-fold: true
-#| tbl-cap: Linear models of species trends using normalized mean count per location
-
-datatable(
-  plot_mdm |>
-    group_by(species_code.x) |>
-    summarise(models = list(
-      lm(normalized_count ~ year + data_type, data = cur_data())
-    )) |>
-    mutate(model_summary = map(models, tidy)) |>
-    unnest(model_summary) |>
-    dplyr::select(-models) |>
-    mutate(across(where(is.numeric), round, 2)),
-  options = list(
-    searching = TRUE,
-    paging = TRUE,
-    pageLength = 10
-  )
-)
-
-```
-
-```{r}
-#| warning: false
-#| echo: true
-#| eval: true
-#| message: false
-#| include: true
-#| results: hide
-#| fig-align: center
-#| fig-cap: Annual count of twenty bird species in Jasper 
-#| label: fig-annual-count
-#| cap-location: bottom
-#| code-fold: true
-
-# Aggregate and normalize data
-count_annual_mdm <- tot_a_mdm |>
-  mutate(ecoregion = case_when(
-    ecoregion == "Alpine" ~ "Alpine",
-    ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"
-  )) |>
-  mutate(year = year(recording_date_time)) |>
-  dplyr::select(location, ecoregion, year, species_code, individual_order, individual_count) |>
-  group_by(location, ecoregion, year, species_code) |>
-  summarise(individual_order = max(individual_order), .groups = "drop") |>
-  mutate(year = round(year, 0)) |>
-  group_by(ecoregion, year) |>
-  summarise(sum_year = sum(individual_order), 
-            sample_size = n(), 
-            .groups = "drop") |>
-  mutate(normalized_count = sum_year / sample_size)
-
-# Run separate models for each ecoregion
-lm_results <- count_annual_mdm %>%
-  group_split(ecoregion) %>%
-  map_df(~ {
-    model <- lm(normalized_count ~ year, data = .x)
-    tibble(
-      ecoregion = unique(.x$ecoregion),
-      slope = coef(model)[2],
-      p_value = summary(model)$coefficients[2, 4],
-      r_squared = summary(model)$r.squared
-    )
-  })
-
-# Merge results back
-count_annual_mdm <- count_annual_mdm %>%
-  left_join(lm_results, by = "ecoregion")
-
-# Plot
-ggplot(count_annual_mdm, aes(x = year, y = normalized_count, colour = ecoregion)) +
-  geom_smooth(method = "lm") +
-  geom_point(size = 2) +
-  scale_colour_manual(values = c("Alpine" = "#71706D", "Montane" = "#001F42")) +
-  labs(x = "Year", y = "Normalized Count of Medium-Distance Migrants", colour = "Ecoregion") +
-  scale_x_continuous(breaks = unique(count_annual_mdm$year)) +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_text(data = lm_results, 
-            aes(x = 2008, 
-                y = ifelse(ecoregion == "Alpine", 1.7, 1.55), 
-                label = paste0("Ecoregion: ", ecoregion, 
-                               "\nSlope: ", round(slope, 2), 
-                               "\nP-value: ", round(p_value, 4))),
-            size = 3, hjust = 0, vjust = 1, show.legend = FALSE)
-
-
-```
-
-We then examined the abundance trend of these twenty species using the maximum count of individuals heard at each survey using the Mann-Kendall test and Sen's slope to examine the significance and magnitude of the trend of the abundance of each species over the study period. The results are summarized in @tbl-mk-sens.
-
-```{r}
-#| eval: false
-#| include: false
-
-tot_a_filtered <- janp_main |>
-  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
-  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
-  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
-  mutate(ecoregion = case_when(
-    ecoregion %in% c("Alpine") ~ "Alpine",
-    ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"
-  )) |>
-  group_by(location, ecoregion, year, recording_date_time, species_code) |>
-  mutate(individual_order = ifelse(is.na(individual_order), 0, individual_order),
-         individual_order = ifelse(is.infinite(individual_order), 0, individual_order),  
-         abundance = max(individual_order, na.rm = TRUE)) |>
-  ungroup() |>
-  filter(is.finite(abundance)) |>
-  inner_join(guilds |> dplyr::select(species_code, trait, dietary_guild, habitat_guild, migratory_guild), by = "species_code")
-
-results_mmkh <- tot_a_filtered %>%
-  filter(species_code %in% mdm) %>%
+trend_results <- lambda_all %>%
   group_by(species_code) %>%
   summarise(
-    trend_vi = list(mmkh(abundance, ci = 0.95)),
-    .groups = "drop"
-  ) %>%
-  mutate(
-    vi_p_trend = map_dbl(trend_vi, ~ if ("new P-value" %in% names(.x)) {
-      .x["new P-value"]
-    } else {
-      NA_real_
-    }),
-    vi_z = map_dbl(trend_vi, ~ if ("Corrected Zc" %in% names(.x)) {
-      .x["Corrected Zc"]
-    } else {
-      NA_real_
-    }),
-    vi_sens = map_dbl(trend_vi, ~ if ("Sen's slope" %in% names(.x)) {
-      .x["Sen's slope"]
-    } else {
-      NA_real_
-    })
-  ) %>%
-  dplyr::select(species_code, vi_p_trend, vi_z, vi_sens)
-
-results_with_plots <- results_mmkh %>%
-  mutate(
-    trend_plot = map(species_code, ~ {
-      species_data <- tot_a_filtered %>% filter(species_code == .x)
-      ggplot(species_data, aes(x = year, y = abundance)) +
-        geom_point() +
-        geom_smooth(method = "lm", se = FALSE) +
-        labs(title = paste("Trend for", .x), x = "Year", y = "Abundance") +
-        theme_minimal()
-    })
-  )
-```
-
-```{r}
-#| warning: false
-#| echo: false
-#| eval: true
-#| message: false
-#| include: true
-#| results: markup
-#| label: tbl-mk-sens
-#| collapse: true
-#| code-fold: true
-#| tbl-cap: Mann-Kendall and Sen's slope species abundance trends
-
-datatable(
-  results_mmkh |>
-  mutate(across(where(is.numeric), round, 2)),
-  caption = "Trend Models Summary"
-)
-```
-
-We analyzed species abundance trends over time using the Mann-Kendall trend test with a 95% confidence interval. Statistically significant p-values (p \< 0.05) were found for several species, including AMRO (0.0285), BRSP (0.0246), FOSP (0.0409), GCKI (0.0498), GCSP (0.0504), WAVI (0.00629), RCKI (0.0246), and YRWA (0.0252), indicating significant trends in abundance. The Z-scores, which reflect trend strength, varied across species, with WAVI showing the highest Z-score (2.73), indicating a particularly strong trend. Other species like AMPI (1.81), AMRO (2.19), and BRSP (2.25) showed moderate trends, while species like HETH (1.51), RBNU (1.41), and WCSP (1.40) had weaker trends. Despite significant trends, the Sen's slope (vi_sens) was consistently zero for all species, indicating that there was no measurable directional change in abundance over the study period. We then proceeding with conduct a model selection workflow to examine best-fit linear models of various distributions (see @tbl-linear-models) on both single species and guild models. For the single species models we used the mean count of individuals.
-
-```{r}
-#| warning: false
-#| echo: true
-#| eval: false
-#| message: false
-#| include: true
-#| results: hide
-#| code-fold: true
-
-models <- list(
-  mP0 = function(data) glm(abundance ~ 1, data = data, family = poisson),
-  mP1 = function(data) glm(abundance ~ year, data = data, family = poisson),
-  mP2 = function(data) glm(abundance ~ year + data_type, data = data, family = poisson),
-  mP3 = function(data) gam(abundance ~ s(year), data = data, family = poisson),
-  mP4 = function(data) gam(abundance ~ s(year) + data_type, data = data, family = poisson),
-  mP5 = function(data) glm.nb(abundance ~ year, data = data),
-  mP6 = function(data) glm.nb(abundance ~ year + data_type, data = data),
-  mP7 = function(data) zeroinfl(abundance ~ year | 1, data = data, dist = "poisson"),
-  mP8 = function(data) zeroinfl(abundance ~ year | 1 + data_type, data = data, dist = "poisson"),
-  mP9 = function(data) zeroinfl(abundance ~ year | 1, data = data, dist = "negbin"),
-  mP10 = function(data) zeroinfl(abundance ~ year | 1 + data_type, data = data, dist = "negbin"),
-  mP11 = function(data) glmmTMB(abundance ~ year + (1 | location), ziformula = ~1, family = poisson(), data = data),
-  mP12 = function(data) glmmTMB(abundance ~ year + (1 | location) + data_type, ziformula = ~1, family = poisson(), data = data),
-  mP13 = function(data) glmer(abundance ~ year + (1 | location), data = data, family = "poisson"),
-  mP14 = function(data) glmer(abundance ~ year + data_type + (1 | location), data = data, family = "poisson")
-)
-
-best_models_with_plot <- function(species_code) {
-  species_data <- tot_a_filtered |>
-    group_by(location, year, recording_date_time) |>
-    mutate(abundance = ifelse(species_code == !!species_code, abundance, 0)) |>
-    ungroup() |>
-    filter(species_code == !!species_code)
-  
-  fitted_models <- map(models, possibly( ~ {
-    model <- .x(species_data)
-    if (!is.null(model)) {
-      cat("Fitting model:", deparse(substitute(.x)), "\n")
-      print(summary(model))
-    } else {
-      cat("Fitting model failed:", deparse(substitute(.x)), "\n")
-    }
-    model
-  }, NULL))
-  
-  aic_values <- map_dfr(names(fitted_models),
-                        ~ tibble(
-                          model = .x,
-                          AIC = if (!is.null(fitted_models[[.x]]))
-                            AIC(fitted_models[[.x]])
-                          else
-                            Inf
-                        ))
-  
-  best_model_name <- aic_values |>
-    filter(AIC == min(AIC, na.rm = TRUE)) |>
-    pull(model)
-  
-  if (!is.null(fitted_models[[best_model_name]])) {
-    best_model <- fitted_models[[best_model_name]]
-    
-    predicted_values <- predict(best_model, newdata = species_data, type = "response")
-    
-    species_data$predicted_abundance <- ifelse(
-      length(predicted_values) == nrow(species_data),
-      predicted_values,
-      rep(NA, nrow(species_data))
-    )
-    
-    trend_result <- if (length(unique(species_data$abundance)) > 1) {
-      tryCatch({
-        mk <- mmkh(species_data$abundance, ci = 0.95)
-        list(
-          p_trend = if ("newPvalue" %in% rownames(as.data.frame(mk))) {
-            as.data.frame(mk)["newPvalue", "mmkh.mean", drop = TRUE]
-          } else {
-            NA_real_
-          },
-          z = if ("CorrectedZc" %in% rownames(as.data.frame(mk))) {
-            as.data.frame(mk)["CorrectedZc", "mmkh.mean", drop = TRUE]
-          } else {
-            NA_real_
-          },
-          sens = if ("Sensslope" %in% rownames(as.data.frame(mk))) {
-            as.data.frame(mk)["Sensslope", "mmkh.mean", drop = TRUE]
-          } else {
-            NA_real_
-          }
-        )
-      }, error = function(e)
-        list(
-          p_trend = NA,
-          z = NA,
-          sens = NA
-        ))
-    } else {
-      list(p_trend = NA,
-           z = NA,
-           sens = NA)
-    }
-    
-    p <- ggplot(species_data, aes(x = year)) +
-      geom_point(aes(y = abundance),
-                 color = "black",
-                 alpha = 0.5) +
-      geom_line(aes(y = predicted_abundance),
-                color = "blue",
-                size = 1) +
-      labs(
-        title = paste(species_code, "Best Fit Model:", best_model_name),
-        x = "Year",
-        y = "Abundance"
-      ) +
-      theme_minimal() +
-      theme(legend.position = "none")
-    
-    # Return the result as a tibble along with the ggplot and trend analysis
-    tibble(
-      species_code = species_code,
-      name = best_model_name,
-      AIC = aic_values |> filter(model == best_model_name) |> pull(AIC),
-      summary = list(summary(best_model)),
-      plot = list(p),
-      vi_p_trend = trend_result$p_trend,
-      vi_z = trend_result$z,
-      vi_sens = trend_result$sens
-    )
-  } else {
-    tibble(
-      species_code = species_code,
-      name = NA,
-      AIC = Inf,
-      summary = "No valid model",
-      plot = NA,
-      vi_p_trend = NA_real_,
-      vi_z = NA_real_,
-      vi_sens = NA_real_
-    )
-  }
-}
-
-# Create a trend_models tibble with the ggplots for each species
-trend_models <- tibble(species_code = mdm) %>%
-  mutate(best_model = map(species_code, best_models_with_plot)) %>%
-  unnest(best_model, names_sep = "_")
-
-```
-
-```{r}
-#| warning: false
-#| echo: false
-#| eval: true
-#| message: false
-#| include: true
-#| results: markup
-#| label: tbl-linear-models
-#| collapse: true
-#| code-fold: true
-#| tbl-cap: Best-fit linear models, Mann-Kendall and Sen's slope for trend of twenty species in Jasper National Park
-
-datatable(
-  trend_models |> 
-    arrange(species_code) |> 
-    dplyr::select(-c(best_model_species_code, best_model_summary, best_model_plot)) |>
-  mutate(across(where(is.numeric), round, 2)),
-  caption = "Trend Models Summary"
-)
-```
-
-```{r}
-#| warning: false
-#| echo: false
-#| eval: false
-#| message: false
-#| include: true
-#| results: hide
-#| code-fold: true
-
-tot_a_filtered_trait <- tot_a_filtered |>
-  mutate(ecoregion = case_when(
-    ecoregion %in% c("Alpine") ~ "Alpine",
-    ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"
-  )) |>
-  group_by(location, year, ecoregion, recording_date_time, trait) |>
-  summarise(sum = sum(abundance)) |>
-  ungroup()
-
-tot_a_filtered_nesting <- tot_a_filtered |>
-  mutate(ecoregion = case_when(
-    ecoregion %in% c("Alpine") ~ "Alpine",
-    ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"
-  )) |>
-  group_by(location, year, ecoregion, recording_date_time, habitat_guild) |>
-  summarise(sum = sum(abundance)) |>
-  ungroup()
-
-tot_a_filtered_migratory <- tot_a_filtered |>
-  mutate(ecoregion = case_when(
-    ecoregion %in% c("Alpine") ~ "Alpine",
-    ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"
-  )) |>
-  group_by(location, year, ecoregion, recording_date_time, migratory_guild) |>
-  summarise(sum = sum(abundance)) |>
-  ungroup()
-
-tot_a_filtered_dietary <- tot_a_filtered |>
-  mutate(ecoregion = case_when(
-    ecoregion %in% c("Alpine") ~ "Alpine",
-    ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"
-  )) |>
-  group_by(location, year, ecoregion, recording_date_time, dietary_guild) |>
-  summarise(sum = sum(abundance)) |>
-  ungroup()
-
-best_models_with_plot_guild <- function(guild_data, guild_col) {
-  
-  guild_results <- unique(guild_data[[guild_col]]) %>%
-    map(function(guild) {
-      filtered_data <- guild_data %>%
-        filter(.data[[guild_col]] == guild) %>%
-        mutate(abundance = sum) # Use the summed abundance
-      
-      # Fit models to the filtered guild data
-      fitted_models <- map(models, possibly(~ {
-        model <- .x(filtered_data)
-        if (!is.null(model)) {
-          cat("Fitting model for guild:", guild, "\n")
-          print(summary(model))
-        }
-        model
-      }, NULL))
-      
-      # Extract AIC values
-      aic_values <- map_dfr(
-        names(fitted_models),
-        ~ tibble(model = .x, AIC = if (!is.null(fitted_models[[.x]])) AIC(fitted_models[[.x]]) else Inf)
-      )
-      
-      # Select the best model
-      best_model_name <- aic_values %>%
-        filter(AIC == min(AIC, na.rm = TRUE)) %>%
-        pull(model)
-      
-      if (!is.null(fitted_models[[best_model_name]])) {
-        best_model <- fitted_models[[best_model_name]]
-        predicted_values <- predict(best_model, newdata = filtered_data, type = "response")
-        
-        filtered_data$predicted_abundance <- ifelse(length(predicted_values) == nrow(filtered_data),
-                                                    predicted_values,
-                                                    rep(NA, nrow(filtered_data)))
-        
-        # Perform Mann-Kendall Test and Sen's Slope
-        trend_result <- if (length(unique(filtered_data$abundance)) > 1) {
-          tryCatch({
-            mk <- mmkh(filtered_data$abundance, ci = 0.95)
-            list(
-              p_trend = if ("newPvalue" %in% rownames(as.data.frame(mk))) {
-                as.data.frame(mk)["newPvalue", "mmkh.mean", drop = TRUE]
-              } else {
-                NA_real_
-              },
-              z = if ("CorrectedZc" %in% rownames(as.data.frame(mk))) {
-                as.data.frame(mk)["CorrectedZc", "mmkh.mean", drop = TRUE]
-              } else {
-                NA_real_
-              },
-              sens = if ("Sensslope" %in% rownames(as.data.frame(mk))) {
-                as.data.frame(mk)["Sensslope", "mmkh.mean", drop = TRUE]
-              } else {
-                NA_real_
-              }
-            )
-          }, error = function(e)
-            list(
-              p_trend = NA,
-              z = NA,
-              sens = NA
-            ))
-        } else {
-          list(p_trend = NA, z = NA, sens = NA)
-        }
-        
-        # Create a plot for the guild
-        p <- ggplot(filtered_data, aes(x = year)) +
-          geom_point(aes(y = abundance), color = "black", alpha = 0.5) +
-          geom_line(aes(y = predicted_abundance), color = "blue", size = 1) +
-          labs(title = paste("Guild:", guild, "| Best Fit Model:", best_model_name),
-               x = "Year", y = "Abundance") +
-          theme_minimal()
-        
-        return(tibble(
-          guild = guild,
-          model_name = best_model_name,
-          AIC = aic_values %>% filter(model == best_model_name) %>% pull(AIC),
-          summary = list(summary(best_model)),  # Always a list
-          p_trend = trend_result$p_trend,
-          z = trend_result$z,
-          sens = trend_result$sens,
-          plot = list(p)  # Always a list
-        ))
-      } else {
-        return(tibble(
-          guild = guild,
-          model_name = NA,
-          AIC = Inf,
-          summary = list(NULL),  # Ensure it's a list for consistency
-          p_trend = NA,
-          z = NA,
-          sens = NA,
-          plot = list(NULL)  # Ensure it's a list for consistency
-        ))
-      }
-    })
-  
-  bind_rows(guild_results)
-}
-
-# Run for guilds
-trend_models_trait <- best_models_with_plot_guild(tot_a_filtered_trait |> filter(!is.na(trait)), "trait")
-trend_models_habitat <- best_models_with_plot_guild(tot_a_filtered_nesting, "habitat_guild")
-trend_models_migratory <- best_models_with_plot_guild(tot_a_filtered_migratory, "migratory_guild")
-trend_models_dietary <- best_models_with_plot_guild(tot_a_filtered_dietary, "dietary_guild")
-
-
-```
-
-```{r}
-#| warning: false
-#| echo: false
-#| eval: true
-#| message: false
-#| include: true
-#| results: markup
-#| label: tbl-linear-models-guilds
-#| collapse: true
-#| code-fold: true
-#| tbl-cap: Best-fit linear models, Mann-Kendall and Sen's slope for guilds of twenty species in Jasper National Park
- 
-datatable(
-  bind_rows(trend_models_trait, trend_models_habitat, trend_models_dietary) |> 
-    dplyr::select(guild, model_name, AIC, p_trend, z, sens) |>
-    dplyr::mutate(across(where(is.numeric), round, 2)),
-  caption = "Guild Trend Models Summary"
-)
-
-```
-
-```{r}
-#| warning: false
-#| echo: true
-#| eval: true
-#| message: false
-#| include: true
-#| results: hide
-#| fig-align: center
-#| fig-cap: Trend of guilds for twenty bird species in Jasper 
-#| label: fig-annual-trend-guild-nesting
-#| cap-location: bottom
-#| code-fold: true
-
-# Plot
-ggplot(tot_a_filtered_nesting, aes(x = year, y = sum, colour = ecoregion)) +
-  geom_smooth(method = "lm") +
-  geom_point(size = 2) +
-  scale_colour_manual(values = c("Alpine" = "#71706D", "Montane" = "#001F42")) +
-  labs(x = "Year", y = "Abundance", colour = "Ecoregion") +
-  scale_x_continuous(breaks = unique(count_annual_mdm$year)) +
-  theme_bw() +
-  facet_wrap(~ecoregion) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
-```
-
-```{r}
-#| warning: false
-#| echo: true
-#| eval: true
-#| message: false
-#| include: true
-#| results: hide
-#| fig-align: center
-#| fig-cap: Trend of guilds for twenty bird species in Jasper 
-#| label: fig-annual-trend-guild-dietary
-#| cap-location: bottom
-#| code-fold: true
-
-# Plot
-ggplot(tot_a_filtered_dietary, aes(x = year, y = sum, colour = ecoregion)) +
-  geom_smooth(method = "lm") +
-  geom_point(size = 2) +
-  scale_colour_manual(values = c("Alpine" = "#71706D", "Montane" = "#001F42")) +
-  labs(x = "Year", y = "Abundance", colour = "Ecoregion") +
-  theme_bw() +
-  facet_wrap(~ecoregion) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    mk_test = list(mmkh(lambda_hat))) |>
+  ungroup() |>
+  unnest_wider(mk_test) 
 
 ```
 
