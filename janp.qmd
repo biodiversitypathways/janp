@@ -438,7 +438,7 @@ A redundancy analysis (RDA) was conducted using the `vegan` package (@vegan2025)
 
 We analyzed bird abundance trends from 2007 to 2024 across species, ecoregions, and functional guilds. This multi-level approach allowed us to assess patterns of change while considering ecological and functional groupings. Observations were first filtered to include only data from the EI monitoring sites containing ecoregional classification. Species were classified into functional guilds using an ecological trait database (see @tbl-guilds). Spatial autocorrelation was accounted for when considered sites grouped <100 meters from one another across years based on the results of the Moran's *I* test. Given transcription methods varied over time (see @tbl-transcriptions), which may possibly affect data consistency, from both a species detectability and methodological standpoint, we used generalized linear mixed models (GLMM) using the `lme4` with package (@bates2015parsimonious) to examine time-to-first detection of each individual and the differences it posed across years to account for detection probability differences, using location as random effect (`1 | location`). 20 species (`r paste(mdm, collapse = ", ")`) that were the most abundant and represented different guilds were used for the analyses. Count data were modeled with a Poisson distribution or a negative binomial distribution when overdispersion was detected, with `year` and `method` (i.e., processing methodology) as fixed effects and `location` as a random effect.
 
-To evaluate trend significance, we applied the Mann–Kendall test (@mann1945non; @hamed1998), a non-parametric method sensitive to monotonic trends (@birds6010014), and estimated trend magnitude using Sen’s Slope (@Sen01121968; @dawood2017spatio) via the `mmkh()` function in the `modifiedmk` package. Because these tests do not account for detection probability, we complemented them with single-visit abundance models (@solymos2012conditional) via the `svabu` function implemented in the `detect` package. `svabu` models estimate abundance while explicitly incorporating detection probability, providing more reliable inferences about true abundance trends. It also avoids the need to assume a closed population statistically and computationally efficient estimators. For each species, we fitted either separate models by year or a single model with year included as a covariate in the abundance component (e.g., `svabu(individual ~ year + ecoregion)`). Year-specific mean abundance (λ̂) was then estimated across sites, and the resulting λ̂ series was analyzed using the Mann–Kendall test to assess temporal trends in detection-corrected abundance.
+To evaluate trend significance, we applied the Mann–Kendall test (@mann1945non; @hamed1998), a non-parametric method sensitive to monotonic trends (@birds6010014), and estimated trend magnitude using Sen’s Slope (@Sen01121968; @dawood2017spatio) via the `mmkh()` function in the `modifiedmk` package. Because these tests do not account for detection probability, we complemented them with single-visit abundance models (@solymos2012conditional) via the `svabu` function implemented in the `detect` package. `svabu` models estimate abundance while explicitly incorporating detection probability, providing more reliable inferences about true abundance trends. It also avoids the need to assume a closed population statistically and computationally efficient estimators. For each species, we fitted separate models for each ecoregion with year, julian date and time of day included as covariate in the abundance component (e.g., `svabu(individual ~ year | year + julian + hour)`). Year-specific mean abundance (λ̂) was then estimated across sites, and the resulting λ̂ series was analyzed using the Mann–Kendall test to assess temporal trends in detection-corrected abundance.
 
 Functional diversity was quantified using Rao’s Q (@rao1982diversity; @laliberte2010adistance) via the dbFD() function in the FD package (@FDpackage). To assess temporal changes in guild-level trait diversity, we applied linear, mixed-effects, and segmented models. We also summarized raw species richness—the number of unique species—per location and plotted its change over time (@fig-spp-rich-locs), complemented by annual estimates of Shannon’s diversity index, which integrates both species richness and evenness, to capture broader shifts in community structure (@fig-shannon).
 
@@ -455,18 +455,23 @@ all_lambda <- list()
 trend_summary <- list()
 
 tot_abundance <- tot_a_filtered |>
-  filter(!detection_time > 180)
+  filter(!detection_time > 180) |>
+  mutate(julian = yday(recording_date_time),
+         hour = hour(recording_date_time)) |> 
+  filter(species_code %in% mdm)
 
-for (sp in mdm) {
+for (sp in unique(tot_abundance$species_code)) {
   for (ec in unique(tot_abundance$ecoregion)) {
     simp <- tot_abundance %>%
       filter(species_code == sp, ecoregion == ec)
     
     if (nrow(simp) < 5) next
     
-    fit <- svabu(individual_order ~ year | 1, data = simp)
+    fit <- svabu(individual_order ~ year | year + julian, data = simp)
+
+    mean_julian <- mean(simp$julian, na.rm = TRUE)
     
-    pred_grid <- expand.grid(year = unique(simp$year))
+    pred_grid <- expand.grid(year = unique(simp$year), julian = mean_julian)
     pred_grid$lambda <- predict(fit, newdata = pred_grid, type = "response")
     
     lambda_year <- pred_grid %>%
@@ -929,8 +934,6 @@ shannon_d
 
 ## Abundance trends
 
-Modified Mann–Kendall trend analyses revealed distinct patterns in detection‐corrected abundance across ecoregions. Significant positive trends (τ ≈ 1, p < 0.001) were found for most species in the Montane and Alpine regions, indicating consistent increases over time. Species showing the strongest upward trends included Dark-eyed Junco (DEJU), Fox Sparrow (FOSP), Swainson’s Thrush (SWTH), White-crowned Sparrow (WCSP), and Red-breasted Nuthatch (RBNU), with Sen’s slopes ranging from 0.007 to 0.03. In contrast, several species exhibited significant declines in Montane sites—such as American Robin (AMRO), Chipping Sparrow (CHSP), Ruby-crowned Kinglet (RCKI), Orange-crowned Warbler (OCWA), and Yellow-rumped Warbler (YRWA)—suggesting region-specific decreases in abundance. Interestingly, some species (e.g., CHSP, HETH, YRWA) showed opposite trends between Alpine and Montane regions, implying possible elevational or habitat-related shifts. Using Mann–Kendall tests and Sen’s slope estimates, only a few species–ecoregion combinations exhibited notable trends exceeding ±2.5% per year. Specifically, AMPI (Alpine), HETH (Alpine), GCSP (Montane), and RBNU (Montane) showed increases greater than 2.5% annually, while all other species were categorized as stable under this threshold. The majority of species exhibited low-magnitude changes, indicating relative stability in abundance over the study period despite statistically significant monotonic trends in some cases. These results highlight that, while some species may be increasing locally, broad-scale temporal shifts in abundance are limited, suggesting overall community composition remains largely consistent across both Montane and Alpine ecoregions.
-
 ```{r}
 #| warning: false
 #| echo: true
@@ -941,6 +944,7 @@ Modified Mann–Kendall trend analyses revealed distinct patterns in detection�
 #| code-fold: true
 #| fig-align: center
 #| fig-width: 10
+#| fig-height: 12
 #| fig-cap: Estimated single-visit mean abundance trends per species and ecoregion
 #| label: fig-abundance-trends
 #| cap-location: bottom
@@ -1010,14 +1014,15 @@ trend_alls <- trend_all %>%
 
 lambda_all_flagged <- lambda_all %>%
   left_join(trend_alls %>% dplyr::select(species_code, ecoregion, trend_flag), 
-            by = c("species_code", "ecoregion"))
+            by = c("species_code", "ecoregion")) |>
+arrange(species_code, year)
 
 # Plot
 ggplot(lambda_all_flagged, aes(x = year, y = lambda_hat, color = trend_flag)) +
   geom_point(data = tot_a_filtered %>% filter(species_code %in% mdm),
              aes(x = year, y = individual_order), alpha = 0.3, color = "gray") +
-  geom_line(size = 1.1) +
-  facet_grid(ecoregion ~ species_code, scales = "free_y") +
+  geom_smooth(method = "lm", se = TRUE, size = 1.1) +  # straight line with confidence interval
+  facet_wrap(~species_code, scales = "free_y") +
   scale_color_manual(values = c("Increase > 2.5%" = "blue",
                                 "Decrease > 2.5%" = "red",
                                 "Stable" = "black")) +
@@ -1029,6 +1034,5 @@ ggplot(lambda_all_flagged, aes(x = year, y = lambda_hat, color = trend_flag)) +
 
 ```
 
-# Discussion
+# Discussion and recommendations
 
-Stay tuned for the discussion!
