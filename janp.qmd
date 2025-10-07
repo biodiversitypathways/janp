@@ -44,21 +44,14 @@ library(ggridges)
 library(scales)
 library(kableExtra)
 library(ggrepel)
-library(plotly)
 library(DT)
 library(lubridate)
-library(spdep)
 library(vegan)
 library(lme4)
 library(modifiedmk)
-library(MuMIn)
-library(mgcv)
-library(MASS)
-library(pscl)
-library(segmented)
-library(glmmTMB)
 library(FD)
-library(broom)
+library(detect)
+library(segmented)
 
 wt_auth()
 
@@ -373,7 +366,7 @@ For the purpose of these analyses abundance was defined as the count of individu
 
 ### Location correlation {#sec-location-correction}
 
-To assess spatial autocorrelation among bird survey locations across years, we examined the spatial relationship between survey points based on total species abundance per location and year. Given that survey points are typically 300 meters apart, we used the `knearneigh()` function to identify the nearest neighbours within this threshold. This function calculates the closest neighboring survey points for each location. We then constructed a spatial weight matrix using the `knn2nb()` function and calculated Moran's *I* statistic using `moran.test` to determine whether spatial autocorrelation exists in the abundance of species across survey locations. A significant Moran's *I* suggests that survey locations are not independent and that spatial autocorrelation should be accounted for in further analyses. We also conducted further analyses grouping locations from each transect (`r paste(unique(janp_transects$transect_name), collapse = ", ")`).
+To assess spatial autocorrelation among bird survey locations across years, we examined the spatial relationship between survey points based on total species abundance per location and year in order to determine whether spatial clustering or spatial dependence exists in the species abundance data. Given that survey points are typically 300 meters apart, we used the `knearneigh()` function to identify the nearest neighbours within this threshold. This function calculates the closest neighboring survey points for each location. We then constructed a spatial weight matrix using the `knn2nb()` function and calculated Moran's *I* statistic using `moran.test` to determine whether spatial autocorrelation exists in the abundance of species across survey locations. A significant Moran's *I* suggests that survey locations are not independent and that spatial autocorrelation should be accounted for in further analyses. We also conducted further analyses grouping locations from each transect (`r paste(unique(janp_transects$transect_name), collapse = ", ")`).
 
 ```{r}
 #| warning: false
@@ -430,16 +423,12 @@ moran_test <- moran.test(janp_locs_sf$n, listw = weights, zero.policy = TRUE)
 #| warning: false
 #| echo: false
 #| message: false
-#| eval: true
-#| include: true  # Change this to true to display the output
+#| eval: false
+#| include: false
 
 moran_test
 
 ```
-
-### Methodological and processing differences
-
-Transcription methods varied over time (see @tbl-transcriptions), which may possibly affect data consistency, from both a detectability and methodological standpoint. To ensure comparability, we examined the effect of using the mean and maximum abundance of species on trend. We used generalized linear mixed models (GLMM) using the `lme4` with package (@bates2015parsimonious) to also examine time-to-first detection and the differences it posed across years to account for detection probability differences, using location as random effect (`1 | location`).
 
 ### Community analysis
 
@@ -447,13 +436,211 @@ A redundancy analysis (RDA) was conducted using the `vegan` package (@vegan2025)
 
 ### Trend analysis
 
-We analyzed bird abundance trends from 2007 to 2024 across multiple scales, including individual species, ecoregions, and functional guilds. This multi-level approach allowed us to assess patterns of change while accounting for ecological and functional groupings. Observations were first filtered to include only data from the EI monitoring sites containing ecoregional classification. Additional ARU monitoring data were supplemented but only one recording chosen to balance the single-visit EI monitoring. Species were classified into functional guilds using an ecological trait database (see @tbl-guilds). Spatial autocorrelation was accounted for when considered sites grouped <100 meters from one another across years based on the results of the Moran's *I* test. 
+We analyzed bird abundance trends from 2007 to 2024 across species, ecoregions, and functional guilds. This multi-level approach allowed us to assess patterns of change while considering ecological and functional groupings. Observations were first filtered to include only data from the EI monitoring sites containing ecoregional classification. Species were classified into functional guilds using an ecological trait database (see @tbl-guilds). Spatial autocorrelation was accounted for when considered sites grouped <100 meters from one another across years based on the results of the Moran's *I* test. Given transcription methods varied over time (see @tbl-transcriptions), which may possibly affect data consistency, from both a species detectability and methodological standpoint, we used generalized linear mixed models (GLMM) using the `lme4` with package (@bates2015parsimonious) to examine time-to-first detection of each individual and the differences it posed across years to account for detection probability differences, using location as random effect (`1 | location`). 20 species (`r paste(mdm, collapse = ", ")`) that were the most abundant and represented different guilds were used for the analyses. Count data were modeled with a Poisson distribution or a negative binomial distribution when overdispersion was detected, with `year` and `method` (i.e., processing methodology) as fixed effects and `location` as a random effect.
 
-First, generalized linear mixed-effects models (GLMMs; @bates2015parsimonious) were implemented in R using the lme4 package (@bates2015lme4) to analyze abundance trends for 20 species (`r paste(mdm, collapse = ", ")`) that were the most abundant and represented different guilds for the single-species analyses. Count data were modeled with a Poisson distribution or a negative binomial distribution when overdispersion was detected, with `year` and `method` (i.e., processing methodology) as fixed effects and `location` as a random effect. Separate models were fitted for montane versus alpine ecoregions, and model selection was based on minimum Akaike’s Information Criterion values (AIC; @akaike1974).
+To evaluate trend significance, we applied the Mann–Kendall test (@mann1945non; @hamed1998), a non-parametric method sensitive to monotonic trends (@birds6010014), and estimated trend magnitude using Sen’s Slope (@Sen01121968; @dawood2017spatio) via the `mmkh()` function in the `modifiedmk` package. Because these tests do not account for detection probability, we complemented them with single-visit abundance models (@solymos2012conditional) via the `svabu` function implemented in the `detect` package. `svabu` models estimate abundance while explicitly incorporating detection probability, providing more reliable inferences about true abundance trends. It also avoids the need to assume a closed population statistically and computationally efficient estimators. For each species, we fitted either separate models by year or a single model with year included as a covariate in the abundance component (e.g., `svabu(individual ~ year + ecoregion)`). Year-specific mean abundance (λ̂) was then estimated across sites, and the resulting λ̂ series was analyzed using the Mann–Kendall test to assess temporal trends in detection-corrected abundance.
 
-To evaluate trend significance, we applied the Mann–Kendall test (@mann1945non; @hamed1998), a non-parametric method sensitive to monotonic trends [@birds6010014], and estimated trend magnitude using Sen’s Slope (@Sen01121968; @dawood2017spatio) via the `mmkh()` function in the `modifiedmk` package. Because these tests do not account for detection probability, we complemented them with single-visit abundance models with the `svabu` function implemented in the `detect` package. `svabu` models estimate abundance while explicitly incorporating detection probability, providing more reliable inferences about true abundance trends. For each species, we fitted either separate models by year or a single model with year included as a covariate in the abundance component (e.g., `svabu(count ~ year + habitat, mixture = "P")`). Year-specific mean abundance (λ̂) was then estimated across sites, and the resulting λ̂ series was analyzed using the Mann–Kendall test to assess temporal trends in detection-corrected abundance.
+Functional diversity was quantified using Rao’s Q (@rao1982diversity; @laliberte2010adistance) via the dbFD() function in the FD package (@FDpackage). To assess temporal changes in guild-level trait diversity, we applied linear, mixed-effects, and segmented models. We also summarized raw species richness—the number of unique species—per location and plotted its change over time (@fig-spp-rich-locs), complemented by annual estimates of Shannon’s diversity index, which integrates both species richness and evenness, to capture broader shifts in community structure (@fig-shannon).
 
-Functional diversity was quantified with Rao’s Q (@rao1982diversity; @laliberte2010adistance) using the `dbFD()` function in the `FD` package (@FDpackage) to examine shifts in guild-level trait diversity over time. Species richness, representing the count of unique species, was summarized per location and plotted over time to assess local biodiversity dynamics (@fig-spp-rich-locs). Shannon’s diversity index, which incorporates both species richness and evenness, was calculated annually to evaluate temporal changes in community structure (@fig-shannon).
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| code-fold: true
+
+all_lambda <- list()
+trend_summary <- list()
+
+tot_abundance <- tot_a_filtered |>
+  filter(!detection_time > 180)
+
+for (sp in mdm) {
+  for (ec in unique(tot_abundance$ecoregion)) {
+    simp <- tot_abundance %>%
+      filter(species_code == sp, ecoregion == ec)
+    
+    if (nrow(simp) < 5) next
+    
+    fit <- svabu(individual_order ~ year | 1, data = simp)
+    
+    pred_grid <- expand.grid(year = unique(simp$year))
+    pred_grid$lambda <- predict(fit, newdata = pred_grid, type = "response")
+    
+    lambda_year <- pred_grid %>%
+      group_by(year) %>%
+      summarise(lambda_hat = mean(lambda)) %>%
+      mutate(species_code = sp, ecoregion = ec)
+    
+    all_lambda[[paste(sp, ec, sep = "_")]] <- lambda_year
+    
+    # Mann–Kendall test on λ̂
+    mk <- try(mmkh(lambda_year$lambda_hat), silent = TRUE)
+    
+    if (!inherits(mk, "try-error")) {
+      trend_summary[[paste(sp, ec, sep = "_")]] <- tibble(
+        species_code = sp,
+        ecoregion = ec,
+        tau = mk[["Tau"]],
+        p_value = mk[["new P-value"]],
+        sen_slope = mk[["Sen's slope"]]
+      )
+    }
+  }
+}
+
+lambda_all <- bind_rows(all_lambda)
+trend_all <- bind_rows(trend_summary)
+
+trend_alls <- trend_all %>%
+  mutate(
+    perc_change = sen_slope / mean(lambda_all$lambda_hat[lambda_all$species_code == species_code & lambda_all$ecoregion == ecoregion]) * 100,
+    trend_flag = case_when(
+      perc_change >= 2.5 ~ "Increase > 2.5%",
+      perc_change <= -2.5 ~ "Decrease > 2.5%",
+      TRUE ~ "Stable"
+    )
+  )
+```
+
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| label: tbl-guilds
+#| collapse: true
+#| code-fold: true
+#| tbl-cap: Guilds
+
+guilds <- read_csv("jasper_guilds.csv")
+
+guild_activity <- janp_main |>
+  filter(data_type %in% c("legacy", "single_visit_3_max", "single_visit_0_max")) |>
+  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
+  wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "unknown"), zerofill = T) |>
+  dplyr::select(location, recording_date_time, species_common_name, species_code, individual_count) |>
+  mutate(julian = lubridate::yday(recording_date_time),
+         month = month(recording_date_time),
+         year = factor(year(recording_date_time))) |>
+  inner_join(guilds, by = "species_code") |>
+  group_by(species_code) |>
+  add_tally() |>
+  ungroup() |>
+  group_by(julian, species_code) |>
+  add_tally() |>
+  ungroup() |>
+  arrange(species_code) |>
+  mutate(recording_date_time = as.POSIXct(recording_date_time)) |>
+  mutate(species_code = factor(species_code, levels = sort(unique(species_code)))) |>
+  inner_join(locs_summary, by = c("location" = "Location")) |>
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"))
+
+datatable(guilds, 
+          options = list(
+            searching = TRUE,  
+            paging = TRUE,    
+            pageLength = 10   
+          ))
+
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| code-fold: true
+
+abund_sp <- janp_main %>%
+  group_by(location, year, species_code) %>%
+  summarise(abund = n(), .groups = "drop") %>%
+  pivot_wider(id_cols = c(location, year),
+              names_from  = species_code,
+              values_from = abund,
+              values_fill = 0)
+
+trait_df <- guilds %>%
+  dplyr::select(species_code, dietary_guild, habitat_guild, migratory_guild) %>%
+  distinct() %>%
+  column_to_rownames("species_code")
+
+trait_mat <- model.matrix(~ dietary_guild + habitat_guild + migratory_guild - 1,
+                          data = trait_df)
+
+a_mat <- abund_sp %>% dplyr::select(-location, -year) %>% as.matrix()
+
+common <- intersect(colnames(a_mat), rownames(trait_mat))
+a_mat2     <- a_mat[, common, drop = FALSE]
+trait_mat2 <- trait_mat[common, , drop = FALSE]
+
+nonzero   <- rowSums(a_mat2) > 0
+a_mat3    <- a_mat2[nonzero, , drop = FALSE]
+sites3    <- abund_sp[nonzero, c("location","year")]
+
+fd <- dbFD(x = trait_mat2, a = a_mat3, calc.FRic = TRUE, calc.CWM = FALSE, messages = FALSE)
+
+loc_year_rao <- sites3 %>%
+  mutate(RaoQ = fd$RaoQ)
+
+yearly_rao <- loc_year_rao %>%
+  group_by(year) %>%
+  summarise(meanRao = mean(RaoQ), .groups = "drop")
+
+mk        <- mmkh(yearly_rao$meanRao, ci = 0.95)
+lm_trend  <- lm(meanRao ~ year, data = yearly_rao)
+mix_trend <- lmer(RaoQ ~ year + (1|location), data = loc_year_rao)
+seg       <- segmented(lm(meanRao ~ year, data = yearly_rao), seg.Z = ~ year)
+
+yearly_rao <- yearly_rao |>
+  mutate(
+    lm_fit = predict(lm_trend, newdata = yearly_rao),
+    mix_fit = predict(mix_trend, newdata = yearly_rao, re.form = NA),
+    seg_fit = predict(seg, newdata = yearly_rao)
+  )
+
+```
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| code-fold: true
+
+shannon_d <- janp_main |> 
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
+  inner_join(wt_get_species() |> dplyr::select(species_code, species_class, species_order), by = "species_code") |>
+  dplyr::select(location, recording_date_time, species_code, species_common_name, individual_order, individual_count) |>
+  distinct() |>
+  group_by(location, recording_date_time, species_code, species_common_name) |>
+  summarise(count = max(individual_order)) |>
+  ungroup() |>
+  pivot_wider(names_from = species_code, values_from = count, values_fill = 0) |>
+  pivot_longer(cols = -(location:species_common_name), names_to = "species", values_to = "count") |>
+  group_by(location, year = year(recording_date_time), species) |>
+  summarise(total_count = sum(count)) |>
+  ungroup() |>
+  group_by(location, year) |>
+  summarise(shannon_index = diversity(total_count, index = "shannon")) |>
+  ungroup() |>
+  ggplot(aes(x = factor(year), y = shannon_index, fill = factor(year))) +
+  geom_boxplot() +
+  geom_point(alpha = 0.6, colour = "grey") +
+  labs(x = "Year",
+       y = "Shannon diversity index per location") +
+  theme_bw() +
+  guides(fill = guide_legend(title = "Year")) +
+  scale_fill_viridis_d(alpha = 0.8, option = "cividis")
+```
 
 # Results
 
@@ -515,7 +702,7 @@ plot_RDA <- ggplot(data = t3scores, aes(x = RDA1, y = RDA2)) +
                   segment.color = "grey70") +
   theme_bw() +
   scale_colour_viridis_d(option = "cividis", end = 0.9) +
-  labs(x = "RDA1", y = "RDA2", title = "RDA Plot of Ecoregions and Species", 
+  labs(x = "RDA1", y = "RDA2", title = "Species-ecoregion associations", 
        colour = "Ecoregion") +
   theme(legend.position = "right", 
         legend.title = element_text(size = 10), 
@@ -540,57 +727,11 @@ ecoregion_group <- comm_matrix$ecoregion
 # Perform PERMANOVA
 permanova_result <- adonis2(comm_matrix_data ~ ecoregion_group, data = comm_matrix, method = "bray", permutations = 999)
 
-print(permanova_result)
 ```
 
-## Guilds
+## Species richness and functional diversity
 
-Activity patterns across nesting, dietary and migratory guilds are illustrated in @fig-spp-nesting onwards. A notable pattern emerges across all four guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion.
-
-```{r}
-#| warning: false
-#| echo: true
-#| eval: true
-#| message: false
-#| include: true
-#| label: tbl-guilds
-#| collapse: true
-#| code-fold: true
-#| tbl-cap: Guilds
-
-guilds <- read_csv("jasper_guilds.csv")
-
-guild_activity <- janp_main |>
-  filter(data_type %in% c("legacy", "single_visit_3_max", "single_visit_0_max")) |>
-  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
-  wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "unknown"), zerofill = T) |>
-  dplyr::select(location, recording_date_time, species_common_name, species_code, individual_count) |>
-  mutate(julian = lubridate::yday(recording_date_time),
-         month = month(recording_date_time),
-         year = factor(year(recording_date_time))) |>
-  inner_join(guilds, by = "species_code") |>
-  group_by(species_code) |>
-  add_tally() |>
-  ungroup() |>
-  group_by(julian, species_code) |>
-  add_tally() |>
-  ungroup() |>
-  arrange(species_code) |>
-  mutate(recording_date_time = as.POSIXct(recording_date_time)) |>
-  mutate(species_code = factor(species_code, levels = sort(unique(species_code)))) |>
-  inner_join(locs_summary, by = c("location" = "Location")) |>
-  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
-                               ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"))
-
-
-datatable(guilds, 
-          options = list(
-            searching = TRUE,  
-            paging = TRUE,    
-            pageLength = 10   
-          ))
-
-```
+Activity patterns across nesting, dietary and migratory guilds are illustrated in @fig-spp-nesting onwards. A notable pattern emerges across all four guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion. Species richness per location is at @fig-spp-rich-locs and Shannon's diversity index over years at @fig-shannon. Overall, both richness and diversity were stable across years. Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.
 
 ```{r}
 #| warning: false
@@ -684,8 +825,6 @@ ggplot(guild_activity, aes(x = julian, y = dietary_guild, fill = dietary_guild))
 
 ```
 
-Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.
-
 ```{r}
 #| warning: false
 #| echo: false
@@ -699,53 +838,6 @@ Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a cl
 #| cap-location: margin
 #| code-fold: true
 
-abund_sp <- janp_main %>%
-  group_by(location, year, species_code) %>%
-  summarise(abund = n(), .groups = "drop") %>%
-  pivot_wider(id_cols = c(location, year),
-              names_from  = species_code,
-              values_from = abund,
-              values_fill = 0)
-
-trait_df <- guilds %>%
-  dplyr::select(species_code, dietary_guild, habitat_guild, migratory_guild) %>%
-  distinct() %>%
-  column_to_rownames("species_code")
-
-trait_mat <- model.matrix(~ dietary_guild + habitat_guild + migratory_guild - 1,
-                          data = trait_df)
-
-a_mat <- abund_sp %>% dplyr::select(-location, -year) %>% as.matrix()
-
-common <- intersect(colnames(a_mat), rownames(trait_mat))
-a_mat2     <- a_mat[, common, drop = FALSE]
-trait_mat2 <- trait_mat[common, , drop = FALSE]
-
-nonzero   <- rowSums(a_mat2) > 0
-a_mat3    <- a_mat2[nonzero, , drop = FALSE]
-sites3    <- abund_sp[nonzero, c("location","year")]
-
-fd <- dbFD(x = trait_mat2, a = a_mat3, calc.FRic = TRUE, calc.CWM = FALSE, messages = FALSE)
-
-loc_year_rao <- sites3 %>%
-  mutate(RaoQ = fd$RaoQ)
-
-yearly_rao <- loc_year_rao %>%
-  group_by(year) %>%
-  summarise(meanRao = mean(RaoQ), .groups = "drop")
-
-mk        <- mmkh(yearly_rao$meanRao, ci = 0.95)
-lm_trend  <- lm(meanRao ~ year, data = yearly_rao)
-mix_trend <- lmer(RaoQ ~ year + (1|location), data = loc_year_rao)
-seg       <- segmented(lm(meanRao ~ year, data = yearly_rao), seg.Z = ~ year)
-
-yearly_rao <- yearly_rao |>
-  mutate(
-    lm_fit = predict(lm_trend, newdata = yearly_rao),
-    mix_fit = predict(mix_trend, newdata = yearly_rao, re.form = NA),
-    seg_fit = predict(seg, newdata = yearly_rao)
-  )
-
 ggplot(yearly_rao, aes(x = year, y = meanRao)) +
   geom_point(color = "#213b6e", size = 2) +  # Points for yearly Rao
   geom_line(aes(y = lm_fit, color = "Linear Model"), size = 1.2, linetype = "dashed") +
@@ -755,13 +847,11 @@ ggplot(yearly_rao, aes(x = year, y = meanRao)) +
                                 "Mixed Effects" = "#6c6e72", 
                                 "Segmented Trend" = "#d9c55c")) +  # Custom color mapping
   labs(
-    title = "Trends in Mean Rao's Q",
-    subtitle = "Linear Model, Mixed Effects, and Segmented Trends",
     x = "Year",
     y = "Mean Rao's Quadratic Entropy",
     color = "Trend Type"  # Legend title
   ) +
-  theme_minimal() +
+  theme_bw() +
   theme(
     plot.title = element_text(size = 16, face = "bold"),
     plot.subtitle = element_text(size = 12),
@@ -772,14 +862,16 @@ ggplot(yearly_rao, aes(x = year, y = meanRao)) +
 ```
 
 ```{r}
+#| warning: false
+#| message: false
+#| echo: false
+#| eval: false
+#| include: false
+#| code-fold: true
 
 res_raos_q
 
 ```
-
-## Species richness and diversity
-
-Species richness per location is at @fig-spp-rich-locs and Shannon's diversity index over years at @fig-shannon. Overall, both richness and diversity were stable across years.
 
 ```{r}
 #| warning: false
@@ -832,84 +924,108 @@ spp_rich_location |>
 #| cap-location: bottom
 #| code-fold: true
 
-shannon_d <- janp_main |> 
-  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
-  inner_join(wt_get_species() |> dplyr::select(species_code, species_class, species_order), by = "species_code") |>
-  dplyr::select(location, recording_date_time, species_code, species_common_name, individual_order, individual_count) |>
-  distinct() |>
-  group_by(location, recording_date_time, species_code, species_common_name) |>
-  summarise(count = max(individual_order)) |>
-  ungroup() |>
-  pivot_wider(names_from = species_code, values_from = count, values_fill = 0) |>
-  pivot_longer(cols = -(location:species_common_name), names_to = "species", values_to = "count") |>
-  group_by(location, year = year(recording_date_time), species) |>
-  summarise(total_count = sum(count)) |>
-  ungroup() |>
-  group_by(location, year) |>
-  summarise(shannon_index = diversity(total_count, index = "shannon")) |>
-  ungroup() |>
-  ggplot(aes(x = factor(year), y = shannon_index, fill = factor(year))) +
-  geom_boxplot() +
-  geom_point(alpha = 0.6, colour = "grey") +
-  labs(x = "Year",
-       y = "Shannon diversity index per location") +
-  theme_bw() +
-  guides(fill = guide_legend(title = "Year")) +
-  scale_fill_viridis_d(alpha = 0.8, option = "cividis")
-
 shannon_d
 ```
 
-## Abundance
+## Abundance trends
 
-Abundance trends.
+Modified Mann–Kendall trend analyses revealed distinct patterns in detection‐corrected abundance across ecoregions. Significant positive trends (τ ≈ 1, p < 0.001) were found for most species in the Montane and Alpine regions, indicating consistent increases over time. Species showing the strongest upward trends included Dark-eyed Junco (DEJU), Fox Sparrow (FOSP), Swainson’s Thrush (SWTH), White-crowned Sparrow (WCSP), and Red-breasted Nuthatch (RBNU), with Sen’s slopes ranging from 0.007 to 0.03. In contrast, several species exhibited significant declines in Montane sites—such as American Robin (AMRO), Chipping Sparrow (CHSP), Ruby-crowned Kinglet (RCKI), Orange-crowned Warbler (OCWA), and Yellow-rumped Warbler (YRWA)—suggesting region-specific decreases in abundance. Interestingly, some species (e.g., CHSP, HETH, YRWA) showed opposite trends between Alpine and Montane regions, implying possible elevational or habitat-related shifts. Using Mann–Kendall tests and Sen’s slope estimates, only a few species–ecoregion combinations exhibited notable trends exceeding ±2.5% per year. Specifically, AMPI (Alpine), HETH (Alpine), GCSP (Montane), and RBNU (Montane) showed increases greater than 2.5% annually, while all other species were categorized as stable under this threshold. The majority of species exhibited low-magnitude changes, indicating relative stability in abundance over the study period despite statistically significant monotonic trends in some cases. These results highlight that, while some species may be increasing locally, broad-scale temporal shifts in abundance are limited, suggesting overall community composition remains largely consistent across both Montane and Alpine ecoregions.
 
 ```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| code-fold: true
+#| fig-align: center
+#| fig-width: 10
+#| fig-cap: Estimated single-visit mean abundance trends per species and ecoregion
+#| label: fig-abundance-trends
+#| cap-location: bottom
 
-simp <- tot_a_filtered |> filter(species_code %in% mdm)
-all_lambda <- list()
-
-for(sp in mdm){
-  simp <- tot_a_filtered %>% filter(species_code == sp)
-  
-  if(nrow(simp) < 5) next
-  
-  fit <- svabu(individual_order ~ year + ecoregion | 1,
-               data = simp, mixture = "P")
-  
-  pred_grid <- expand.grid(year = unique(simp$year),
-                           ecoregion = unique(simp$ecoregion))
-  
-  pred_grid$lambda <- predict(fit, newdata = pred_grid, type = "response")
-  
-  lambda_year <- pred_grid %>%
-    group_by(year) %>%
-    summarise(lambda_hat = mean(lambda)) %>%
-    mutate(species_code = sp)
-  
-  all_lambda[[sp]] <- lambda_year
-}
-
-lambda_all <- bind_rows(all_lambda)
-
-ggplot() +
-  geom_point(data = tot_a_filtered %>% filter(species_code %in% mdm),
-             aes(x = year, y = individual_order), alpha = 0.3, color = "gray") +
-  geom_line(data = lambda_all, aes(x = year, y = lambda_hat), color = "blue", size = 1.1) +
-  facet_wrap(~ species_code, scales = "free_y") +
-  labs(x = "Year", y = "Estimated Abundance (λ̂)", title = "Detection-Corrected Abundance Trends") +
-  theme_bw()
+# Plot abundance trends
+ggplot(lambda_all, aes(x = year, y = lambda_hat, color = ecoregion)) +
+  geom_line(size = 1.1) +
+  facet_wrap(~species_code, scales = "free_y", ncol = 6) +
+  ylim(0, 3) +
+  labs(
+    x = "Year",
+    y = expression("Estimated Abundance (" * hat(lambda) * ")"),
+    title = "Detection-Corrected Abundance Trends by Ecoregion"
+  ) +
+  theme_bw() +
+  scale_colour_viridis_d(option = "cividis") +
+  theme(strip.text = element_text(size = 8))
 
 ```
 
 ```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| code-fold: true
 
-trend_results <- lambda_all %>%
+lambda_all %>%
   group_by(species_code) %>%
   summarise(
     mk_test = list(mmkh(lambda_hat))) |>
   ungroup() |>
   unnest_wider(mk_test) 
+
+```
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| results: hide
+#| code-fold: true
+#| fig-align: center
+#| fig-width: 10
+#| fig-cap: Abundance trends with thresholds
+#| label: fig-abundance-trends-thresholds
+#| cap-location: bottom
+
+mean_lambda <- lambda_all %>%
+  group_by(species_code, ecoregion) %>%
+  summarise(mean_lambda = mean(lambda_hat), .groups = "drop")
+
+trend_alls <- trend_all %>%
+  left_join(mean_lambda, by = c("species_code", "ecoregion")) %>%
+  mutate(
+    perc_change = sen_slope / mean_lambda * 100,
+    trend_flag = case_when(
+      perc_change >= 2.5 ~ "Increase > 2.5%",
+      perc_change <= -2.5 ~ "Decrease > 2.5%",
+      TRUE ~ "Stable"
+    )
+  )
+
+lambda_all_flagged <- lambda_all %>%
+  left_join(trend_alls %>% dplyr::select(species_code, ecoregion, trend_flag), 
+            by = c("species_code", "ecoregion"))
+
+# Plot
+ggplot(lambda_all_flagged, aes(x = year, y = lambda_hat, color = trend_flag)) +
+  geom_point(data = tot_a_filtered %>% filter(species_code %in% mdm),
+             aes(x = year, y = individual_order), alpha = 0.3, color = "gray") +
+  geom_line(size = 1.1) +
+  facet_grid(ecoregion ~ species_code, scales = "free_y") +
+  scale_color_manual(values = c("Increase > 2.5%" = "blue",
+                                "Decrease > 2.5%" = "red",
+                                "Stable" = "black")) +
+  labs(x = "Year", y = expression("Estimated Abundance ("*lambda*")"),
+       color = "Trend Category",
+       title = "Detection-Corrected Abundance Trends with ±2.5% Threshold") +
+  theme_bw() +
+  theme(legend.position = "bottom")
 
 ```
 
