@@ -467,7 +467,7 @@ for (sp in unique(tot_abundance$species_code)) {
     
     if (nrow(simp) < 5) next
     
-    fit <- svabu(individual_order ~ year | year + julian, data = simp)
+    fit <- svabu(individual_order ~ year | year + julian + hour, data = simp)
 
     mean_julian <- mean(simp$julian, na.rm = TRUE)
     
@@ -1018,7 +1018,7 @@ lambda_all_flagged <- lambda_all %>%
 arrange(species_code, year)
 
 # Plot
-ggplot(lambda_all_flagged, aes(x = year, y = lambda_hat, color = trend_flag)) +
+ggplot(lambda_all_flagged |> filter(ecoregion == "Alpine"), aes(x = year, y = lambda_hat, colour = trend_flag)) +
   geom_point(data = tot_a_filtered %>% filter(species_code %in% mdm),
              aes(x = year, y = individual_order), alpha = 0.3, color = "gray") +
   geom_smooth(method = "lm", se = TRUE, size = 1.1) +  # straight line with confidence interval
