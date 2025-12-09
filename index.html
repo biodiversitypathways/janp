@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Alex MacPhail">
 <meta name="author" content="Brenda Shepherd">
 <meta name="author" content="Nina Veselka">
-<meta name="dcterms.date" content="2025-10-07">
+<meta name="dcterms.date" content="2025-12-09">
 
 <title>Report on the use of passive acoustic monitoring for analysis of bird trends in Jasper National Park</title>
 <style>
@@ -85,14 +85,15 @@ div.csl-indent {
 <script src="janp_files/libs/clipboard/clipboard.min.js"></script>
 <script src="janp_files/libs/quarto-html/quarto.js" type="module"></script>
 <script src="janp_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="janp_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="janp_files/libs/quarto-html/popper.min.js"></script>
 <script src="janp_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="janp_files/libs/quarto-html/anchor.min.js"></script>
 <link href="janp_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="janp_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="janp_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="janp_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="janp_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="janp_files/libs/bootstrap/bootstrap-9685baf95270990545aa8132dc0803a2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="janp_files/libs/bootstrap/bootstrap-d9ee3e7c13397ee64e8144b167ea800e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="janp_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
 <script src="janp_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 <script src="janp_files/libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -197,7 +198,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 7, 2025</p>
+      <p class="date">December 9, 2025</p>
     </div>
   </div>
   
@@ -218,7 +219,7 @@ div.csl-indent {
 <h1>Abstract</h1>
 <p>Since 2007, Jasper National Park has conducted passive acoustic monitoring as part of its ecological integrity monitoring program. The 17 years of data were analyzed to identify trends and extract insights that inform ongoing monitoring and strengthen future species monitoring practices. The analysis assessed whether species and guild abundances shifted by ±2.5% in the alpine and montane ecoregions. Data were managed and processed in WildTrax, combining and harmonizing legacy datasets from multiple methodologies. Sampling locations were tested for independence, and trend analyses quantified changes in species counts over time across guilds and ecoregions.</p>
 <div class="callout callout-style-default callout-note callout-titled" style="background-color: #f4f4f4; padding: 20px;">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -271,14 +272,14 @@ Figure&nbsp;1: Locations from Jasper National Park ARU Monitoring Program. Inclu
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(locs_summary, </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(locs_summary, </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">options =</span> <span class="fu">list</span>(</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">searching =</span> <span class="cn">TRUE</span>,  </span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">paging =</span> <span class="cn">TRUE</span>,    </span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">pageLength =</span> <span class="dv">10</span>   </span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>          )) <span class="sc">|&gt;</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(<span class="at">columns =</span> <span class="fu">colnames</span>(locs_summary), </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">backgroundColor =</span> <span class="fu">styleEqual</span>(<span class="fu">c</span>(<span class="st">"NA"</span>), <span class="st">"lightgray"</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">backgroundColor =</span> <span class="fu">styleEqual</span>(<span class="fu">c</span>(<span class="st">"NA"</span>), <span class="st">"lightgray"</span>))  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-loc-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -301,7 +302,7 @@ Table&nbsp;1: Locations surveyed across years. Ones indicated a deployment in th
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>transcription_table <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>transcription_table <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Years =</span> <span class="fu">c</span>(<span class="st">"2007-2020"</span>, <span class="st">"2021-2022"</span>, <span class="st">"2023-2024"</span>, <span class="st">"2007-2011"</span>),</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">Transcription Method</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0-3.33, 3.33-6.66, 6.66-10 min"</span>,</span>
@@ -348,7 +349,7 @@ Table&nbsp;1: Locations surveyed across years. Ones indicated a deployment in th
 <span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>            <span class="at">pageLength =</span> <span class="dv">10</span>   </span>
 <span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>          )) <span class="sc">|&gt;</span></span>
 <span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(<span class="at">columns =</span> <span class="fu">colnames</span>(transcription_table), </span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>              <span class="at">backgroundColor =</span> <span class="fu">styleEqual</span>(<span class="fu">c</span>(<span class="st">"NA"</span>), <span class="st">"lightgray"</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>              <span class="at">backgroundColor =</span> <span class="fu">styleEqual</span>(<span class="fu">c</span>(<span class="st">"NA"</span>), <span class="st">"lightgray"</span>))  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-transcriptions" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -412,7 +413,7 @@ Figure&nbsp;3: Visit photos at CAVELL-3
 <section id="analyses" class="level2">
 <h2 class="anchored" data-anchor-id="analyses">Analyses</h2>
 <div class="callout callout-style-default callout-note callout-titled" style="background-color: #f4f4f4; padding: 20px;">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -443,7 +444,7 @@ Note
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>all_lambda <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>all_lambda <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>trend_summary <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>tot_abundance <span class="ot">&lt;-</span> tot_a_filtered <span class="sc">|&gt;</span></span>
@@ -459,7 +460,7 @@ Note
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">nrow</span>(simp) <span class="sc">&lt;</span> <span class="dv">5</span>) <span class="cf">next</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">svabu</span>(individual_order <span class="sc">~</span> year <span class="sc">|</span> year <span class="sc">+</span> julian, <span class="at">data =</span> simp)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">svabu</span>(individual_order <span class="sc">~</span> year <span class="sc">|</span> year <span class="sc">+</span> julian <span class="sc">+</span> hour, <span class="at">data =</span> simp)</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    mean_julian <span class="ot">&lt;-</span> <span class="fu">mean</span>(simp<span class="sc">$</span>julian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -499,13 +500,13 @@ Note
 <span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>      perc_change <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fl">2.5</span> <span class="sc">~</span> <span class="st">"Decrease &gt; 2.5%"</span>,</span>
 <span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"Stable"</span></span>
 <span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>guilds <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"jasper_guilds.csv"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>guilds <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"jasper_guilds.csv"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>guild_activity <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(data_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"legacy"</span>, <span class="st">"single_visit_3_max"</span>, <span class="st">"single_visit_0_max"</span>)) <span class="sc">|&gt;</span></span>
@@ -534,7 +535,7 @@ Note
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">searching =</span> <span class="cn">TRUE</span>,  </span>
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">paging =</span> <span class="cn">TRUE</span>,    </span>
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>            <span class="at">pageLength =</span> <span class="dv">10</span>   </span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>          ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>          ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-guilds" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -553,7 +554,7 @@ Table&nbsp;5: Guilds
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>shannon_d <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>shannon_d <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span> </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>,<span class="st">"amphibian"</span>,<span class="st">"abiotic"</span>,<span class="st">"insect"</span>,<span class="st">"unknown"</span>), <span class="at">zerofill =</span> F) <span class="sc">|&gt;</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(<span class="fu">wt_get_species</span>() <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(species_code, species_class, species_order), <span class="at">by =</span> <span class="st">"species_code"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(location, recording_date_time, species_code, species_common_name, individual_order, individual_count) <span class="sc">|&gt;</span></span>
@@ -576,7 +577,7 @@ Table&nbsp;5: Guilds
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Shannon diversity index per location"</span>) <span class="sc">+</span></span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">title =</span> <span class="st">"Year"</span>)) <span class="sc">+</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">option =</span> <span class="st">"cividis"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">option =</span> <span class="st">"cividis"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </section>
@@ -585,7 +586,7 @@ Table&nbsp;5: Guilds
 <section id="results" class="level1 page-columns page-full">
 <h1>Results</h1>
 <div class="callout callout-style-default callout-note callout-titled" style="background-color: #f4f4f4; padding: 20px;">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -623,7 +624,7 @@ Figure&nbsp;4
 <p>Activity patterns across nesting, dietary and migratory guilds are illustrated in <strong>?@fig-spp-nesting</strong> onwards. A notable pattern emerges across all four guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion. Species richness per location is at <a href="#fig-spp-rich-locs" class="quarto-xref">Figure&nbsp;10</a> and Shannon’s diversity index over years at <a href="#fig-shannon" class="quarto-xref">Figure&nbsp;11</a>. Overall, both richness and diversity were stable across years. Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (<a href="#fig-raos-q" class="quarto-xref">Figure&nbsp;9</a>). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.</p>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-nesting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-nesting-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -637,7 +638,7 @@ Figure&nbsp;5: Seasonal detection activity of by nesting guild and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-migratory" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-migratory" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-migratory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-migratory-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -651,7 +652,7 @@ Figure&nbsp;6: Seasonal detection activity of by migratory guild and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-trait" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-trait" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-trait-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-trait-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -665,7 +666,7 @@ Figure&nbsp;7: Seasonal detection activity of by trait and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-dietary" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-spp-activity-dietary" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-spp-activity-dietary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-activity-dietary-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -679,7 +680,7 @@ Figure&nbsp;8: Seasonal detection activity of by dietary guild and ecoregion
 </div>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
-<div id="fig-raos-q" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
+<div id="fig-raos-q" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-fig-align="center" data-cap-location="margin">
 <figure class="quarto-float quarto-float-fig figure page-columns page-full">
 <div aria-describedby="fig-raos-q-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-raos-q-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -694,7 +695,7 @@ Figure&nbsp;9: Mean functional diversity (Rao’s Q) over time
 <div class="cell" data-layout-align="center" data-cap-location="bottom">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>spp_rich_location <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>spp_rich_location <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(data_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"legacy"</span>,<span class="st">"single_visit_3_max"</span>,<span class="st">"single_visit_0_max"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(data_type <span class="sc">==</span> <span class="st">"single_visit_0_max"</span> <span class="sc">&amp;</span> year <span class="sc">&lt;</span> <span class="dv">2023</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>,<span class="st">"amphibian"</span>,<span class="st">"abiotic"</span>,<span class="st">"insect"</span>,<span class="st">"unknown"</span>), <span class="at">zerofill =</span> F) <span class="sc">|&gt;</span></span>
@@ -716,10 +717,10 @@ Figure&nbsp;9: Mean functional diversity (Rao’s Q) over time
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>ecoregion) <span class="sc">+</span></span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">option =</span> <span class="st">"cividis"</span>) <span class="sc">+</span></span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">'Year'</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">'Species richness per location'</span>) <span class="sc">+</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spp-rich-locs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-spp-rich-locs-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -734,10 +735,10 @@ Figure&nbsp;10: Species richness by year
 <div class="cell" data-layout-align="center" data-cap-location="bottom">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>shannon_d</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>shannon_d</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shannon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-shannon-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
@@ -755,7 +756,7 @@ Figure&nbsp;11: Shannon diversity index over years
 <div class="cell" data-layout-align="center" data-cap-location="bottom">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot abundance trends</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot abundance trends</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lambda_all, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> lambda_hat, <span class="at">color =</span> ecoregion)) <span class="sc">+</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>species_code, <span class="at">scales =</span> <span class="st">"free_y"</span>, <span class="at">ncol =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
@@ -767,10 +768,10 @@ Figure&nbsp;11: Shannon diversity index over years
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_d</span>(<span class="at">option =</span> <span class="st">"cividis"</span>) <span class="sc">+</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-abundance-trends" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-abundance-trends" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-abundance-trends-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-abundance-trends-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
@@ -785,18 +786,18 @@ Figure&nbsp;12: Estimated single-visit mean abundance trends per species and eco
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>lambda_all <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>lambda_all <span class="sc">%&gt;%</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species_code) <span class="sc">%&gt;%</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mk_test =</span> <span class="fu">list</span>(<span class="fu">mmkh</span>(lambda_hat))) <span class="sc">|&gt;</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(mk_test) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(mk_test) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell" data-layout-align="center" data-cap-location="bottom">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mean_lambda <span class="ot">&lt;-</span> lambda_all <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" data-cap-location="bottom"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mean_lambda <span class="ot">&lt;-</span> lambda_all <span class="sc">%&gt;%</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species_code, ecoregion) <span class="sc">%&gt;%</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_lambda =</span> <span class="fu">mean</span>(lambda_hat), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -817,7 +818,7 @@ Figure&nbsp;12: Estimated single-visit mean abundance trends per species and eco
 <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(species_code, year)</span>
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lambda_all_flagged, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> lambda_hat, <span class="at">color =</span> trend_flag)) <span class="sc">+</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lambda_all_flagged <span class="sc">|&gt;</span> <span class="fu">filter</span>(ecoregion <span class="sc">==</span> <span class="st">"Alpine"</span>), <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> lambda_hat, <span class="at">colour =</span> trend_flag)) <span class="sc">+</span></span>
 <span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> tot_a_filtered <span class="sc">%&gt;%</span> <span class="fu">filter</span>(species_code <span class="sc">%in%</span> mdm),</span>
 <span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> individual_order), <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">color =</span> <span class="st">"gray"</span>) <span class="sc">+</span></span>
 <span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="fl">1.1</span>) <span class="sc">+</span>  <span class="co"># straight line with confidence interval</span></span>
@@ -829,10 +830,10 @@ Figure&nbsp;12: Estimated single-visit mean abundance trends per species and eco
 <span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Trend Category"</span>,</span>
 <span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Detection-Corrected Abundance Trends with ±2.5% Threshold"</span>) <span class="sc">+</span></span>
 <span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-abundance-trends-thresholds" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
+<div id="fig-abundance-trends-thresholds" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-abundance-trends-thresholds-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="janp_files/figure-html/fig-abundance-trends-thresholds-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960">
@@ -1091,13 +1092,14 @@ Ware, Lena, C. Lisa Mahon, Logan McLeod, and Jean-François Jetté. 2023. <span>
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
