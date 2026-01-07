@@ -953,6 +953,7 @@ shannon_d
 
 # 1. Summarize per site-visit using max()
 janp_trend <- janp_main |>
+  filter(ecoregion %in% c("Alpine")) |>
   mutate(year = year(recording_date_time),
          hour = hour(recording_date_time),
          julian = yday(recording_date_time)) |>
@@ -966,7 +967,7 @@ base_zero <- janp_trend |>
   distinct()
 
 yrwa <- janp_trend |>
-  filter(species_code == "FOSP") |>
+    filter(species_code == "RCKI") |>
   group_by(location, ecoregion, recording_date_time, observer) |>
   summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
   ungroup()
@@ -1011,8 +1012,93 @@ trend_class <- dplyr::case_when(
   TRUE               ~ "Stable"
 )
 
-trend_result <- tibble(
-  species_code = "FOSP",
+trend_result_rcki_alpine <- tibble(
+  species_code = "RCKI",
+  ecoregion = "Alpine",
+  tau          = tau,
+  p_value      = p_value,
+  sen_slope    = sen_slope,
+  pct_change   = pct_change,
+  trend        = trend_class
+)
+```
+
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+#| message: false
+#| include: true
+#| results: hide
+#| code-fold: true
+
+# Trend
+
+# 1. Summarize per site-visit using max()
+janp_trend <- janp_main |>
+  filter(ecoregion %in% c("Montane", "Upper Subalpine", "Lower Subalpine")) |>
+  mutate(year = year(recording_date_time),
+         hour = hour(recording_date_time),
+         julian = yday(recording_date_time)) |>
+  dplyr::select(organization, project_id, longitude, latitude, location, location_id, task_id, ecoregion, recording_date_time, observer, species_code, individual_order, abundance, detection_time) |>
+  distinct() |>
+  wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "human", "unknown"), zerofill = T) 
+
+# 2. Combine with zero sites
+base_zero <- janp_trend |>
+  dplyr::select(location, ecoregion, recording_date_time, observer) |>
+  distinct()
+
+yrwa <- janp_trend |>
+  filter(species_code == "RCKI") |>
+  group_by(location, ecoregion, recording_date_time, observer) |>
+  summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
+  ungroup()
+
+jpt <- base_zero |>
+  left_join(yrwa,
+            by = c("location", "ecoregion", "recording_date_time", "observer")) |>
+  mutate(individual_order = tidyr::replace_na(individual_order, 0)) |>
+  mutate(year = year(recording_date_time),
+         hour = hour(recording_date_time),
+         julian = yday(recording_date_time)) |>
+  filter(!is.infinite(individual_order))
+
+# 3. Fit svabu: year only in abundance component
+fit <- svabu(individual_order ~ year | julian + hour, data = jpt)
+
+# 4. Standardize detection
+ref_vals <- jpt %>%
+  summarise(
+    julian = mean(julian, na.rm = TRUE),
+    hour   = mean(hour,   na.rm = TRUE)
+  )
+
+jpt$lambda_hat <- predict(fit, newdata = jpt %>% mutate(julian = ref_vals$julian, hour = ref_vals$hour), type = "response")
+
+# 5. Aggregate to annual index
+lambda_year <- jpt %>%
+  group_by(year) %>%
+  summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE), .groups = "drop") %>%
+  arrange(year)
+
+# 6. Run Mann-Kendall + Sen's slope
+x <- lambda_year$lambda_hat
+mk <- mmkh(x)
+tau       <- mk[6]
+sen_slope <- mk[7]
+p_value   <- mk[2]
+pct_change <- mk[["Sen's slope"]] / mean(x) * 100
+trend_class <- dplyr::case_when(
+  pct_change >  2.5  ~ "Increasing",
+  pct_change < -2.5  ~ "Decreasing",
+  TRUE               ~ "Stable"
+)
+
+trend_result_rcki_forested <- tibble(
+  species_code = "RCKI",
+  ecoregion = "Forested",
   tau          = tau,
   p_value      = p_value,
   sen_slope    = sen_slope,
@@ -1029,6 +1115,20 @@ trend_result <- tibble(
 #| include: true
 #| results: hide
 #| code-fold: true
+
+trendz <- bind_rows(
+  trend_result_vath_alpine, trend_result_vath_forested,
+  trend_result_deju_alpine, trend_result_deju_forested,
+  trend_result_heth_alpine, trend_result_heth_forested,
+  trend_result_fosp_alpine, trend_result_fosp_forested,
+  trend_result_chsp_alpine, trend_result_chsp_forested,
+  trend_result_yrwa_alpine, trend_result_yrwa_forested,
+  trend_result_swth_alpine, trend_result_swth_forested,
+  trend_result_amro_alpine, trend_result_amro_forested,
+  trend_result_pisi_alpine, trend_result_pisi_forested,
+  trend_result_rcki_alpine, trend_result_rcki_forested
+)
+
 
 # 7. Plot results
 ggplot(lambda_year, aes(x = year, y = lambda_hat)) +
@@ -1052,7 +1152,7 @@ ggplot(lambda_year, aes(x = year, y = lambda_hat)) +
 
 #trend_h <- bind_rows(trend_result, trend_g)
 
-kable(trend_h)
+kable(trendz)
 
 ```
 
@@ -1064,9 +1164,31 @@ kable(trend_h)
 #| include: true
 #| code-fold: true
 
-trend_h |>
-  summarise(percent_decline = mean(trend == "Decreasing") * 100) |>
-  pull(percent_decline)
+trend_guild <- trendz |>
+  inner_join(guilds, by = "species_code")
+  
+kable(trend_guild %>%
+  group_by(ecoregion) %>%
+  summarise(
+    total_species = n_distinct(species_code),
+    declining_species = n_distinct(species_code[pct_change <= -2.5]),
+    percent_declining = declining_species / total_species * 100
+  ))
+
+kable(trend_guild %>%
+  group_by(ecoregion, habitat_guild) %>%   # or another guild column if desired
+  summarise(
+    total_guild_species = n_distinct(species_code),
+    declining_guild_species = n_distinct(species_code[pct_change <= -2.5]),
+    percent_declining = declining_guild_species / total_guild_species * 100
+  ) %>%
+  ungroup() %>%
+  group_by(ecoregion) %>%
+  summarise(
+    total_guilds = n_distinct(habitat_guild),
+    guilds_with_decline = sum(percent_declining > 0),
+    percent_guilds_declining = guilds_with_decline / total_guilds * 100
+  ))
 
 ```
 
