@@ -701,101 +701,204 @@ Figure&nbsp;11: Shannon diversity index over years
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Summarize per site-visit using max()</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>janp_trend <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">hour =</span> <span class="fu">hour</span>(recording_date_time),</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">julian =</span> <span class="fu">yday</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(organization, project_id, longitude, latitude, location, location_id, task_id, ecoregion, recording_date_time, observer, species_code, individual_order, abundance, detection_time) <span class="sc">|&gt;</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>, <span class="st">"amphibian"</span>, <span class="st">"abiotic"</span>, <span class="st">"insect"</span>, <span class="st">"human"</span>, <span class="st">"unknown"</span>), <span class="at">zerofill =</span> T) </span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Combine with zero sites</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>base_zero <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(location, ecoregion, recording_date_time, observer) <span class="sc">|&gt;</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>yrwa <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(species_code <span class="sc">==</span> <span class="st">"FOSP"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, ecoregion, recording_date_time, observer) <span class="sc">|&gt;</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">individual_order =</span> <span class="fu">max</span>(individual_order, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>jpt <span class="ot">&lt;-</span> base_zero <span class="sc">|&gt;</span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(yrwa,</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"location"</span>, <span class="st">"ecoregion"</span>, <span class="st">"recording_date_time"</span>, <span class="st">"observer"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">individual_order =</span> tidyr<span class="sc">::</span><span class="fu">replace_na</span>(individual_order, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time),</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>         <span class="at">hour =</span> <span class="fu">hour</span>(recording_date_time),</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>         <span class="at">julian =</span> <span class="fu">yday</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.infinite</span>(individual_order))</span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Fit svabu: year only in abundance component</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">svabu</span>(individual_order <span class="sc">~</span> year <span class="sc">|</span> julian <span class="sc">+</span> hour, <span class="at">data =</span> jpt)</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Standardize detection</span></span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>ref_vals <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">julian =</span> <span class="fu">mean</span>(julian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">hour   =</span> <span class="fu">mean</span>(hour,   <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>jpt<span class="sc">$</span>lambda_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">newdata =</span> jpt <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">julian =</span> ref_vals<span class="sc">$</span>julian, <span class="at">hour =</span> ref_vals<span class="sc">$</span>hour), <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Aggregate to annual index</span></span>
-<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>lambda_year <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">lambda_hat =</span> <span class="fu">mean</span>(lambda_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year)</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Run Mann-Kendall + Sen's slope</span></span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> lambda_year<span class="sc">$</span>lambda_hat</span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>mk <span class="ot">&lt;-</span> <span class="fu">mmkh</span>(x)</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>tau       <span class="ot">&lt;-</span> mk[<span class="dv">6</span>]</span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>sen_slope <span class="ot">&lt;-</span> mk[<span class="dv">7</span>]</span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>p_value   <span class="ot">&lt;-</span> mk[<span class="dv">2</span>]</span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>pct_change <span class="ot">&lt;-</span> mk[[<span class="st">"Sen's slope"</span>]] <span class="sc">/</span> <span class="fu">mean</span>(x) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>trend_class <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>  pct_change <span class="sc">&gt;</span>  <span class="fl">2.5</span>  <span class="sc">~</span> <span class="st">"Increasing"</span>,</span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>  pct_change <span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">2.5</span>  <span class="sc">~</span> <span class="st">"Decreasing"</span>,</span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span>               <span class="sc">~</span> <span class="st">"Stable"</span></span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>trend_result <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>  <span class="at">species_code =</span> <span class="st">"FOSP"</span>,</span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau          =</span> tau,</span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_value      =</span> p_value,</span>
-<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">sen_slope    =</span> sen_slope,</span>
-<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">pct_change   =</span> pct_change,</span>
-<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">trend        =</span> trend_class</span>
-<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ecoregion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Alpine"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">hour =</span> <span class="fu">hour</span>(recording_date_time),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">julian =</span> <span class="fu">yday</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(organization, project_id, longitude, latitude, location, location_id, task_id, ecoregion, recording_date_time, observer, species_code, individual_order, abundance, detection_time) <span class="sc">|&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>, <span class="st">"amphibian"</span>, <span class="st">"abiotic"</span>, <span class="st">"insect"</span>, <span class="st">"human"</span>, <span class="st">"unknown"</span>), <span class="at">zerofill =</span> T) </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Combine with zero sites</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>base_zero <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(location, ecoregion, recording_date_time, observer) <span class="sc">|&gt;</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>yrwa <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(species_code <span class="sc">==</span> <span class="st">"RCKI"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, ecoregion, recording_date_time, observer) <span class="sc">|&gt;</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">individual_order =</span> <span class="fu">max</span>(individual_order, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>jpt <span class="ot">&lt;-</span> base_zero <span class="sc">|&gt;</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(yrwa,</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"location"</span>, <span class="st">"ecoregion"</span>, <span class="st">"recording_date_time"</span>, <span class="st">"observer"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">individual_order =</span> tidyr<span class="sc">::</span><span class="fu">replace_na</span>(individual_order, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time),</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>         <span class="at">hour =</span> <span class="fu">hour</span>(recording_date_time),</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>         <span class="at">julian =</span> <span class="fu">yday</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.infinite</span>(individual_order))</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Fit svabu: year only in abundance component</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">svabu</span>(individual_order <span class="sc">~</span> year <span class="sc">|</span> julian <span class="sc">+</span> hour, <span class="at">data =</span> jpt)</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Standardize detection</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>ref_vals <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">julian =</span> <span class="fu">mean</span>(julian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">hour   =</span> <span class="fu">mean</span>(hour,   <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>jpt<span class="sc">$</span>lambda_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">newdata =</span> jpt <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">julian =</span> ref_vals<span class="sc">$</span>julian, <span class="at">hour =</span> ref_vals<span class="sc">$</span>hour), <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Aggregate to annual index</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>lambda_year <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">lambda_hat =</span> <span class="fu">mean</span>(lambda_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year)</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Run Mann-Kendall + Sen's slope</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> lambda_year<span class="sc">$</span>lambda_hat</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>mk <span class="ot">&lt;-</span> <span class="fu">mmkh</span>(x)</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>tau       <span class="ot">&lt;-</span> mk[<span class="dv">6</span>]</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>sen_slope <span class="ot">&lt;-</span> mk[<span class="dv">7</span>]</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>p_value   <span class="ot">&lt;-</span> mk[<span class="dv">2</span>]</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>pct_change <span class="ot">&lt;-</span> mk[[<span class="st">"Sen's slope"</span>]] <span class="sc">/</span> <span class="fu">mean</span>(x) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>trend_class <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>  pct_change <span class="sc">&gt;</span>  <span class="fl">2.5</span>  <span class="sc">~</span> <span class="st">"Increasing"</span>,</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>  pct_change <span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">2.5</span>  <span class="sc">~</span> <span class="st">"Decreasing"</span>,</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span>               <span class="sc">~</span> <span class="st">"Stable"</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>trend_result_rcki_alpine <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">species_code =</span> <span class="st">"RCKI"</span>,</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">ecoregion =</span> <span class="st">"Alpine"</span>,</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau          =</span> tau,</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_value      =</span> p_value,</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">sen_slope    =</span> sen_slope,</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">pct_change   =</span> pct_change,</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">trend        =</span> trend_class</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. Plot results</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lambda_year, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> lambda_hat)) <span class="sc">+</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">group =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Detection-corrected abundance trend"</span>,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Annual abundance index trend"</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Trend</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Summarize per site-visit using max()</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>janp_trend <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ecoregion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Montane"</span>, <span class="st">"Upper Subalpine"</span>, <span class="st">"Lower Subalpine"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">hour =</span> <span class="fu">hour</span>(recording_date_time),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">julian =</span> <span class="fu">yday</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(organization, project_id, longitude, latitude, location, location_id, task_id, ecoregion, recording_date_time, observer, species_code, individual_order, abundance, detection_time) <span class="sc">|&gt;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>, <span class="st">"amphibian"</span>, <span class="st">"abiotic"</span>, <span class="st">"insect"</span>, <span class="st">"human"</span>, <span class="st">"unknown"</span>), <span class="at">zerofill =</span> T) </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Combine with zero sites</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>base_zero <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(location, ecoregion, recording_date_time, observer) <span class="sc">|&gt;</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>yrwa <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(species_code <span class="sc">==</span> <span class="st">"RCKI"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(location, ecoregion, recording_date_time, observer) <span class="sc">|&gt;</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">individual_order =</span> <span class="fu">max</span>(individual_order, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>jpt <span class="ot">&lt;-</span> base_zero <span class="sc">|&gt;</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(yrwa,</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"location"</span>, <span class="st">"ecoregion"</span>, <span class="st">"recording_date_time"</span>, <span class="st">"observer"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">individual_order =</span> tidyr<span class="sc">::</span><span class="fu">replace_na</span>(individual_order, <span class="dv">0</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time),</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>         <span class="at">hour =</span> <span class="fu">hour</span>(recording_date_time),</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>         <span class="at">julian =</span> <span class="fu">yday</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.infinite</span>(individual_order))</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Fit svabu: year only in abundance component</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">svabu</span>(individual_order <span class="sc">~</span> year <span class="sc">|</span> julian <span class="sc">+</span> hour, <span class="at">data =</span> jpt)</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Standardize detection</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>ref_vals <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">julian =</span> <span class="fu">mean</span>(julian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">hour   =</span> <span class="fu">mean</span>(hour,   <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>jpt<span class="sc">$</span>lambda_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">newdata =</span> jpt <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">julian =</span> ref_vals<span class="sc">$</span>julian, <span class="at">hour =</span> ref_vals<span class="sc">$</span>hour), <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Aggregate to annual index</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>lambda_year <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">lambda_hat =</span> <span class="fu">mean</span>(lambda_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year)</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. Run Mann-Kendall + Sen's slope</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> lambda_year<span class="sc">$</span>lambda_hat</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>mk <span class="ot">&lt;-</span> <span class="fu">mmkh</span>(x)</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>tau       <span class="ot">&lt;-</span> mk[<span class="dv">6</span>]</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>sen_slope <span class="ot">&lt;-</span> mk[<span class="dv">7</span>]</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>p_value   <span class="ot">&lt;-</span> mk[<span class="dv">2</span>]</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>pct_change <span class="ot">&lt;-</span> mk[[<span class="st">"Sen's slope"</span>]] <span class="sc">/</span> <span class="fu">mean</span>(x) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>trend_class <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>  pct_change <span class="sc">&gt;</span>  <span class="fl">2.5</span>  <span class="sc">~</span> <span class="st">"Increasing"</span>,</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>  pct_change <span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">2.5</span>  <span class="sc">~</span> <span class="st">"Decreasing"</span>,</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span>               <span class="sc">~</span> <span class="st">"Stable"</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>trend_result_rcki_forested <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>  <span class="at">species_code =</span> <span class="st">"RCKI"</span>,</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>  <span class="at">ecoregion =</span> <span class="st">"Forested"</span>,</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>  <span class="at">tau          =</span> tau,</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>  <span class="at">p_value      =</span> p_value,</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>  <span class="at">sen_slope    =</span> sen_slope,</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">pct_change   =</span> pct_change,</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">trend        =</span> trend_class</span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#trend_h &lt;- bind_rows(trend_result, trend_g)</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(trend_h)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>trendz <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  trend_result_vath_alpine, trend_result_vath_forested,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  trend_result_deju_alpine, trend_result_deju_forested,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  trend_result_heth_alpine, trend_result_heth_forested,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  trend_result_fosp_alpine, trend_result_fosp_forested,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  trend_result_chsp_alpine, trend_result_chsp_forested,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  trend_result_yrwa_alpine, trend_result_yrwa_forested,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  trend_result_swth_alpine, trend_result_swth_forested,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  trend_result_amro_alpine, trend_result_amro_forested,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  trend_result_pisi_alpine, trend_result_pisi_forested,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  trend_result_rcki_alpine, trend_result_rcki_forested</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. Plot results</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lambda_year, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> lambda_hat)) <span class="sc">+</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">group =</span> <span class="dv">1</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year"</span>,</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Detection-corrected abundance trend"</span>,</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Annual abundance index trend"</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#trend_h &lt;- bind_rows(trend_result, trend_g)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(trendz)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 14%">
+<col style="width: 5%">
+<col style="width: 14%">
+<col style="width: 15%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">species_code</th>
+<th style="text-align: left;">ecoregion</th>
 <th style="text-align: right;">tau</th>
 <th style="text-align: right;">p_value</th>
 <th style="text-align: right;">sen_slope</th>
@@ -805,76 +908,184 @@ Figure&nbsp;11: Shannon diversity index over years
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">FOSP</td>
+<td style="text-align: left;">VATH</td>
+<td style="text-align: left;">Alpine</td>
 <td style="text-align: right;">1</td>
-<td style="text-align: right;">0.0002241</td>
-<td style="text-align: right;">0.0545848</td>
-<td style="text-align: right;">6.7411847</td>
+<td style="text-align: right;">0.0002189</td>
+<td style="text-align: right;">0.0208340</td>
+<td style="text-align: right;">4.4303227</td>
 <td style="text-align: left;">Increasing</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">HETH</td>
+<td style="text-align: left;">VATH</td>
+<td style="text-align: left;">Forested</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">0.0002189</td>
-<td style="text-align: right;">0.0084262</td>
-<td style="text-align: right;">0.1086198</td>
+<td style="text-align: right;">0.0227688</td>
+<td style="text-align: right;">2.1567867</td>
 <td style="text-align: left;">Stable</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">DEJU</td>
-<td style="text-align: right;">-1</td>
+<td style="text-align: left;">Alpine</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">0.0002189</td>
-<td style="text-align: right;">-0.0098083</td>
-<td style="text-align: right;">-1.8296858</td>
+<td style="text-align: right;">0.0033337</td>
+<td style="text-align: right;">1.0880654</td>
 <td style="text-align: left;">Stable</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">VATH</td>
+<td style="text-align: left;">DEJU</td>
+<td style="text-align: left;">Forested</td>
+<td style="text-align: right;">-1</td>
+<td style="text-align: right;">0.0002189</td>
+<td style="text-align: right;">-0.0183039</td>
+<td style="text-align: right;">-3.2865835</td>
+<td style="text-align: left;">Decreasing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HETH</td>
+<td style="text-align: left;">Alpine</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">0.0002189</td>
-<td style="text-align: right;">0.0157061</td>
-<td style="text-align: right;">1.6246928</td>
+<td style="text-align: right;">0.0161012</td>
+<td style="text-align: right;">1.9345571</td>
+<td style="text-align: left;">Stable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HETH</td>
+<td style="text-align: left;">Forested</td>
+<td style="text-align: right;">-1</td>
+<td style="text-align: right;">0.0002189</td>
+<td style="text-align: right;">-0.0056717</td>
+<td style="text-align: right;">-0.6691111</td>
 <td style="text-align: left;">Stable</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">PISI</td>
-<td style="text-align: right;">-1</td>
+<td style="text-align: left;">FOSP</td>
+<td style="text-align: left;">Alpine</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.0002291</td>
+<td style="text-align: right;">0.0605256</td>
+<td style="text-align: right;">6.9146730</td>
+<td style="text-align: left;">Increasing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">FOSP</td>
+<td style="text-align: left;">Forested</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">0.0002189</td>
-<td style="text-align: right;">-0.0104217</td>
-<td style="text-align: right;">-0.8371855</td>
+<td style="text-align: right;">0.0305743</td>
+<td style="text-align: right;">5.6502036</td>
+<td style="text-align: left;">Increasing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CHSP</td>
+<td style="text-align: left;">Alpine</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.0002175</td>
+<td style="text-align: right;">0.0413600</td>
+<td style="text-align: right;">5.7826836</td>
+<td style="text-align: left;">Increasing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CHSP</td>
+<td style="text-align: left;">Forested</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.0002189</td>
+<td style="text-align: right;">0.0059886</td>
+<td style="text-align: right;">0.8017908</td>
 <td style="text-align: left;">Stable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YRWA</td>
+<td style="text-align: left;">Alpine</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.0002241</td>
+<td style="text-align: right;">0.0180768</td>
+<td style="text-align: right;">6.1847231</td>
+<td style="text-align: left;">Increasing</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">YRWA</td>
+<td style="text-align: left;">Forested</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">0.0002189</td>
-<td style="text-align: right;">0.0017853</td>
-<td style="text-align: right;">0.2164086</td>
+<td style="text-align: right;">0.0057678</td>
+<td style="text-align: right;">0.6434589</td>
+<td style="text-align: left;">Stable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SWTH</td>
+<td style="text-align: left;">Alpine</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.0002189</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">3.0753240</td>
+<td style="text-align: left;">Increasing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SWTH</td>
+<td style="text-align: left;">Forested</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.0002189</td>
+<td style="text-align: right;">0.0029051</td>
+<td style="text-align: right;">0.2498357</td>
 <td style="text-align: left;">Stable</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">AMRO</td>
+<td style="text-align: left;">Alpine</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">0.0002189</td>
-<td style="text-align: right;">0.0044012</td>
-<td style="text-align: right;">1.0544939</td>
-<td style="text-align: left;">Stable</td>
+<td style="text-align: right;">0.0478928</td>
+<td style="text-align: right;">3.2923197</td>
+<td style="text-align: left;">Increasing</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">SWTH</td>
+<td style="text-align: left;">AMRO</td>
+<td style="text-align: left;">Forested</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">0.0002189</td>
-<td style="text-align: right;">0.0025968</td>
-<td style="text-align: right;">0.2243023</td>
+<td style="text-align: right;">0.0394013</td>
+<td style="text-align: right;">0.4409493</td>
 <td style="text-align: left;">Stable</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">CHSP</td>
-<td style="text-align: right;">1</td>
+<td style="text-align: left;">PISI</td>
+<td style="text-align: left;">Alpine</td>
+<td style="text-align: right;">-1</td>
 <td style="text-align: right;">0.0002189</td>
-<td style="text-align: right;">0.0134573</td>
-<td style="text-align: right;">1.7899922</td>
+<td style="text-align: right;">-0.0090386</td>
+<td style="text-align: right;">-1.4852490</td>
 <td style="text-align: left;">Stable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PISI</td>
+<td style="text-align: left;">Forested</td>
+<td style="text-align: right;">-1</td>
+<td style="text-align: right;">0.0002189</td>
+<td style="text-align: right;">-0.0450856</td>
+<td style="text-align: right;">-0.4821736</td>
+<td style="text-align: left;">Stable</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RCKI</td>
+<td style="text-align: left;">Alpine</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.0004095</td>
+<td style="text-align: right;">0.0066183</td>
+<td style="text-align: right;">8.8987570</td>
+<td style="text-align: left;">Increasing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RCKI</td>
+<td style="text-align: left;">Forested</td>
+<td style="text-align: right;">-1</td>
+<td style="text-align: right;">0.0002189</td>
+<td style="text-align: right;">-0.0089373</td>
+<td style="text-align: right;">-2.6717128</td>
+<td style="text-align: left;">Decreasing</td>
 </tr>
 </tbody>
 </table>
@@ -883,12 +1094,91 @@ Figure&nbsp;11: Shannon diversity index over years
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>trend_h <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">percent_decline =</span> <span class="fu">mean</span>(trend <span class="sc">==</span> <span class="st">"Decreasing"</span>) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(percent_decline)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>trend_guild <span class="ot">&lt;-</span> trendz <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(guilds, <span class="at">by =</span> <span class="st">"species_code"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(trend_guild <span class="sc">%&gt;%</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ecoregion) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_species =</span> <span class="fu">n_distinct</span>(species_code),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">declining_species =</span> <span class="fu">n_distinct</span>(species_code[pct_change <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fl">2.5</span>]),</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent_declining =</span> declining_species <span class="sc">/</span> total_species <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 0</code></pre>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">ecoregion</th>
+<th style="text-align: right;">total_species</th>
+<th style="text-align: right;">declining_species</th>
+<th style="text-align: right;">percent_declining</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Alpine</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Forested</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">20</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(trend_guild <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ecoregion, habitat_guild) <span class="sc">%&gt;%</span>   <span class="co"># or another guild column if desired</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_guild_species =</span> <span class="fu">n_distinct</span>(species_code),</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">declining_guild_species =</span> <span class="fu">n_distinct</span>(species_code[pct_change <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fl">2.5</span>]),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent_declining =</span> declining_guild_species <span class="sc">/</span> total_guild_species <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ecoregion) <span class="sc">%&gt;%</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_guilds =</span> <span class="fu">n_distinct</span>(habitat_guild),</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">guilds_with_decline =</span> <span class="fu">sum</span>(percent_declining <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent_guilds_declining =</span> guilds_with_decline <span class="sc">/</span> total_guilds <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 19%">
+<col style="width: 29%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">ecoregion</th>
+<th style="text-align: right;">total_guilds</th>
+<th style="text-align: right;">guilds_with_decline</th>
+<th style="text-align: right;">percent_guilds_declining</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Alpine</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.00000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Forested</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">66.66667</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </section>
