@@ -43,6 +43,7 @@ library(sf)
 library(ggridges)
 library(scales)
 library(kableExtra)
+library(spdep)
 library(ggrepel)
 library(DT)
 library(lubridate)
@@ -99,16 +100,13 @@ janp_aru <- imap_dfr(
       ~ wildrtrax::wt_download_report(
           project_id = .x,
           sensor_id = "ARU",
-          weather_cols = TRUE,
           reports = "main"
         )
     ) |> mutate(data_type = .y, .after = organization) 
 )
 
 # Mountain Pine Beetle
-mpb <- wildrtrax::wt_download_report(project_id = 2129, sensor_id = "ARU", weather_cols = TRUE, reports = "main")
-
-janp_aru <- read_csv("./main_temp.csv")
+mpb <- wildrtrax::wt_download_report(project_id = 2129, sensor_id = "ARU", reports = "main")
 
 # Bind legacy data with acoustic data
 janp_main <- bind_rows(old_s_max, janp_aru) |>
@@ -148,6 +146,17 @@ This project aims to analyze Jasper’s passive acoustic monitoring data from 20
 ## Data collection
 
 Songbird data was collected using autonomous recording units (ARUs), deployed by field staff to capture one 10-minute recordings per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting at dawn. Technicians walked transects containing ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each location, the ARU is set up, and technicians move 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording for voice notes and activation and de-activation of the units.
+
+```{r}
+#| echo: false
+#| eval: false
+#| warning: false
+#| message: false
+#| include: true
+
+janp_shp <- read_sf("assets/National_Parks_and_National_Park_Reserves_of_Canada_Legislative_Boundaries.shp") |>
+  filter(grepl("JASPER",adminAreaN))
+```
 
 ```{r}
 #| echo: false
@@ -349,9 +358,9 @@ verified_tags <- janp_main |>
 #| tbl-cap: Too many to count (TMTT) tags in WildTrax
 
 tmtt_tags <- janp_main |>
-  dplyr::select(location, recording_date_time, species_code, individual_count) |>
+  dplyr::select(location, recording_date_time, species_code, abundance) |>
   distinct() |>
-  filter(individual_count == "TMTT") |>
+  filter(abundance == "TMTT") |>
   mutate(recording_date_time = format(recording_date_time, "%Y-%m-%d %H:%M:%S"))
 
 ```
@@ -398,7 +407,6 @@ janp_transects <- janp_main |>
 
 janp_total_count <- janp_main %>%
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
-  wt_replace_tmtt(calc = "round") |>
   group_by(location, year, species_code) %>%
   summarise(n = max(individual_order, na.rm = TRUE), .groups = "drop") %>%
   group_by(location, year) %>%
@@ -436,81 +444,11 @@ A redundancy analysis (RDA) was conducted using the `vegan` package (@vegan2025)
 
 ### Trend analysis
 
-We analyzed bird abundance trends from 2007 to 2024 across species, ecoregions, and functional guilds. This multi-level approach allowed us to assess patterns of change while considering ecological and functional groupings. Observations were first filtered to include only data from the EI monitoring sites containing ecoregional classification. Species were classified into functional guilds using an ecological trait database (see @tbl-guilds). Spatial autocorrelation was accounted for when considered sites grouped <100 meters from one another across years based on the results of the Moran's *I* test. Given transcription methods varied over time (see @tbl-transcriptions), which may possibly affect data consistency, from both a species detectability and methodological standpoint, we used generalized linear mixed models (GLMM) using the `lme4` with package (@bates2015parsimonious) to examine time-to-first detection of each individual and the differences it posed across years to account for detection probability differences, using location as random effect (`1 | location`). 20 species (`r paste(mdm, collapse = ", ")`) that were the most abundant and represented different guilds were used for the analyses. Count data were modeled with a Poisson distribution or a negative binomial distribution when overdispersion was detected, with `year` and `method` (i.e., processing methodology) as fixed effects and `location` as a random effect.
+We analyzed bird abundance trends from 2007 to 2024 across species, ecoregions, and functional guilds. This multi-level approach allowed us to assess patterns of change while considering ecological and functional groupings. Observations were first filtered to include only data from the EI monitoring sites containing ecoregional classification. Species were classified into functional guilds using an ecological trait database (see @tbl-guilds). Spatial autocorrelation was accounted for when considered sites grouped \<100 meters from one another across years based on the results of the Moran's *I* test. Given transcription methods varied over time (see @tbl-transcriptions), which may possibly affect data consistency, from both a species detectability and methodological standpoint, we used generalized linear mixed models (GLMM) using the `lme4` with package (@bates2015parsimonious) to examine time-to-first detection of each individual and the differences it posed across years to account for detection probability differences, using location as random effect (`1 | location`). 20 species (`r paste(mdm, collapse = ", ")`) that were the most abundant and represented different guilds were used for the analyses. Count data were modeled with a Poisson distribution or a negative binomial distribution when overdispersion was detected, with `year` and `method` (i.e., processing methodology) as fixed effects and `location` as a random effect.
 
 To evaluate trend significance, we applied the Mann–Kendall test (@mann1945non; @hamed1998), a non-parametric method sensitive to monotonic trends (@birds6010014), and estimated trend magnitude using Sen’s Slope (@Sen01121968; @dawood2017spatio) via the `mmkh()` function in the `modifiedmk` package. Because these tests do not account for detection probability, we complemented them with single-visit abundance models (@solymos2012conditional) via the `svabu` function implemented in the `detect` package. `svabu` models estimate abundance while explicitly incorporating detection probability, providing more reliable inferences about true abundance trends. It also avoids the need to assume a closed population statistically and computationally efficient estimators. For each species, we fitted separate models for each ecoregion with year, julian date and time of day included as covariate in the abundance component (e.g., `svabu(individual ~ year | year + julian + hour)`). Year-specific mean abundance (λ̂) was then estimated across sites, and the resulting λ̂ series was analyzed using the Mann–Kendall test to assess temporal trends in detection-corrected abundance.
 
 Functional diversity was quantified using Rao’s Q (@rao1982diversity; @laliberte2010adistance) via the dbFD() function in the FD package (@FDpackage). To assess temporal changes in guild-level trait diversity, we applied linear, mixed-effects, and segmented models. We also summarized raw species richness—the number of unique species—per location and plotted its change over time (@fig-spp-rich-locs), complemented by annual estimates of Shannon’s diversity index, which integrates both species richness and evenness, to capture broader shifts in community structure (@fig-shannon).
-
-```{r}
-#| warning: false
-#| echo: true
-#| eval: true
-#| message: false
-#| include: true
-#| results: hide
-#| code-fold: true
-
-all_lambda <- list()
-trend_summary <- list()
-
-tot_abundance <- tot_a_filtered |>
-  filter(!detection_time > 180) |>
-  mutate(julian = yday(recording_date_time),
-         hour = hour(recording_date_time)) |> 
-  filter(species_code %in% mdm)
-
-for (sp in unique(tot_abundance$species_code)) {
-  for (ec in unique(tot_abundance$ecoregion)) {
-    simp <- tot_abundance %>%
-      filter(species_code == sp, ecoregion == ec)
-    
-    if (nrow(simp) < 5) next
-    
-    fit <- svabu(individual_order ~ year | year + julian + hour, data = simp)
-
-    mean_julian <- mean(simp$julian, na.rm = TRUE)
-    
-    pred_grid <- expand.grid(year = unique(simp$year), julian = mean_julian)
-    pred_grid$lambda <- predict(fit, newdata = pred_grid, type = "response")
-    
-    lambda_year <- pred_grid %>%
-      group_by(year) %>%
-      summarise(lambda_hat = mean(lambda)) %>%
-      mutate(species_code = sp, ecoregion = ec)
-    
-    all_lambda[[paste(sp, ec, sep = "_")]] <- lambda_year
-    
-    # Mann–Kendall test on λ̂
-    mk <- try(mmkh(lambda_year$lambda_hat), silent = TRUE)
-    
-    if (!inherits(mk, "try-error")) {
-      trend_summary[[paste(sp, ec, sep = "_")]] <- tibble(
-        species_code = sp,
-        ecoregion = ec,
-        tau = mk[["Tau"]],
-        p_value = mk[["new P-value"]],
-        sen_slope = mk[["Sen's slope"]]
-      )
-    }
-  }
-}
-
-lambda_all <- bind_rows(all_lambda)
-trend_all <- bind_rows(trend_summary)
-
-trend_alls <- trend_all %>%
-  mutate(
-    perc_change = sen_slope / mean(lambda_all$lambda_hat[lambda_all$species_code == species_code & lambda_all$ecoregion == ecoregion]) * 100,
-    trend_flag = case_when(
-      perc_change >= 2.5 ~ "Increase > 2.5%",
-      perc_change <= -2.5 ~ "Decrease > 2.5%",
-      TRUE ~ "Stable"
-    )
-  )
-```
-
-
 ```{r}
 #| warning: false
 #| echo: true
@@ -528,7 +466,7 @@ guild_activity <- janp_main |>
   filter(data_type %in% c("legacy", "single_visit_3_max", "single_visit_0_max")) |>
   filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
   wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "unknown"), zerofill = T) |>
-  dplyr::select(location, recording_date_time, species_common_name, species_code, individual_count) |>
+  dplyr::select(location, recording_date_time, species_common_name, species_code, abundance) |>
   mutate(julian = lubridate::yday(recording_date_time),
          month = month(recording_date_time),
          year = factor(year(recording_date_time))) |>
@@ -624,7 +562,7 @@ yearly_rao <- yearly_rao |>
 shannon_d <- janp_main |> 
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
   inner_join(wt_get_species() |> dplyr::select(species_code, species_class, species_order), by = "species_code") |>
-  dplyr::select(location, recording_date_time, species_code, species_common_name, individual_order, individual_count) |>
+  dplyr::select(location, recording_date_time, species_code, species_common_name, individual_order, abundance) |>
   distinct() |>
   group_by(location, recording_date_time, species_code, species_common_name) |>
   summarise(count = max(individual_order)) |>
@@ -668,7 +606,6 @@ Some of these analyses are still a work-in-progress. Check back soon for updates
 
 comm_matrix <- janp_main |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
-  wt_replace_tmtt(calc = "round") |>
   dplyr::select(-ecoregion) |>
   inner_join(locs_summary, by = c("location" = "Location")) |>
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
@@ -1035,4 +972,3 @@ ggplot(lambda_all_flagged |> filter(ecoregion == "Alpine"), aes(x = year, y = la
 ```
 
 # Discussion and recommendations
-
