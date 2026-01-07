@@ -119,13 +119,13 @@ janp_main <- bind_rows(old_s_max, janp_aru) |>
 
 ```
 
-# Abstract
-
-Since 2007, Jasper National Park has conducted passive acoustic monitoring as part of its ecological integrity monitoring program. The 17 years of data were analyzed to identify trends and extract insights that inform ongoing monitoring and strengthen future species monitoring practices. The analysis assessed whether species and guild abundances shifted by ±2.5% in the alpine and montane ecoregions. Data were managed and processed in WildTrax, combining and harmonizing legacy datasets from multiple methodologies. Sampling locations were tested for independence, and trend analyses quantified changes in species counts over time across guilds and ecoregions.
-
 ::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
 This report is dynamically generated, meaning its results may evolve with the addition of new data or further analyses. For the most recent updates, refer to the publication date and feel free to reach out to the authors.
 :::
+
+# Abstract
+
+Since 2007, Jasper National Park has conducted passive acoustic monitoring as part of its ecological integrity monitoring program. The 18 years of data were analyzed to identify trends and extract insights that inform ongoing monitoring and strengthen future species monitoring practices. The analysis assessed whether species and guild abundances shifted by ±2.5% in the alpine and montane ecoregions. Data were managed and processed in WildTrax, combining and harmonizing legacy datasets from multiple methodologies. Sampling locations were tested for independence, and trend analyses quantified changes in species counts over time across guilds and ecoregions.
 
 # Land Acknowledgement
 
@@ -137,7 +137,7 @@ Human activities have been identified as key pressures and contributors to the g
 
 This project aims to analyze Jasper’s passive acoustic monitoring data from 2007 to 2024, assessing trends in species and guild abundance while accounting for the clustering of survey points within transects. Separate analyses will be conducted for montane and sub-alpine and alpine ecoregions to align with Ecological Integrity reporting requirements, determining time-to-first-detection usability in analysis. To enhance accessibility and reproducibility, the findings will be presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations will be developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. The objectives of this report are to:
 
--   Describe the data management and processing procedures for the acoustic data collected from 2007 to 2024;
+-   Describe the data management and processing procedures for the acoustic data collected from 2007 to 2025;
 -   Comparing data processing methods on count of species and individuals heard on recordings;
 -   Report on transects in montane/sub-alpine and alpine ecoregions, including time-to-first-detection where possible, with key metrics such as the percentage of bird species and guilds declining by ≥2.5% in both montane/sub-alpine and alpine regions.
 -   Recommendations for prioritizing previous years’ data for re-transcription to 1SPT, determine the best approach for annual reporting, e.g. baseline comparisons or 10-year trend assessments, adjust methods for evaluating species trends against thresholds, and review guilds and traits used in assessments
@@ -355,9 +355,7 @@ verified_tags <- janp_main |>
 #| echo: false
 #| message: false
 #| eval: true
-#| include: true
-#| label: tbl-tmtt
-#| tbl-cap: Too many to count (TMTT) tags in WildTrax
+#| include: false
 
 tmtt_tags <- janp_main |>
   dplyr::select(location, recording_date_time, species_code, abundance) |>
@@ -497,7 +495,7 @@ ggplot(janp_lisa_sf) +
 
 A redundancy analysis (RDA) was conducted using the `vegan` package (@vegan2025) to quantify the variation in community composition explained by ecoregions and to visualize species–ecoregion relationships with ordination plots (@Rao1964). Species‑level observations were aggregated into a species‑by‑location matrix, with abundances recorded as the maximum count of each species at each location. Ecoregions were categorized into Alpine and Montane with the Montaine ecoregions that can be further sub-divided into Upper Subalpine, Lower Subalpine, and Montane proper ecozones for all subsequent analyses. Differences in composition between Alpine and Montane groups were tested using permutational multivariate analysis of variance (PERMANOVA; @Anderson2001) on Bray–Curtis dissimilarities with 999 permutations under a reduced model.
 
-### Functional and community-Level diversity
+### Functional and community-level diversity
 
 To evaluate community-level ecological responses, we examined temporal changes in functional diversity, species richness, and community evenness. Functional diversity was quantified using Rao’s Q (Rao, 1982; Laliberté & Legendre, 2010) via the dbFD() function in the FD package (Laliberté, Legendre, & Shipley, 2014). We also calculated species richness (number of unique species per location per year) and Shannon’s diversity index, which integrates richness and evenness to describe community structure. These metrics were modeled through time using linear, mixed-effects, and segmented regression models to detect both gradual and threshold-type changes. Results were summarized graphically by ecoregion and functional guild to highlight spatial variation in diversity trajectories.
 
@@ -942,6 +940,134 @@ shannon_d
 
 ## Trends
 
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+#| message: false
+#| include: true
+#| results: hide
+#| code-fold: true
 
+# Trend
 
-# Discussion and recommendations
+# 1. Summarize per site-visit using max()
+janp_trend <- janp_main |>
+  mutate(year = year(recording_date_time),
+         hour = hour(recording_date_time),
+         julian = yday(recording_date_time)) |>
+  dplyr::select(organization, project_id, longitude, latitude, location, location_id, task_id, ecoregion, recording_date_time, observer, species_code, individual_order, abundance, detection_time) |>
+  distinct() |>
+  wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "human", "unknown"), zerofill = T) 
+
+# 2. Combine with zero sites
+base_zero <- janp_trend |>
+  dplyr::select(location, ecoregion, recording_date_time, observer) |>
+  distinct()
+
+yrwa <- janp_trend |>
+  filter(species_code == "FOSP") |>
+  group_by(location, ecoregion, recording_date_time, observer) |>
+  summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
+  ungroup()
+
+jpt <- base_zero |>
+  left_join(yrwa,
+            by = c("location", "ecoregion", "recording_date_time", "observer")) |>
+  mutate(individual_order = tidyr::replace_na(individual_order, 0)) |>
+  mutate(year = year(recording_date_time),
+         hour = hour(recording_date_time),
+         julian = yday(recording_date_time)) |>
+  filter(!is.infinite(individual_order))
+
+# 3. Fit svabu: year only in abundance component
+fit <- svabu(individual_order ~ year | julian + hour, data = jpt)
+
+# 4. Standardize detection
+ref_vals <- jpt %>%
+  summarise(
+    julian = mean(julian, na.rm = TRUE),
+    hour   = mean(hour,   na.rm = TRUE)
+  )
+
+jpt$lambda_hat <- predict(fit, newdata = jpt %>% mutate(julian = ref_vals$julian, hour = ref_vals$hour), type = "response")
+
+# 5. Aggregate to annual index
+lambda_year <- jpt %>%
+  group_by(year) %>%
+  summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE), .groups = "drop") %>%
+  arrange(year)
+
+# 6. Run Mann-Kendall + Sen's slope
+x <- lambda_year$lambda_hat
+mk <- mmkh(x)
+tau       <- mk[6]
+sen_slope <- mk[7]
+p_value   <- mk[2]
+pct_change <- mk[["Sen's slope"]] / mean(x) * 100
+trend_class <- dplyr::case_when(
+  pct_change >  2.5  ~ "Increasing",
+  pct_change < -2.5  ~ "Decreasing",
+  TRUE               ~ "Stable"
+)
+
+trend_result <- tibble(
+  species_code = "FOSP",
+  tau          = tau,
+  p_value      = p_value,
+  sen_slope    = sen_slope,
+  pct_change   = pct_change,
+  trend        = trend_class
+)
+```
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: false
+#| message: false
+#| include: true
+#| results: hide
+#| code-fold: true
+
+# 7. Plot results
+ggplot(lambda_year, aes(x = year, y = lambda_hat)) +
+  geom_point(size = 3) +
+  geom_line(group = 1, color = "steelblue", size = 1) +
+  labs(
+    x = "Year",
+    y = "Detection-corrected abundance trend",
+    title = "Annual abundance index trend"
+  ) +
+  theme_minimal(base_size = 14) 
+```
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| code-fold: true
+
+#trend_h <- bind_rows(trend_result, trend_g)
+
+kable(trend_h)
+
+```
+
+```{r}
+#| warning: false
+#| echo: true
+#| eval: true
+#| message: false
+#| include: true
+#| code-fold: true
+
+trend_h |>
+  summarise(percent_decline = mean(trend == "Decreasing") * 100) |>
+  pull(percent_decline)
+
+```
+
+## Discussion and recommendations
