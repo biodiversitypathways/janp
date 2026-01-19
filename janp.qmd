@@ -60,6 +60,7 @@ load('janp.RData')
 #save.image('janp.RData')
 ```
 
+
 ```{r}
 #| label: Download data from WildTrax
 #| warning: false
@@ -174,6 +175,30 @@ janp_shp <- read_sf("assets/National_Parks_and_National_Park_Reserves_of_Canada_
 
 janp_fire <- read_sf("./assets/JNP_FirePerimeters_selection.shp") |>
   st_transform(st_crs(janp_shp))
+
+abfire <- read_sf("/users/alexandremacphail/downloads/abfire/WildfirePerimeters1931to2024.shp") |>
+  st_transform(st_crs(janp_shp)) |>
+  st_make_valid()
+abfire <- abfire[!st_is_empty(abfire), ]
+
+
+janp_utm <- janp_shp |> st_transform(26911)
+
+abfire_utm <- abfire |>
+  st_transform(26911)
+
+abfire_utm <- abfire_utm |>
+  st_make_valid() |>
+  st_collection_extract("POLYGON")
+
+idx <- lengths(st_intersects(abfire_utm, janp_utm)) > 0
+
+fires_in_janp <- abfire_utm[idx, ] 
+
+fires_in_janp <- fires_in_janp |> filter(!grepl('Chetamon',ALIAS)) |> filter(!YEAR == 2024)
+
+fires_in_janp <- fires_in_janp |> st_transform(4326)
+
 ```
 
 ```{r}
@@ -183,7 +208,7 @@ janp_fire <- read_sf("./assets/JNP_FirePerimeters_selection.shp") |>
 #| message: false
 #| include: true
 #| fig-align: center
-#| fig-cap: Locations from Jasper National Park ARU Monitoring Program. Includes acoustic monitoring locations for other collaborative projects. Ecoregions were not classified for Other sites but only EI Monitoring locations.
+#| fig-cap: Locations from Jasper National Park ARU EI Monitoring Program.
 #| label: fig-aru-monitoring-locations
 
 janp_locs <- janp_main |>
@@ -230,8 +255,12 @@ pal <- colorFactor(
   domain = janp_locs_map$ecoregion
 )
 
+fire_color <- "#C71585"  # You can adjust to a medium pink if you like
+
 leaflet() %>%
   addTiles() %>%
+  
+  # Park polygons
   addPolygons(
     data = janp_shp,
     color = "blue",
@@ -239,13 +268,39 @@ leaflet() %>%
     fillOpacity = 0.2,
     popup = ~paste("Park:", adminAreaN)
   ) %>%
+  
+  # Fires polygons
+  addPolygons(
+    data = fires_in_janp,
+    fillColor = fire_color,
+    color = fire_color,
+    weight = 1,
+    fillOpacity = 0.5,
+    popup = ~paste("Fire:", ALIAS, "<br>Year:", YEAR),
+    group = "Fires"   # group them for a single legend entry
+  ) %>%
+  
+  # Optional: any other fire layer, e.g., janp_fire
   addPolygons(
     data = janp_fire,
-    color = "pink",
+    fillColor = fire_color,
+    color = fire_color,
     weight = 1,
     fillOpacity = 0.7,
-    popup = ~paste(Fire_Name)
+    popup = ~paste(Fire_Name),
+    group = "Fires"
   ) %>%
+  
+  # Single legend entry for fires
+  addLegend(
+    position = "bottomright",
+    colors = fire_color,
+    labels = "Fires",
+    title = "Recent Fires",
+    opacity = 1
+  ) %>%
+  
+  # Locations
   addCircleMarkers(
     data = janp_locs_map |> filter(!grepl('MPB',location)),
     popup = ~paste("Location:", location, "<br>"),
@@ -254,6 +309,8 @@ leaflet() %>%
     color = "black", 
     radius = 6 
   ) %>%
+  
+  # Ecoregion legend
   addLegend(
     "topright",
     pal = pal,
@@ -261,6 +318,7 @@ leaflet() %>%
     title = "Ecoregion",
     opacity = 1
   ) %>%
+  
   addMeasure(primaryLengthUnit = "meters", primaryAreaUnit = "sqmeters") %>%
   addMiniMap(position = "bottomleft")
 
@@ -354,8 +412,6 @@ datatable(transcription_table,
 #| message: false
 #| eval: true
 #| include: true
-#| label: tbl-verified
-#| tbl-cap: Proportion of tags verified. NA evaluated tags were from legacy acoustic data, not including re-transcriptions for method comparison in WildTrax.
 
 all_tags <- janp_main |>
   tally() |>
@@ -368,8 +424,6 @@ verified_tags <- janp_main |>
   mutate(Proportion = round(n / all_tags,4)*100) |>
   rename("Count" = n) |>
   rename("Tag is verified" = tag_is_verified)
-
-#kable(verified_tags)
 
 ```
 
@@ -759,7 +813,7 @@ permanova_result <- adonis2(comm_matrix_data ~ ecoregion_group, data = comm_matr
 
 ## Species richness and functional diversity
 
-Activity patterns across nesting, dietary and migratory guilds are illustrated in @fig-spp-nesting onwards. A notable pattern emerges across all four guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion. Species richness per location is at @fig-spp-rich-locs and Shannon's diversity index over years at @fig-shannon. Overall, both richness and diversity were stable across years. Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.
+Activity patterns across nesting, dietary and migratory guilds are illustrated in @fig-spp-activity-nesting onwards. A notable pattern emerges across all four guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion. Species richness per location is at @fig-spp-rich-locs and Shannon's diversity index over years at @fig-shannon. Overall, both richness and diversity were stable across years. Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.
 
 ```{r}
 #| warning: false
@@ -852,6 +906,10 @@ ggplot(guild_activity, aes(x = julian, y = dietary_guild, fill = dietary_guild))
       ylab("Species")
 
 ```
+
+
+
+
 
 ```{r}
 #| warning: false
@@ -955,6 +1013,16 @@ spp_rich_location |>
 shannon_d
 ```
 
+
+```{r}
+
+
+```
+
+
+
+
+
 ## Trends
 
 ```{r}
@@ -968,13 +1036,9 @@ shannon_d
 
 # Trend
 
-rel_wea |>
-  dplyr::select(recording_id, task_id, temperature, wind_speed, humidity, precipitation, cloudcover, weather) |>
-  distinct()
-
 # 1. Summarize per site-visit using max()
 janp_trend <- janp_main |>
-  filter(ecoregion %in% c("Alpine")) |>
+  filter(ecoregion %in% c("Alpine"), grepl('COTTONWOOD|MUSHROOM',location)) |>
   mutate(year = year(recording_date_time),
          hour = hour(recording_date_time),
          julian = yday(recording_date_time)) |>
@@ -1058,7 +1122,7 @@ trend_result_rcki_alpine <- tibble(
 
 # 1. Summarize per site-visit using max()
 janp_trend <- janp_main |>
-  filter(ecoregion %in% c("Montane", "Upper Subalpine", "Lower Subalpine")) |>
+  filter(ecoregion %in% c("Montane", "Upper Subalpine", "Lower Subalpine"), grepl('COTTONWOOD|MUSHROOM',location)) |>
   mutate(year = year(recording_date_time),
          hour = hour(recording_date_time),
          julian = yday(recording_date_time)) |>
