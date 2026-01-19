@@ -171,6 +171,9 @@ Songbird data was collected using autonomous recording units (ARUs), deployed by
 
 janp_shp <- read_sf("assets/National_Parks_and_National_Park_Reserves_of_Canada_Legislative_Boundaries.shp") |>
   filter(grepl("JASPER",adminAreaN))
+
+janp_fire <- read_sf("./assets/JNP_FirePerimeters_selection.shp") |>
+  st_transform(st_crs(janp_shp))
 ```
 
 ```{r}
@@ -231,10 +234,17 @@ leaflet() %>%
   addTiles() %>%
   addPolygons(
     data = janp_shp,
-    color = "black",
+    color = "blue",
     weight = 1,
-    fillOpacity = 0.4,
+    fillOpacity = 0.2,
     popup = ~paste("Park:", adminAreaN)
+  ) %>%
+  addPolygons(
+    data = janp_fire,
+    color = "pink",
+    weight = 1,
+    fillOpacity = 0.7,
+    popup = ~paste(Fire_Name)
   ) %>%
   addCircleMarkers(
     data = janp_locs_map |> filter(!grepl('MPB',location)),
@@ -1204,3 +1214,5 @@ kable(trend_guild %>%
 ```
 
 ## Discussion and recommendations
+
+The Discussion and Recommendations. 
