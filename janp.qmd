@@ -26,7 +26,7 @@ styles: styles.css
 github: https://github.com/biodiversitypathways/janp
 ---
 
-![](janp.png){style="float:left`;" fig-alt="Photo of Jasper" fig-align="center"}
+![](assets/janp.png){style="float:left`;" fig-alt="Photo of Jasper" fig-align="center"}
 
 ```{r}
 #| label: Load packages and authenticate to WildTrax
@@ -346,7 +346,7 @@ datatable(transcription_table,
 
 ```
 
-![WildTrax Acoustic Processing Interface (Version 2)](acousticprocessing.png){#fig-acousticprocessing .float-left .fig-align-center}
+![WildTrax Acoustic Processing Interface (Version 2)](assets/acousticprocessing.png){#fig-acousticprocessing .float-left .fig-align-center}
 
 ```{r}
 #| warning: false
@@ -388,7 +388,7 @@ tmtt_tags <- janp_main |>
 
 ```
 
-![Visit photos at CAVELL-3](locationphotos.png){#fig-visitphotos .float-left .fig-align-center}
+![Visit photos at CAVELL-3](assets/locationphotos.png){#fig-visitphotos .float-left .fig-align-center}
 
 ## Analyses
 
@@ -545,7 +545,7 @@ Temporal trends were quantified using the Mann–Kendall test (@mann1945non; @ha
 #| code-fold: true
 #| tbl-cap: Guilds
 
-guilds <- read_csv("jasper_guilds.csv")
+guilds <- read_csv("./assets/jasper_guilds.csv")
 
 guild_activity <- janp_main |>
   filter(data_type %in% c("legacy", "single_visit_3_max", "single_visit_0_max")) |>

@@ -1,6 +1,6 @@
 ### Legacy data from Jasper National Park
 
-old_data <- read_csv("./jasper_legacy_data.csv")
+old_data <- read_csv("./assets/jasper_legacy_data.csv")
 
 ### Three different versions of legacy data tiedied and formatted. One is max count, one is mean across the ten minute period and one is mean across the 3 minute period. Goal is to determine the differences between the uses cases for modelling.
 
