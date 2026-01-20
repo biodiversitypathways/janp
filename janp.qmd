@@ -192,11 +192,8 @@ abfire_utm <- abfire_utm |>
   st_collection_extract("POLYGON")
 
 idx <- lengths(st_intersects(abfire_utm, janp_utm)) > 0
-
 fires_in_janp <- abfire_utm[idx, ] 
-
 fires_in_janp <- fires_in_janp |> filter(!grepl('Chetamon',ALIAS)) |> filter(!YEAR == 2024)
-
 fires_in_janp <- fires_in_janp |> st_transform(4326)
 
 ```
@@ -238,6 +235,22 @@ janp_locs_map <- janp_locs |>
   )) |>
   filter(!grepl('MPB',location))
 
+fire_intersect <- st_intersects(janp_locs_map, janp_fire)
+
+ysf <- janp_locs_map %>%
+  mutate(
+    FIRE_YEAR = sapply(fire_intersect, function(x) if(length(x)) janp_fire$FIRE_YEAR[x] else NA),
+    Fire_Name = sapply(fire_intersect, function(x) if(length(x)) janp_fire$Fire_Name[x] else NA)
+  ) |>
+  filter(!is.na(FIRE_YEAR)) |>
+  st_drop_geometry() |>
+  mutate_at(vars(year, FIRE_YEAR), as.numeric) |>
+  rowwise() |>
+  mutate(yrs_since_fire = case_when(FIRE_YEAR > year ~ NA_real_,
+                                    FIRE_YEAR == year ~ 0,
+                                    FIRE_YEAR < year ~ year - FIRE_YEAR,
+                                    TRUE ~ NA_real_))
+
 # Generate summary table
 locs_summary <- janp_locs_map |>
   st_drop_geometry() |>
@@ -259,8 +272,6 @@ fire_color <- "#C71585"  # You can adjust to a medium pink if you like
 
 leaflet() %>%
   addTiles() %>%
-  
-  # Park polygons
   addPolygons(
     data = janp_shp,
     color = "blue",
@@ -268,8 +279,6 @@ leaflet() %>%
     fillOpacity = 0.2,
     popup = ~paste("Park:", adminAreaN)
   ) %>%
-  
-  # Fires polygons
   addPolygons(
     data = fires_in_janp,
     fillColor = fire_color,
@@ -279,19 +288,15 @@ leaflet() %>%
     popup = ~paste("Fire:", ALIAS, "<br>Year:", YEAR),
     group = "Fires"   # group them for a single legend entry
   ) %>%
-  
-  # Optional: any other fire layer, e.g., janp_fire
   addPolygons(
     data = janp_fire,
     fillColor = fire_color,
     color = fire_color,
     weight = 1,
     fillOpacity = 0.7,
-    popup = ~paste(Fire_Name),
+    popup = ~paste("Fire: ", Fire_Name, "<br>Year:", FIRE_YEAR),
     group = "Fires"
   ) %>%
-  
-  # Single legend entry for fires
   addLegend(
     position = "bottomright",
     colors = fire_color,
@@ -299,18 +304,14 @@ leaflet() %>%
     title = "Recent Fires",
     opacity = 1
   ) %>%
-  
-  # Locations
   addCircleMarkers(
-    data = janp_locs_map |> filter(!grepl('MPB',location)),
+    data = janp_locs_map,
     popup = ~paste("Location:", location, "<br>"),
     fillColor = ~pal(ecoregion),  
     fillOpacity = 1,
     color = "black", 
     radius = 6 
   ) %>%
-  
-  # Ecoregion legend
   addLegend(
     "topright",
     pal = pal,
@@ -318,7 +319,6 @@ leaflet() %>%
     title = "Ecoregion",
     opacity = 1
   ) %>%
-  
   addMeasure(primaryLengthUnit = "meters", primaryAreaUnit = "sqmeters") %>%
   addMiniMap(position = "bottomleft")
 
@@ -389,7 +389,6 @@ transcription_table <- tibble(
 )
 
 transcription_table
-
 
 # Render the datatable
 datatable(transcription_table, 
@@ -1012,16 +1011,6 @@ spp_rich_location |>
 
 shannon_d
 ```
-
-
-```{r}
-
-
-```
-
-
-
-
 
 ## Trends
 
