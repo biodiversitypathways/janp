@@ -567,6 +567,49 @@ ggplot(janp_lisa_sf) +
 
 ```
 
+### Site Comparisons
+
+The 2024 Jasper Fire destroyed two established acoustic transects (VALLEY5 and TEKKARA). These transects were replaced in 2025 with two new montane transects (COTTONWOOD and MUSHROOM). To assess whether the replacement transects were appropriate proxies for the original sites, we evaluated how similar their species assemblages were to those observed at other existing montane transects.
+
+Specifically, we compared species detections from COTTONWOOD and MUSHROOM to the distribution of detections across all other montane transects to quantify their compositional similarity and degree of departure from the montane baseline. We assessed whether replacement transects were representative of montane communities using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity. Distances of replacement transects to the montane centroid were compared against the distribution of distances observed among existing montane transects.
+
+
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: true
+#| include: true
+#| code-fold: true
+
+montane_all <- comm_matrix |> filter(ecoregion == "Montane")
+sp_mat <- montane_all |> dplyr::select(-location, -ecoregion)
+sp_mat <- as.data.frame(sp_mat)
+rownames(sp_mat) <- montane_all$location
+bc_dist <- vegdist(sp_mat, method = "bray")
+group <- ifelse(
+  grepl("^COTTONWOOD|^MUSHROOM", rownames(sp_mat)),
+  "Replacement",
+  "Reference"
+)
+bd <- betadisper(bc_dist, group)
+dist_df <- data.frame(
+  location = rownames(sp_mat),
+  group = group,
+  dist_to_centroid = bd$distances
+)
+summary(dist_df$dist_to_centroid[group == "Reference"])
+dist_df %>% filter(group == "Replacement")
+ggplot(dist_df, aes(x=group, y=dist_to_centroid)) +
+  geom_boxplot() +
+  geom_point(alpha = 0.2) +
+  ylab("Distance to Montane Centroid") + xlab("Group") +
+  theme_bw() +
+  ylim(0,1)
+```
+
+
 ### Community analysis
 
 A redundancy analysis (RDA) was conducted using the `vegan` package (@vegan2025) to quantify the variation in community composition explained by ecoregions and to visualize species–ecoregion relationships with ordination plots (@Rao1964). Species‑level observations were aggregated into a species‑by‑location matrix, with abundances recorded as the maximum count of each species at each location. Ecoregions were categorized into Alpine and Montane with the Montaine ecoregions that can be further sub-divided into Upper Subalpine, Lower Subalpine, and Montane proper ecozones for all subsequent analyses. Differences in composition between Alpine and Montane groups were tested using permutational multivariate analysis of variance (PERMANOVA; @Anderson2001) on Bray–Curtis dissimilarities with 999 permutations under a reduced model.
