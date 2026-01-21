@@ -601,9 +601,10 @@ dist_df <- data.frame(
 )
 summary(dist_df$dist_to_centroid[group == "Reference"])
 dist_df %>% filter(group == "Replacement")
-ggplot(dist_df, aes(x=group, y=dist_to_centroid)) +
+ggplot(dist_df, aes(x=group, y=dist_to_centroid, fill=group)) +
   geom_boxplot() +
   geom_point(alpha = 0.2) +
+  scale_fill_viridis_d(option = "cividis") +
   ylab("Distance to Montane Centroid") + xlab("Group") +
   theme_bw() +
   ylim(0,1)
