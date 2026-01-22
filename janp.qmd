@@ -43,7 +43,6 @@ library(sf)
 library(ggridges)
 library(scales)
 library(kableExtra)
-library(spdep)
 library(ggrepel)
 library(DT)
 library(lubridate)
@@ -53,6 +52,7 @@ library(modifiedmk)
 library(FD)
 library(detect)
 library(segmented)
+library(fs)
 
 wt_auth()
 
@@ -193,8 +193,28 @@ abfire_utm <- abfire_utm |>
 
 idx <- lengths(st_intersects(abfire_utm, janp_utm)) > 0
 fires_in_janp <- abfire_utm[idx, ] 
-fires_in_janp <- fires_in_janp |> filter(!grepl('Chetamon',ALIAS)) |> filter(!YEAR == 2024)
+fires_in_janp <- fires_in_janp |> filter(!grepl('Chetamon',ALIAS)) |>
+  filter(!YEAR == 2024)
 fires_in_janp <- fires_in_janp |> st_transform(4326)
+
+lc_150m <- read_csv("Habitat/LandCoverClass_Buffer150Raw.csv") |>
+  pivot_longer(
+    cols = matches("^LANDCOVER_(CODE|PCT)_"),
+    names_to = c(".value", "rank"),
+    names_pattern = "LANDCOVER_(CODE|PCT)_(\\d+)"
+  ) |>
+  rename(
+    landcover = CODE,
+    pct = PCT
+  ) |>
+  filter(!is.na(landcover), pct > 0) |>
+  mutate(area_m2 = Shape_Area * (pct / 100)) |>
+  group_by(Point_ID, landcover, VEGETATION_DENSITY, REFERENCE_YEAR) |>
+  summarise(
+    total_area_m2 = sum(area_m2, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  mutate(prop_cover = total_area_m2 / (pi * 150^2))
 
 ```
 
@@ -567,13 +587,11 @@ ggplot(janp_lisa_sf) +
 
 ```
 
-### Site Comparisons
+### Site comparisons
 
 The 2024 Jasper Fire destroyed two established acoustic transects (VALLEY5 and TEKKARA). These transects were replaced in 2025 with two new montane transects (COTTONWOOD and MUSHROOM). To assess whether the replacement transects were appropriate proxies for the original sites, we evaluated how similar their species assemblages were to those observed at other existing montane transects.
 
 Specifically, we compared species detections from COTTONWOOD and MUSHROOM to the distribution of detections across all other montane transects to quantify their compositional similarity and degree of departure from the montane baseline. We assessed whether replacement transects were representative of montane communities using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity. Distances of replacement transects to the montane centroid were compared against the distribution of distances observed among existing montane transects.
-
-
 
 ```{r}
 #| warning: false
@@ -599,8 +617,8 @@ dist_df <- data.frame(
   group = group,
   dist_to_centroid = bd$distances
 )
-summary(dist_df$dist_to_centroid[group == "Reference"])
-dist_df %>% filter(group == "Replacement")
+#summary(dist_df$dist_to_centroid[group == "Reference"])
+#dist_df %>% filter(group == "Replacement")
 ggplot(dist_df, aes(x=group, y=dist_to_centroid, fill=group)) +
   geom_boxplot() +
   geom_point(alpha = 0.2) +
@@ -619,17 +637,6 @@ A redundancy analysis (RDA) was conducted using the `vegan` package (@vegan2025)
 
 To evaluate community-level ecological responses, we examined temporal changes in functional diversity, species richness, and community evenness. Functional diversity was quantified using Rao’s Q (@rao1982diversity; @laliberte2010adistance) via the `dbFD()` function in the `FD` package (@FDpackage). We also calculated species richness (number of unique species per location per year) and Shannon’s diversity index, which integrates richness and evenness to describe community structure. These metrics were modeled through time using linear, mixed-effects, and segmented regression models to detect both gradual and threshold-type changes. Results were summarized graphically by ecoregion and functional guild to highlight spatial variation in diversity trajectories.
 
-### Trend analysis
-
-To quantify temporal changes in bird populations and community composition from 2007 to 2025, we analyzed trends in species-specific abundance, forest and alpine assemblages, and functional guilds. Analyses were designed to separate biological change from potential sampling and methodological effects, ensuring that observed patterns represented genuine ecological responses. This was achieved through a multi-step framework that (1) modeled detection probability and methodological variability, (2) estimated detection-corrected abundance, and (3) evaluated long-term directional trends and associated shifts in functional and community-level diversity.
-
-#### Detection-corrected abundance estimation
-
-Temporal trends in abundance were estimated using single-visit abundance models implemented in the `detect::svabu()` function (@solymos2012conditional). This framework jointly models site-level abundance and detection probability from single-visit counts, providing unbiased estimates without requiring repeated surveys. In the models, year was included as a covariate in the abundance component to capture long-term trends, while julian date, hour of day and observer were included in the detection component to account for within-season and diurnal variation in detectability.  The resulting detection-corrected expected abundance per site-visit (λ) was then aggregated by year to produce mean annual abundance indices. These indices were subsequently used to evaluate temporal trends in species abundance and community composition.
-
-#### Trend estimation
-
-Temporal trends were quantified using the Mann–Kendall test (@mann1945non; @hamed2009), which detects monotonic directional change, and Sen’s Slope (@Sen01121968) to estimate the magnitude of those trends. Both tests were implemented via the `modifiedmk` package (@hamed1998) and applied to raw count data as well as detection-corrected abundance estimates (λ̂). Comparing these two datasets allowed us to assess how accounting for detection influenced the estimated direction and rate of change. This dual approach provided both a robust, distribution-free evaluation of trend significance and a quantitative measure of annual rate of change.
 
 ```{r}
 #| warning: false
@@ -742,19 +749,21 @@ yearly_rao <- yearly_rao |>
 #| code-fold: true
 
 shannon_d <- janp_main |> 
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
   inner_join(wt_get_species() |> dplyr::select(species_code, species_class, species_order), by = "species_code") |>
-  dplyr::select(location, recording_date_time, species_code, species_common_name, individual_order, abundance) |>
+  dplyr::select(location, ecoregion, recording_date_time, species_code, species_common_name, individual_order, abundance) |>
   distinct() |>
-  group_by(location, recording_date_time, species_code, species_common_name) |>
+  group_by(location, ecoregion, recording_date_time, species_code, species_common_name) |>
   summarise(count = max(individual_order)) |>
   ungroup() |>
   pivot_wider(names_from = species_code, values_from = count, values_fill = 0) |>
   pivot_longer(cols = -(location:species_common_name), names_to = "species", values_to = "count") |>
-  group_by(location, year = year(recording_date_time), species) |>
+  group_by(location, ecoregion, year = year(recording_date_time), species) |>
   summarise(total_count = sum(count)) |>
   ungroup() |>
-  group_by(location, year) |>
+  group_by(location, ecoregion, year) |>
   summarise(shannon_index = diversity(total_count, index = "shannon")) |>
   ungroup() |>
   ggplot(aes(x = factor(year), y = shannon_index, fill = factor(year))) +
@@ -764,8 +773,21 @@ shannon_d <- janp_main |>
        y = "Shannon diversity index per location") +
   theme_bw() +
   guides(fill = guide_legend(title = "Year")) +
-  scale_fill_viridis_d(alpha = 0.8, option = "cividis")
+  scale_fill_viridis_d(alpha = 0.8, option = "cividis") +
+  facet_wrap(~ecoregion, ncol = 1)
 ```
+
+### Trend analysis
+
+To quantify temporal changes in bird populations and community composition from 2007 to 2025, we analyzed trends in species-specific abundance, forest and alpine assemblages, and functional guilds. Analyses were designed to separate biological change from potential sampling and methodological effects, ensuring that observed patterns represented genuine ecological responses. This was achieved through a multi-step framework that (1) modeled detection probability and methodological variability, (2) estimated detection-corrected abundance, and (3) evaluated long-term directional trends and associated shifts in functional and community-level diversity.
+
+#### Detection-corrected abundance estimation
+
+Temporal trends in abundance were estimated using single-visit abundance models implemented in the `detect::svabu()` function (@solymos2012conditional). This framework jointly models site-level abundance and detection probability from single-visit counts, providing unbiased estimates without requiring repeated surveys. In the models, year, ecoregion and landcover type and proportion at a 150 meter buffer were included as observation covariates with julian date, hour of day and observer included in the detection covariates to account for within-season and diurnal variation in detectability.The resulting detection-corrected expected abundance per site-visit (λ) was then aggregated by year to produce mean annual abundance indices. These indices were subsequently used to evaluate temporal trends in species abundance.
+
+#### Trend estimation
+
+Temporal trends were quantified using the Mann–Kendall test (@mann1945non; @hamed2009), which detects monotonic directional change, and Sen’s Slope (@Sen01121968) to estimate the magnitude of those trends. Both tests were implemented via the `modifiedmk` package (@hamed1998) and applied to the detection-corrected abundance estimates (λ̂).Sen’s slope provides an estimate of the median annual rate of change in the abundance index over the time series. To express this rate in a standardized and interpretable way, we converted Sen’s slope to a percent change per year by dividing the estimated slope by the mean annual abundance index across the full time series and multiplying by 100. This metric represents the average proportional change in abundance per year, relative to the long-term mean abundance of the species in that ecoregion. Positive values indicate increasing abundance, while negative values indicate declining abundance.
 
 # Results
 
@@ -951,9 +973,6 @@ ggplot(guild_activity, aes(x = julian, y = dietary_guild, fill = dietary_guild))
 ```
 
 
-
-
-
 ```{r}
 #| warning: false
 #| echo: false
@@ -1067,159 +1086,163 @@ shannon_d
 #| results: hide
 #| code-fold: true
 
-# Trend
-
-run_trend <- function(spp, ecor){
-  
-if(ecor == "Alpine"){
-
-# 1. Summarize per site-visit using max()
-janp_trend <- janp_main |>
-  filter(ecoregion %in% c("Alpine")) |>
-  mutate(year = year(recording_date_time),
-         hour = hour(recording_date_time),
-         julian = yday(recording_date_time)) |>
-  dplyr::select(organization, project_id, longitude, latitude, location, location_id, task_id, ecoregion, recording_date_time, observer, species_code, individual_order, abundance, detection_time) |>
-  distinct() |>
-  wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "human", "unknown"), zerofill = T) 
-
-# 2. Combine with zero sites
-base_zero <- janp_trend |>
-  dplyr::select(location, ecoregion, recording_date_time, observer) |>
+janp_ready_trend <- janp_main |>
+  inner_join(lc_150m, by = c("location" = "Point_ID")) |>
+  mutate(landcover = case_when(grepl('TEKARRA|VALLEY5', location) & year > 2024 ~ "Burned", TRUE ~ landcover)) |>
   distinct()
 
-spp_max <- janp_trend |>
-  filter(species_code == spp) |>
-  group_by(location, ecoregion, recording_date_time, observer) |>
-  summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
-  ungroup()
-
-if(nrow(spp_max) < 20) { message(paste0("Probably an error in Alpine with ", spp))}
-
-jpt <- base_zero |>
-  left_join(spp_max,
-            by = c("location", "ecoregion", "recording_date_time", "observer")) |>
-  mutate(individual_order = tidyr::replace_na(individual_order, 0)) |>
-  mutate(year = year(recording_date_time),
-         hour = hour(recording_date_time),
-         julian = yday(recording_date_time)) |>
-  filter(!is.infinite(individual_order))
-
-# 3. Fit svabu: year only in abundance component
-fit <- svabu(individual_order ~ year | julian + hour + observer, data = jpt)
-
-# 4. Standardize detection
-ref_vals <- jpt |>
-  summarise(observer = first(observer),
-            julian = mean(julian, na.rm = TRUE),
-            hour   = mean(hour,   na.rm = TRUE))
-
-jpt$lambda_hat <- predict(fit, newdata = jpt |> mutate(julian = ref_vals$julian, hour = ref_vals$hour, observer = ref_vals$observer), type = "response")
-
-# 5. Aggregate to annual index
-lambda_year <- jpt |>
-  group_by(year) |>
-  summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE), .groups = "drop") |>
-  arrange(year)
-
-# 6. Run Mann-Kendall + Sen's slope
-x <- lambda_year$lambda_hat
-mk <- mmkh(x)
-tau       <- mk[6]
-sen_slope <- mk[7]
-p_value   <- mk[2]
-pct_change <- mk[["Sen's slope"]] / mean(x) * 100
-trend_class <- dplyr::case_when(
-  pct_change >  2.5  ~ "Increasing",
-  pct_change < -2.5  ~ "Decreasing",
-  TRUE               ~ "Stable"
-)
-
-return(trend_result_rcki_alpine <- tibble(
-  species_code = spp,
-  ecoregion = "Alpine",
-  tau          = tau,
-  p_value      = p_value,
-  sen_slope    = sen_slope,
-  pct_change   = pct_change,
-  trend        = trend_class
-))
-} else {
+# Trend
+run_trend <- function(spp, ecor){
   
-  janp_trend <- janp_main |>
+  if(ecor == "Alpine"){
+
+      # 1. Summarize per site-visit using max()
+      janp_trend <- janp_ready_trend |>
+        filter(ecoregion %in% c("Alpine")) |>
+        mutate(year = year(recording_date_time),
+               hour = hour(recording_date_time),
+               julian = yday(recording_date_time)) |>
+        dplyr::select(organization, project_id, longitude, latitude, location, location_id, task_id, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, recording_date_time, observer, species_code, individual_order, abundance, detection_time) |>
+        distinct() |>
+        wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "human", "unknown"), zerofill = T) 
+
+      # 2. Combine with zero sites
+      base_zero <- janp_trend |>
+        dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, recording_date_time, observer) |>
+        distinct()
+      
+      spp_max <- janp_trend |>
+        filter(species_code == spp) |>
+        group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, recording_date_time, observer) |>
+        summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
+        ungroup()
+      
+      if(nrow(spp_max) < 20) { message(paste0("Probably an error in Alpine with ", spp))}
+      
+      jpt <- base_zero |>
+        left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "recording_date_time", "observer")) |>
+        mutate(individual_order = tidyr::replace_na(individual_order, 0)) |>
+        mutate(year = year(recording_date_time),
+               hour = hour(recording_date_time),
+               julian = yday(recording_date_time)) |>
+        filter(!is.infinite(individual_order))
+      
+      # 3. Fit svabu: year only in abundance component
+      fit <- svabu(individual_order ~ year + landcover + prop_cover + VEGETATION_DENSITY | julian + hour + observer, data = jpt)
+      
+      # 4. Standardize detection
+      ref_vals <- jpt |>
+        summarise(observer = first(observer),
+                  julian = mean(julian, na.rm = TRUE),
+                  hour   = mean(hour,   na.rm = TRUE))
+      
+      jpt$lambda_hat <- predict(fit, newdata = jpt |> mutate(julian = ref_vals$julian, hour = ref_vals$hour, observer = ref_vals$observer), type = "response")
+      
+      # 5. Aggregate to annual index
+      lambda_year <- jpt |>
+        group_by(year) |>
+        summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE), .groups = "drop") |>
+        arrange(year)
+      
+      # 6. Run Mann-Kendall + Sen's slope
+      x <- lambda_year$lambda_hat
+      mk <- mmkh(x)
+      tau       <- mk[6]
+      sen_slope <- mk[7]
+      p_value   <- mk[2]
+      pct_change <- mk[["Sen's slope"]] / mean(x) * 100
+      trend_class <- dplyr::case_when(
+        pct_change >  2.5  ~ "Increasing",
+        pct_change < -2.5  ~ "Decreasing",
+        TRUE               ~ "Stable"
+      )
+      
+      return(trend_result_alpine <- tibble(
+        species_code = spp,
+        ecoregion = "Alpine",
+        tau          = tau,
+        p_value      = p_value,
+        sen_slope    = sen_slope,
+        pct_change   = pct_change,
+        trend        = trend_class
+      ))
+      
+  } else {
+  
+  janp_trend <- janp_ready_trend |>
   filter(ecoregion %in% c("Montane", "Upper Subalpine", "Lower Subalpine"), !grepl('COTTONWOOD|MUSHROOM',location), !year == 2012) |>
   mutate(year = year(recording_date_time),
          hour = hour(recording_date_time),
          julian = yday(recording_date_time)) |>
-  dplyr::select(organization, project_id, longitude, latitude, location, location_id, task_id, ecoregion, recording_date_time, observer, species_code, individual_order, abundance, detection_time) |>
+  dplyr::select(organization, project_id, longitude, latitude, location, location_id, task_id, ecoregion, landcover, prop_cover, recording_date_time, observer, species_code, individual_order, abundance, detection_time) |>
   distinct() |>
   wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "human", "unknown"), zerofill = T) 
 
-# 2. Combine with zero sites
-base_zero <- janp_trend |>
-  dplyr::select(location, ecoregion, recording_date_time, observer) |>
-  distinct()
+  # 2. Combine with zero sites
+  base_zero <- janp_trend |>
+    dplyr::select(location, ecoregion, landcover, prop_cover, recording_date_time, observer) |>
+    distinct()
 
-spp_max <- janp_trend |>
-  filter(species_code == spp) |>
-  group_by(location, ecoregion, recording_date_time, observer) |>
-  summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
-  ungroup()
+  spp_max <- janp_trend |>
+    filter(species_code == "VATH") |>
+    group_by(location, ecoregion, landcover, prop_cover, recording_date_time, observer) |>
+    summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
+    ungroup()
 
-if(nrow(spp_max) < 20) { message(paste0("Probably an error in Forested with ", spp))}
+  if(nrow(spp_max) < 20) { message(paste0("Probably an error in Forested with ", spp))}
 
-jpt <- base_zero |>
-  left_join(yrwa,
-            by = c("location", "ecoregion", "recording_date_time", "observer")) |>
-  mutate(individual_order = tidyr::replace_na(individual_order, 0)) |>
-  mutate(year = year(recording_date_time),
-         hour = hour(recording_date_time),
-         julian = yday(recording_date_time)) |>
-  filter(!is.infinite(individual_order))
+  jpt <- base_zero |>
+    left_join(spp_max,
+              by = c("location", "ecoregion", "landcover", "prop_cover", "recording_date_time", "observer")) |>
+    mutate(individual_order = tidyr::replace_na(individual_order, 0)) |>
+    mutate(year = year(recording_date_time),
+           hour = hour(recording_date_time),
+           julian = yday(recording_date_time)) |>
+    filter(!is.infinite(individual_order))
 
-# 3. Fit svabu: year only in abundance component
-fit <- svabu(individual_order ~ year | julian + hour + observer, data = jpt)
+  # 3. Fit svabu: year only in abundance component
+  fit <- svabu(individual_order ~ year + landcover | julian + hour + observer, data = jpt)
 
-# 4. Standardize detection
-ref_vals <- jpt %>%
-  summarise(
-    observer = first(observer),
-    julian = mean(julian, na.rm = TRUE),
-    hour   = mean(hour,   na.rm = TRUE)
+  # 4. Standardize detection
+  ref_vals <- jpt %>%
+    summarise(
+      observer = first(observer),
+      julian = mean(julian, na.rm = TRUE),
+      hour   = mean(hour,   na.rm = TRUE)
+    )
+
+  jpt$lambda_hat <- predict(fit, newdata = jpt |> mutate(julian = ref_vals$julian, hour = ref_vals$hour, observer = ref_vals$observer), type = "response")
+
+  # 5. Aggregate to annual index
+  lambda_year <- jpt |>
+    group_by(year) |>
+    summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE), .groups = "drop") |>
+    arrange(year)
+
+  # 6. Run Mann-Kendall + Sen's slope
+  x <- lambda_year$lambda_hat
+  mk <- mmkh(x)
+  tau       <- mk[6]
+  sen_slope <- mk[7]
+  p_value   <- mk[2]
+  pct_change <- mk[["Sen's slope"]] / mean(x) * 100
+  trend_class <- dplyr::case_when(
+    pct_change >  2.5  ~ "Increasing",
+    pct_change < -2.5  ~ "Decreasing",
+    TRUE               ~ "Stable"
   )
 
-jpt$lambda_hat <- predict(fit, newdata = jpt |> mutate(julian = ref_vals$julian, hour = ref_vals$hour, observer = ref_vals$observer), type = "response")
-
-# 5. Aggregate to annual index
-lambda_year <- jpt |>
-  group_by(year) |>
-  summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE), .groups = "drop") |>
-  arrange(year)
-
-# 6. Run Mann-Kendall + Sen's slope
-x <- lambda_year$lambda_hat
-mk <- mmkh(x)
-tau       <- mk[6]
-sen_slope <- mk[7]
-p_value   <- mk[2]
-pct_change <- mk[["Sen's slope"]] / mean(x) * 100
-trend_class <- dplyr::case_when(
-  pct_change >  2.5  ~ "Increasing",
-  pct_change < -2.5  ~ "Decreasing",
-  TRUE               ~ "Stable"
-)
-
-return(trend_result_rcki_forested <- tibble(
-  species_code = spp,
-  ecoregion = "Forested",
-  tau          = tau,
-  p_value      = p_value,
-  sen_slope    = sen_slope,
-  pct_change   = pct_change,
-  trend        = trend_class
-))
+  return(trend_result_forested <- tibble(
+    species_code = spp,
+    ecoregion = "Forested",
+    tau          = tau,
+    p_value      = p_value,
+    sen_slope    = sen_slope,
+    pct_change   = pct_change,
+    trend        = trend_class
+  ))
   
-}
+  }
 }
 
 ```
@@ -1234,7 +1257,7 @@ return(trend_result_rcki_forested <- tibble(
 #| code-fold: true
 
 trendz <- bind_rows(
-  run_trend("VATH", "Alpine"), run_trend("VATH", "Forested"),
+  run_trend("VATH", "Alpine"), run_trend("VATH", "Forested"))
   run_trend("DEJU", "Alpine"), run_trend("DEJU", "Forested"),
   run_trend("HETH", "Alpine"), run_trend("HETH", "Forested"),
   run_trend("FOSP", "Alpine"), run_trend("FOSP", "Forested"),
@@ -1247,6 +1270,7 @@ trendz <- bind_rows(
   run_trend("GCKI", "Alpine"),   run_trend("GCKI", "Forested"),
   run_trend("WCSP", "Alpine"),   run_trend("WCSP", "Forested"),
   run_trend("GCSP", "Alpine"),   run_trend("GCSP", "Forested"))
+
 
   run_trend("WTSP", "Alpine"),   run_trend("WTSP", "Forested"),
   run_trend("RBNU", "Alpine"),   run_trend("RBNU", "Forested"),
