@@ -628,6 +628,36 @@ ggplot(dist_df, aes(x=group, y=dist_to_centroid, fill=group)) +
   ylim(0,1)
 ```
 
+### Observer and methodological comparisons
+
+```{r}
+
+obs_dups <- janp_main |>
+  filter(!observer == "Not Assigned") |>
+  group_by(location, recording_date_time) |>
+  mutate(n = n_distinct(data_type), n_obs = n_distinct(observer)) |>
+  ungroup() |>
+  filter(n > 1) |>
+  distinct() |>
+  dplyr::select(-c(organization, data_type, project_id:n_obs)) |>
+  arrange(recording_date_time) |>
+  group_by(location, recording_date_time, species_code, observer) %>%
+  summarise(individual_order = max(individual_order, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(
+    names_from = observer,
+    values_from = individual_order,
+    values_fill = 0  # missing species = 0
+  )
+
+obs_matrix <- obs_dups %>%
+  dplyr::select(-location, -recording_date_time, -species_code) %>%
+  mutate(across(everything(), ~ ifelse(. > 0, 1, 0)))
+
+dist_obs <- vegdist(t(obs_matrix), method = "bray")
+hc <- hclust(dist_obs)
+plot(hc)
+
+```
 
 ### Community analysis
 
