@@ -643,11 +643,50 @@ obs_dups <- janp_main |>
   arrange(recording_date_time) |>
   group_by(location, recording_date_time, species_code, observer) %>%
   summarise(individual_order = max(individual_order, na.rm = TRUE), .groups = "drop") %>%
+  ungroup() |>
+  distinct() |>
   pivot_wider(
     names_from = observer,
     values_from = individual_order,
     values_fill = 0  # missing species = 0
-  )
+  ) |>
+  inner_join(janp_main |> dplyr::select(location, recording_date_time, recording_id) |> distinct(), by = c("location" = "location", "recording_date_time" = "recording_date_time")) |>
+  relocate(recording_id, .after = recording_date_time) |>
+  drop_na()
+
+obs_wide <- obs_dups %>%
+  pivot_longer(
+    cols = `Maya Meron`:`Kelsey Bell`,
+    names_to = "observer",
+    values_to = "count"
+  ) %>%
+  pivot_wider(names_from = observer, values_from = count, values_fill = 0)
+
+# Observer names
+observer_cols <- colnames(obs_wide)[!(colnames(obs_wide) %in% c("location", "recording_date_time", "recording_id", "species_code"))]
+
+# Initialize empty tibble for pairwise correlations
+pairwise_corr <- tibble(obs1 = character(), obs2 = character(), corr = double())
+
+# Compute pairwise correlations
+for(i in 1:(length(observer_cols)-1)) {
+  for(j in (i+1):length(observer_cols)) {
+    o1 <- observer_cols[i]
+    o2 <- observer_cols[j]
+    c <- cor(obs_wide[[o1]], obs_wide[[o2]], use = "pairwise.complete.obs")
+    pairwise_corr <- pairwise_corr %>%
+      add_row(obs1 = o1, obs2 = o2, corr = c)
+  }
+}
+
+# Heatmap
+ggplot(pairwise_corr, aes(x = obs1, y = obs2, fill = corr)) +
+  geom_tile() +
+  scale_fill_viridis_c(option = "C") +
+  labs(x = "Observer", y = "Observer", fill = "Correlation",
+       title = "Pairwise observer correlations") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 obs_matrix <- obs_dups %>%
   dplyr::select(-location, -recording_date_time, -species_code) %>%
@@ -682,6 +721,7 @@ To evaluate community-level ecological responses, we examined temporal changes i
 guilds <- read_csv("./assets/jasper_guilds.csv")
 
 guild_activity <- janp_main |>
+  filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
   filter(data_type %in% c("legacy", "single_visit_3_max", "single_visit_0_max")) |>
   filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
   wt_tidy_species(remove = c("mammal", "amphibian", "abiotic", "insect", "unknown"), zerofill = T) |>
@@ -721,6 +761,7 @@ datatable(guilds,
 #| code-fold: true
 
 abund_sp <- janp_main %>%
+  filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
   group_by(location, year, species_code) %>%
   summarise(abund = n(), .groups = "drop") %>%
   pivot_wider(id_cols = c(location, year),
@@ -779,6 +820,7 @@ yearly_rao <- yearly_rao |>
 #| code-fold: true
 
 shannon_d <- janp_main |> 
+  filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
                                ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
@@ -839,6 +881,7 @@ Some of these analyses are still a work-in-progress. Check back soon for updates
 #| tbl-cap: Community matrix
 
 comm_matrix <- janp_main |>
+  filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
   dplyr::select(-ecoregion) |>
   inner_join(locs_summary, by = c("location" = "Location")) |>
@@ -1064,6 +1107,7 @@ res_raos_q
 #| code-fold: true
 
 spp_rich_location <- janp_main |>
+  filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
   filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
   filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
@@ -1074,7 +1118,8 @@ spp_rich_location <- janp_main |>
   ungroup() |>
   inner_join(locs_summary, by = c("location" = "Location")) |>
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
-                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane"))
+                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
+  filter(!(year == 2012 & ecoregion == "Montane"))
 
 spp_rich_location |>
   ggplot(aes(x=as.factor(year), y=species_count, fill=year)) +
