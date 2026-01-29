@@ -238,6 +238,7 @@ lc_150m <- read_csv("Habitat/LandCoverClass_Buffer150Raw.csv") |>
 #| label: fig-aru-monitoring-locations
 
 janp_locs <- janp_main |>
+  filter(year > 2022) |>
   dplyr::select(location, latitude, longitude, year, ecoregion) |>
   drop_na(latitude) |>
   distinct() |>
@@ -598,7 +599,7 @@ ggplot(janp_lisa_sf) +
 
 ### Site comparisons
 
-The 2024 Jasper Fire destroyed two established acoustic transects (VALLEY5 and TEKKARA). These transects were replaced in 2025 with two new montane transects (COTTONWOOD and MUSHROOM). To assess whether the replacement transects were appropriate proxies for the original sites, we evaluated how similar their species assemblages were to those observed at other existing montane transects.
+The 2024 Jasper Fire affected two established acoustic transects (VALLEY5 and TEKKARA). These transects were replaced in 2025 with two new montane transects (COTTONWOOD and MUSHROOM). To assess whether the replacement transects were appropriate proxies for the original sites, we evaluated how similar their species assemblages were to those observed at other existing montane transects.
 
 Specifically, we compared species detections from COTTONWOOD and MUSHROOM to the distribution of detections across all other montane transects to quantify their compositional similarity and degree of departure from the montane baseline. We assessed whether replacement transects were representative of montane communities using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity. Distances of replacement transects to the montane centroid were compared against the distribution of distances observed among existing montane transects.
 
@@ -607,7 +608,7 @@ Specifically, we compared species detections from COTTONWOOD and MUSHROOM to the
 #| echo: false
 #| message: false
 #| eval: true
-#| include: false
+#| include: true
 #| code-fold: true
 
 comm_matrix1 <- janp_main |>
