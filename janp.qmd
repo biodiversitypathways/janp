@@ -34,7 +34,7 @@ styles: styles.css
 github: https://github.com/biodiversitypathways/janp
 ---
 
-![](assets/janp.png){style="float:left`;" fig-alt="Photo of Jasper" fig-align="center"}
+![](assets/janp.png){style="float:left`;" fig-alt="Photo of Jasper" fig-align="center"}{.lightbox}
 
 ```{r}
 #| label: Load packages and authenticate to WildTrax
@@ -433,7 +433,7 @@ datatable(transcription_table,
 
 ```
 
-![WildTrax Acoustic Processing Interface (Version 2)](assets/acousticprocessing.png){#fig-acousticprocessing .float-left .fig-align-center}
+![WildTrax Acoustic Processing Interface (Version 2)](assets/acousticprocessing.png){#fig-acousticprocessing .float-left .fig-align-center}{.lightbox}
 
 ```{r}
 #| warning: false
@@ -471,7 +471,7 @@ tmtt_tags <- janp_main |>
 
 ```
 
-![Visit photos at CAVELL-3](assets/locationphotos.png){#fig-visitphotos .float-left .fig-align-center}
+![Visit photos at CAVELL-3](assets/locationphotos.png){#fig-visitphotos .float-left .fig-align-center}{.lightbox}
 
 ## Analyses
 
