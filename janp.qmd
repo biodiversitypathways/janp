@@ -632,8 +632,8 @@ rownames(sp_mat) <- montane_all$location
 bc_dist <- vegdist(sp_mat, method = "bray")
 group <- ifelse(
   grepl("^COTTONWOOD|^MUSHROOM", rownames(sp_mat)),
-  "Replacement",
-  "Reference"
+  "Transect Replacement",
+  "Montane Reference"
 )
 bd <- betadisper(bc_dist, group)
 dist_df <- data.frame(
@@ -642,7 +642,7 @@ dist_df <- data.frame(
   dist_to_centroid = bd$distances
 )
 #summary(dist_df$dist_to_centroid[group == "Reference"])
-dist_df %>% filter(group == "Replacement")
+#dist_df %>% filter(group == "Replacement")
 ggplot(dist_df, aes(x=group, y=dist_to_centroid, fill=group)) +
   geom_boxplot() +
   geom_point(alpha = 0.2) +
@@ -650,6 +650,75 @@ ggplot(dist_df, aes(x=group, y=dist_to_centroid, fill=group)) +
   ylab("Distance to Montane Centroid") + xlab("Group") +
   theme_bw() +
   ylim(0,1)
+```
+
+We summarized bird community composition on the VALLEY5 and TEKARRA transects using a species–by–site community matrix and applied redundancy analysis (RDA) to test whether community structure differed between pre-fire and post-fire periods (@fig-after-fire). The ordination visualizes shifts in species associations attributable to fire, with site scores grouped by fire period and species vectors indicating taxa contributing most strongly to observed differences.
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: true
+#| include: true
+#| code-fold: true
+#| label: fig-after-fire
+#| fig-cap: Community matrix of species associations before and after the Jasper 2024 fire on the VALLEY5 and TEKARRA transects.
+
+
+janp_fire <- janp_main |>
+  filter(grepl("VALLEY5|TEKARRA",location)) |>
+  group_by(location, year, species_code) |>
+  summarise(individual_order = max(individual_order)) |>
+  ungroup() |>
+  mutate(fire_period = if_else(year < 2023, "Pre-fire", "Post-fire")) |>
+  filter(!(species_code == "NONE"))
+ 
+comm_mat_fire <- janp_fire |>
+  pivot_wider(
+    names_from = species_code,
+    values_from = individual_order,
+    values_fill = 0) |>
+  drop_na()
+
+env_fire <- env_fire |>
+  mutate(
+    location = factor(location),
+    fire_period = factor(fire_period)
+  ) |>
+  drop_na()
+
+t3_fire <- rda(comm_mat_fire[,-c(1:3)] ~ fire_period, data = env_fire)
+t3scores_fire <- scores(t3_fire, display = "sites") %>%
+as.data.frame() %>%
+rownames_to_column("site") %>%
+bind_cols(., env_fire)
+t3vect_fire <- scores(t3_fire, display = "species") %>%
+as.data.frame()
+
+plot_RDA_fire <- ggplot(data = t3scores_fire, aes(x = RDA1, y = PC1)) +
+  geom_point(data = t3scores_fire, aes(x = RDA1, y = PC1, colour = fire_period), 
+             alpha = 0.7, size = 3, shape = 16) +
+  stat_ellipse(data = t3scores_fire, aes(colour = fire_period), 
+               linetype = 1, type = 'norm', level = 0.67, size = 1) +
+  geom_vline(xintercept = 0, color = "#A19E99", linetype = 2, size = 1) +
+  geom_hline(yintercept = 0, color = "#A19E99", linetype = 2, size = 1) +
+  geom_segment(data = t3vect_fire, aes(x = 0, y = 0, xend = RDA1, yend = PC1), 
+               arrow = arrow(length = unit(0.2, "cm")), size = 0.3) +
+  geom_text_repel(data = t3vect_fire, aes(x = RDA1, y = PC1, label = rownames(t3vect_fire)), 
+                  size = 3, colour = "black", fontface = "italic", 
+                  max.overlaps = 10, 
+                  segment.color = "grey70") +
+  theme_bw() +
+  scale_colour_viridis_d(option = "cividis", end = 0.9) +
+  labs(x = "RDA1", y = "PC1", title = "Pre-post Jasper Fire species associations", 
+       colour = "Fire Period") +
+  theme(legend.position = "right", 
+        legend.title = element_text(size = 10), 
+        legend.text = element_text(size = 9), 
+        plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
+
+plot_RDA_fire
+
 ```
 
 ### Observer and methodological comparisons
@@ -747,7 +816,7 @@ To evaluate community-level ecological responses, we examined temporal changes i
 
 ```{r}
 #| warning: false
-#| echo: true
+#| echo: false
 #| eval: true
 #| message: false
 #| include: true
@@ -917,7 +986,7 @@ Some of these analyses are still a work-in-progress. Check back soon for updates
 #| eval: true
 #| include: true
 #| label: fig-community
-#| tbl-cap: Community matrix
+#| tbl-cap: Community matrix of species associations between montane and alpine ecoregions
 
 comm_matrix <- janp_main |>
   filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
