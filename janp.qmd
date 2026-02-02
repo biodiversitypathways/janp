@@ -377,7 +377,7 @@ datatable(locs_summary,
 
 ## Data management, processing and quality control
 
-Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output. Tags were then drawn to encompass the signal within the methods indicated in each project (see @tbl-transcriptions and @fig-acousticprocessing). Transcribers also had site photos available (see @fig-visitphotos) to optimize their species identification by having habitat context while processing.
+Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (MacPhail 2026, *In Review*). Tags were then drawn to encompass the signal within the methods indicated in each project (see @tbl-transcriptions). Transcribers also had site photos available to optimize their species identification by having habitat context while processing.
 
 ```{r}
 #| warning: false
@@ -599,9 +599,7 @@ ggplot(janp_lisa_sf) +
 
 ### Site comparisons
 
-The 2024 Jasper Fire affected two established acoustic transects (VALLEY5 and TEKKARA). These transects were replaced in 2025 with two new montane transects (COTTONWOOD and MUSHROOM). To assess whether the replacement transects were appropriate proxies for the original sites, we evaluated how similar their species assemblages were to those observed at other existing montane transects.
-
-Specifically, we compared species detections from COTTONWOOD and MUSHROOM to the distribution of detections across all other montane transects to quantify their compositional similarity and degree of departure from the montane baseline. We assessed whether replacement transects were representative of montane communities using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity. Distances of replacement transects to the montane centroid were compared against the distribution of distances observed among existing montane transects.
+The 2024 Jasper Fire affected two established acoustic transects (VALLEY5 and TEKKARA). These transects were replaced in 2025 with two new montane transects (COTTONWOOD and MUSHROOM). To assess whether the replacement transects were appropriate proxies for the original sites, we evaluated how similar their species assemblages were to those observed at other existing montane transects. Specifically, we compared species detections from COTTONWOOD and MUSHROOM to the distribution of detections across all other montane transects to quantify their compositional similarity and degree of departure from the montane baseline. We assessed whether replacement transects were representative of montane communities using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity. Distances of replacement transects to the montane centroid were compared against the distribution of distances observed among existing montane transects.
 
 ```{r}
 #| warning: false
@@ -1298,12 +1296,12 @@ run_trend <- function(spp) {
     
     spp_max <- janp_trend |>
       filter(species_code == spp) |>
-      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, recording_date_time, observer) |>
+      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, recording_date_time, observer, species_code) |>
       summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
       ungroup()
     
     if (nrow(spp_max) < 20) {
-      message(paste0("Probably an error in Alpine with ", spp))
+      next(paste0("Probably an error in Alpine with ", spp))
     }
     
     jpt <- base_zero |>
@@ -1384,7 +1382,7 @@ run_trend <- function(spp) {
       summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
       ungroup()
     
-    if (nrow(spp_max) < 20) {message(paste0("Probably an error in Forested with ", spp))}
+    if (nrow(spp_max) < 20) {stop(paste0("Probably an error in Forested with ", spp))}
     
     jpt <- base_zero |>
       left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "recording_date_time", "observer")) |>
@@ -1453,13 +1451,14 @@ run_trend <- function(spp) {
 #| results: hide
 #| code-fold: true
 
+safe_run_trend <- possibly(run_trend, otherwise = NA)
+
 trendz <- janp_main |>
   group_by(species_code) |>
   tally() |>
   arrange(-n) |>
-  filter(!species_code == "NONE") |>
-  slice(1:10) |>
-  mutate(trend = map(.x = species_code, .f = ~run_trend(.x))) |>
+  filter(species_code != "NONE") |>
+  mutate(trend = map(species_code, safe_run_trend))
   unnest_wider(trend) |>
   unnest()
 
