@@ -9,7 +9,7 @@
 <meta name="author" content="Alex MacPhail">
 <meta name="author" content="Brenda Shepherd">
 <meta name="author" content="Nina Veselka">
-<meta name="dcterms.date" content="2026-02-01">
+<meta name="dcterms.date" content="2026-02-02">
 
 <title>Report on the use of passive acoustic monitoring for analysis of bird trends in Jasper National Park</title>
 <style>
@@ -201,7 +201,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 1, 2026</p>
+      <p class="date">February 2, 2026</p>
     </div>
   </div>
   
@@ -213,11 +213,7 @@ div.csl-indent {
 </header>
 
 
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="assets/janp.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="float:left`;" alt="Photo of Jasper"></p>
-</figure>
-</div>
+<p><img src="assets/janp.png" class="img-fluid quarto-figure quarto-figure-center" style="float:left`;" alt="Photo of Jasper">{.lightbox}</p>
 <div class="callout callout-style-default callout-note callout-titled" style="background-color: #f4f4f4; padding: 20px;">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -301,7 +297,7 @@ Table&nbsp;1: Locations surveyed across years. Ones indicated a deployment in th
 </section>
 <section id="data-management-processing-and-quality-control" class="level2">
 <h2 class="anchored" data-anchor-id="data-management-processing-and-quality-control">Data management, processing and quality control</h2>
-<p>Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output. Tags were then drawn to encompass the signal within the methods indicated in each project (see <a href="#tbl-transcriptions" class="quarto-xref">Table&nbsp;2</a> and <a href="#fig-acousticprocessing" class="quarto-xref">Figure&nbsp;2</a>). Transcribers also had site photos available (see <a href="#fig-visitphotos" class="quarto-xref">Figure&nbsp;3</a>) to optimize their species identification by having habitat context while processing.</p>
+<p>Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (MacPhail 2026, <em>In Review</em>). Tags were then drawn to encompass the signal within the methods indicated in each project (see <a href="#tbl-transcriptions" class="quarto-xref">Table&nbsp;2</a>). Transcribers also had site photos available to optimize their species identification by having habitat context while processing.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -367,26 +363,8 @@ Table&nbsp;2: Transcription method by year with re-transcribed data being conduc
 </figure>
 </div>
 </div>
-<div id="fig-acousticprocessing" class="float-left fig-align-center quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-acousticprocessing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="assets/acousticprocessing.png" class="float-left fig-align-center img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-acousticprocessing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: WildTrax Acoustic Processing Interface (Version 2)
-</figcaption>
-</figure>
-</div>
-<div id="fig-visitphotos" class="float-left fig-align-center quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-visitphotos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="assets/locationphotos.png" class="float-left fig-align-center img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-visitphotos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Visit photos at CAVELL-3
-</figcaption>
-</figure>
-</div>
+<p><img src="assets/acousticprocessing.png" id="fig-acousticprocessing" class="float-left fig-align-center img-fluid" alt="WildTrax Acoustic Processing Interface (Version 2)">{.lightbox}</p>
+<p><img src="assets/locationphotos.png" id="fig-visitphotos" class="float-left fig-align-center img-fluid" alt="Visit photos at CAVELL-3">{.lightbox}</p>
 </section>
 <section id="analyses" class="level2">
 <h2 class="anchored" data-anchor-id="analyses">Analyses</h2>
@@ -412,8 +390,7 @@ Note
 </section>
 <section id="site-comparisons" class="level3">
 <h3 class="anchored" data-anchor-id="site-comparisons">Site comparisons</h3>
-<p>The 2024 Jasper Fire affected two established acoustic transects (VALLEY5 and TEKKARA). These transects were replaced in 2025 with two new montane transects (COTTONWOOD and MUSHROOM). To assess whether the replacement transects were appropriate proxies for the original sites, we evaluated how similar their species assemblages were to those observed at other existing montane transects.</p>
-<p>Specifically, we compared species detections from COTTONWOOD and MUSHROOM to the distribution of detections across all other montane transects to quantify their compositional similarity and degree of departure from the montane baseline. We assessed whether replacement transects were representative of montane communities using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity. Distances of replacement transects to the montane centroid were compared against the distribution of distances observed among existing montane transects.</p>
+<p>The 2024 Jasper Fire affected two established acoustic transects (VALLEY5 and TEKKARA). These transects were replaced in 2025 with two new montane transects (COTTONWOOD and MUSHROOM). To assess whether the replacement transects were appropriate proxies for the original sites, we evaluated how similar their species assemblages were to those observed at other existing montane transects. Specifically, we compared species detections from COTTONWOOD and MUSHROOM to the distribution of detections across all other montane transects to quantify their compositional similarity and degree of departure from the montane baseline. We assessed whether replacement transects were representative of montane communities using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity. Distances of replacement transects to the montane centroid were compared against the distribution of distances observed among existing montane transects.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -423,7 +400,7 @@ Note
 </div>
 </div>
 </div>
-<p>We summarized bird community composition on the VALLEY5 and TEKARRA transects using a species–by–site community matrix and applied redundancy analysis (RDA) to test whether community structure differed between pre-fire and post-fire periods (<a href="#fig-after-fire" class="quarto-xref">Figure&nbsp;4</a>). The ordination visualizes shifts in species associations attributable to fire, with site scores grouped by fire period and species vectors indicating taxa contributing most strongly to observed differences.</p>
+<p>We summarized bird community composition on the VALLEY5 and TEKARRA transects using a species–by–site community matrix and applied redundancy analysis (RDA) to test whether community structure differed between pre-fire and post-fire periods (<a href="#fig-after-fire" class="quarto-xref">Figure&nbsp;2</a>). The ordination visualizes shifts in species associations attributable to fire, with site scores grouped by fire period and species vectors indicating taxa contributing most strongly to observed differences.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-after-fire" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -432,7 +409,7 @@ Note
 <img src="janp_files/figure-html/fig-after-fire-1.png" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-after-fire-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: Community matrix of species associations before and after the Jasper 2024 fire on the VALLEY5 and TEKARRA transects.
+Figure&nbsp;2: Community matrix of species associations before and after the Jasper 2024 fire on the VALLEY5 and TEKARRA transects.
 </figcaption>
 </figure>
 </div>
@@ -550,7 +527,7 @@ Note
 </div>
 <section id="ecoregions" class="level2">
 <h2 class="anchored" data-anchor-id="ecoregions">Ecoregions</h2>
-<p><a href="#fig-community" class="quarto-xref">Figure&nbsp;5</a> shows the relationship between species and ecoregion. The PERMANOVA test was performed using Bray-Curtis dissimilarity to assess whether community composition significantly differed between ecoregion groups. The analysis revealed a significant difference in community composition between alpine and montane groups. The ecoregion grouping explained approximately 27.85% of the variation in community composition, while residual variation accounted for 72.15%. These findings indicate a substantial divergence in species composition between ecoregion groups and helps to justify subsequent analyses looking at trend differences between these areas.</p>
+<p><a href="#fig-community" class="quarto-xref">Figure&nbsp;3</a> shows the relationship between species and ecoregion. The PERMANOVA test was performed using Bray-Curtis dissimilarity to assess whether community composition significantly differed between ecoregion groups. The analysis revealed a significant difference in community composition between alpine and montane groups. The ecoregion grouping explained approximately 27.85% of the variation in community composition, while residual variation accounted for 72.15%. These findings indicate a substantial divergence in species composition between ecoregion groups and helps to justify subsequent analyses looking at trend differences between these areas.</p>
 <div class="cell" data-tbl-cap="Community matrix of species associations between montane and alpine ecoregions">
 <div class="cell-output-display">
 <div id="fig-community" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
@@ -559,7 +536,7 @@ Note
 <img src="janp_files/figure-html/fig-community-1.png" id="fig-community" class="img-fluid figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-community-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5
+Figure&nbsp;3
 </figcaption>
 </figure>
 </div>
@@ -568,7 +545,7 @@ Figure&nbsp;5
 </section>
 <section id="species-richness-and-functional-diversity" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="species-richness-and-functional-diversity">Species richness and functional diversity</h2>
-<p>Activity patterns across nesting, dietary and migratory guilds are illustrated in <a href="#fig-spp-activity-nesting" class="quarto-xref">Figure&nbsp;6</a> onwards. A notable pattern emerges across all four guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion. Species richness per location is at <a href="#fig-spp-rich-locs" class="quarto-xref">Figure&nbsp;11</a> and Shannon’s diversity index over years at <a href="#fig-shannon" class="quarto-xref">Figure&nbsp;12</a>. Overall, both richness and diversity were stable across years. Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (<a href="#fig-raos-q" class="quarto-xref">Figure&nbsp;10</a>). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.</p>
+<p>Activity patterns across nesting, dietary and migratory guilds are illustrated in <a href="#fig-spp-activity-nesting" class="quarto-xref">Figure&nbsp;4</a> onwards. A notable pattern emerges across all four guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion. Species richness per location is at <a href="#fig-spp-rich-locs" class="quarto-xref">Figure&nbsp;9</a> and Shannon’s diversity index over years at <a href="#fig-shannon" class="quarto-xref">Figure&nbsp;10</a>. Overall, both richness and diversity were stable across years. Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (<a href="#fig-raos-q" class="quarto-xref">Figure&nbsp;8</a>). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.</p>
 <div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
 <div class="cell-output-display page-columns page-full">
 <div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
@@ -577,7 +554,7 @@ Figure&nbsp;5
 <img src="janp_files/figure-html/fig-spp-activity-nesting-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-spp-activity-nesting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Seasonal detection activity of by nesting guild and ecoregion
+Figure&nbsp;4: Seasonal detection activity of by nesting guild and ecoregion
 </figcaption>
 </figure>
 </div>
@@ -591,7 +568,7 @@ Figure&nbsp;6: Seasonal detection activity of by nesting guild and ecoregion
 <img src="janp_files/figure-html/fig-spp-activity-migratory-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-spp-activity-migratory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: Seasonal detection activity of by migratory guild and ecoregion
+Figure&nbsp;5: Seasonal detection activity of by migratory guild and ecoregion
 </figcaption>
 </figure>
 </div>
@@ -605,7 +582,7 @@ Figure&nbsp;7: Seasonal detection activity of by migratory guild and ecoregion
 <img src="janp_files/figure-html/fig-spp-activity-trait-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-spp-activity-trait-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: Seasonal detection activity of by trait and ecoregion
+Figure&nbsp;6: Seasonal detection activity of by trait and ecoregion
 </figcaption>
 </figure>
 </div>
@@ -619,7 +596,7 @@ Figure&nbsp;8: Seasonal detection activity of by trait and ecoregion
 <img src="janp_files/figure-html/fig-spp-activity-dietary-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-spp-activity-dietary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: Seasonal detection activity of by dietary guild and ecoregion
+Figure&nbsp;7: Seasonal detection activity of by dietary guild and ecoregion
 </figcaption>
 </figure>
 </div>
@@ -633,7 +610,7 @@ Figure&nbsp;9: Seasonal detection activity of by dietary guild and ecoregion
 <img src="janp_files/figure-html/fig-raos-q-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-raos-q-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10: Mean functional diversity (Rao’s Q) over time
+Figure&nbsp;8: Mean functional diversity (Rao’s Q) over time
 </figcaption>
 </figure>
 </div>
@@ -675,7 +652,7 @@ Figure&nbsp;10: Mean functional diversity (Rao’s Q) over time
 <img src="janp_files/figure-html/fig-spp-rich-locs-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spp-rich-locs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11: Species richness by year
+Figure&nbsp;9: Species richness by year
 </figcaption>
 </figure>
 </div>
@@ -693,7 +670,7 @@ Figure&nbsp;11: Species richness by year
 <img src="janp_files/figure-html/fig-shannon-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shannon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12: Shannon diversity index over years
+Figure&nbsp;10: Shannon diversity index over years
 </figcaption>
 </figure>
 </div>
@@ -734,12 +711,12 @@ Figure&nbsp;12: Shannon diversity index over years
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    spp_max <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(species_code <span class="sc">==</span> spp) <span class="sc">|&gt;</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, recording_date_time, observer) <span class="sc">|&gt;</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, recording_date_time, observer, species_code) <span class="sc">|&gt;</span></span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">individual_order =</span> <span class="fu">max</span>(individual_order, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>()</span>
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">nrow</span>(spp_max) <span class="sc">&lt;</span> <span class="dv">20</span>) {</span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">message</span>(<span class="fu">paste0</span>(<span class="st">"Probably an error in Alpine with "</span>, spp))</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span>(<span class="fu">paste0</span>(<span class="st">"Probably an error in Alpine with "</span>, spp))</span>
 <span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    jpt <span class="ot">&lt;-</span> base_zero <span class="sc">|&gt;</span></span>
@@ -820,7 +797,7 @@ Figure&nbsp;12: Shannon diversity index over years
 <span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">individual_order =</span> <span class="fu">max</span>(individual_order, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>()</span>
 <span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">nrow</span>(spp_max) <span class="sc">&lt;</span> <span class="dv">20</span>) {<span class="fu">message</span>(<span class="fu">paste0</span>(<span class="st">"Probably an error in Forested with "</span>, spp))}</span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">nrow</span>(spp_max) <span class="sc">&lt;</span> <span class="dv">20</span>) {<span class="fu">stop</span>(<span class="fu">paste0</span>(<span class="st">"Probably an error in Forested with "</span>, spp))}</span>
 <span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>    jpt <span class="ot">&lt;-</span> base_zero <span class="sc">|&gt;</span></span>
 <span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>      <span class="fu">left_join</span>(spp_max, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"location"</span>, <span class="st">"ecoregion"</span>, <span class="st">"landcover"</span>, <span class="st">"prop_cover"</span>, <span class="st">"VEGETATION_DENSITY"</span>, <span class="st">"recording_date_time"</span>, <span class="st">"observer"</span>)) <span class="sc">|&gt;</span></span>
@@ -882,15 +859,16 @@ Figure&nbsp;12: Shannon diversity index over years
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>trendz <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species_code) <span class="sc">|&gt;</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tally</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>n) <span class="sc">|&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>species_code <span class="sc">==</span> <span class="st">"NONE"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trend =</span> <span class="fu">map</span>(<span class="at">.x =</span> species_code, <span class="at">.f =</span> <span class="sc">~</span><span class="fu">run_trend</span>(.x))) <span class="sc">|&gt;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(trend) <span class="sc">|&gt;</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>safe_run_trend <span class="ot">&lt;-</span> <span class="fu">possibly</span>(run_trend, <span class="at">otherwise =</span> <span class="cn">NA</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>trendz <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species_code) <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tally</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>n) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(species_code <span class="sc">!=</span> <span class="st">"NONE"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trend =</span> <span class="fu">map</span>(species_code, safe_run_trend))</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(trend) <span class="sc">|&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
