@@ -148,7 +148,7 @@ This report is dynamically generated, meaning its results may evolve with the ad
 
 # Abstract
 
-Since 2007, Jasper National Park has conducted passive acoustic monitoring as part of its ecological integrity monitoring program. The 18 years of data were analyzed to identify trends and extract insights that inform ongoing monitoring and strengthen future species monitoring practices. The analysis assessed whether species and guild abundances shifted by ±2.5% in the alpine and montane ecoregions. Data were managed and processed in WildTrax, combining and harmonizing legacy datasets from multiple methodologies. Sampling locations were tested for independence, and trend analyses quantified changes in species counts over time across guilds and ecoregions.
+Since 2007, Jasper National Park has conducted passive acoustic monitoring as part of its ecological integrity monitoring program. The 18 years of data were analyzed to identify trends and extract insights that inform ongoing monitoring and strengthen future species monitoring practices. The analysis assessed whether species and guild abundances shifted by ±2.5% in the alpine and forested ecoregions. Data were managed and processed in WildTrax, combining and harmonizing legacy datasets from multiple methodologies. Sampling locations were tested for independence, and trend analyses quantified changes in species counts over time across guilds and ecoregions.
 
 # Land Acknowledgement
 
@@ -158,7 +158,7 @@ We respectfully acknowledge that Jasper National Park is located in Treaty 6 and
 
 Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (@allan2017recent). The repercussions of habitat fragmentation (@fahrig2003effects) and loss (@hanski2011habitat), climate change (@mantyka2012interactions, @sattar2021review, @abrahms2023climate), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in managed regions in Canada (@lemieux2011state). Climate change and increasing wildfire activity in Alberta's Rocky Mountain Natural Region have significantly impacted montane bird monitoring; in 2023, two of the park's three long-term montane monitoring transects were affected by wildfires, while the third is currently undergoing wildfire risk reduction measures. Since 2007, Jasper National Park initiated a program incorporating passive acoustic monitoring of the Park's vocalizing wildlife. ARUs are compact environmental sensors that are designed to passively record the environment (@aru-overview), capturing vocalizing species like birds and amphibians, which is growing in use across the globe (@lots-of-pam). This technology enables resource managers to conduct prolonged surveys with minimal human interference, but also to create a permanent, archiveable recording of the soundscape. The subsequent data collected by these units contribute valuable information to ecological integrity metrics such as species richness, diversity, occupancy, and trends of species and human activities in National Parks over time. This data can aid in decision-making and management within the Park. Given the rapid and ease of accumulating data from these units, maintaining a high standard of data integrity is paramount to ensure future data interoperability and sharing.
 
-This project aims to analyze Jasper’s passive acoustic monitoring data from 2007 to 2024, assessing trends in species and guild abundance while accounting for the clustering of survey points within transects. Separate analyses will be conducted for montane and sub-alpine and alpine ecoregions to align with Ecological Integrity reporting requirements, determining time-to-first-detection usability in analysis. To enhance accessibility and reproducibility, the findings will be presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations will be developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. The objectives of this report are to:
+This project aims to analyze Jasper’s passive acoustic monitoring data from 2007 to 2025, assessing trends in species and guild abundance while accounting for the clustering of survey points within transects. Separate analyses will be conducted for montane and sub-alpine and alpine ecoregions to align with Ecological Integrity reporting requirements, determining time-to-first-detection usability in analysis. To enhance accessibility and reproducibility, the findings will be presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations will be developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. The objectives of this report are to:
 
 -   Describe the data management and processing procedures for the acoustic data collected from 2007 to 2025;
 -   Comparing data processing methods on count of species and individuals heard on recordings;
@@ -170,7 +170,7 @@ This project aims to analyze Jasper’s passive acoustic monitoring data from 20
 
 ## Data collection
 
-Songbird data was collected using autonomous recording units (ARUs), deployed by field staff to capture one 10-minute recordings per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting at dawn. Technicians walked transects containing ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each location, the ARU is set up, and technicians move 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording for voice notes and activation and de-activation of the units.
+Songbird data was collected using autonomous recording units (ARUs), deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each monumented location, the ARU is set up, and technicians move 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording for voice notes and activation and de-activation of the units.
 
 ```{r}
 #| echo: false
@@ -224,6 +224,23 @@ lc_150m <- read_csv("Habitat/LandCoverClass_Buffer150Raw.csv") |>
     .groups = "drop"
   ) |>
   mutate(prop_cover = total_area_m2 / (pi * 150^2))
+
+canopy_150m <- read_csv("Habitat/DomCanopy_Buffer150Raw.csv") |>
+  group_by(Point_ID) |>
+  mutate(buffer_area = sum(Shape_Area, na.rm = TRUE)) |>
+  ungroup() |>
+  group_by(Point_ID, DOM_LAYER_SPECIES_CODE) |>
+  summarise(
+    canopy_cover = sum(Shape_Area, na.rm = TRUE) / first(buffer_area),
+    avg_height = mean(DOM_LAYER_HEIGHT, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  rename(canopy_species = DOM_LAYER_SPECIES_CODE) |>
+  mutate(
+    canopy_species = if_else(is.na(canopy_species), "NC", canopy_species),
+    avg_height     = if_else(is.na(avg_height) | is.nan(avg_height), 0, avg_height)
+  )
+
 
 ```
 
@@ -388,7 +405,7 @@ Recordings were clipped and organized to only include the 10-minute count. Befor
 #| label: tbl-transcriptions
 #| collapse: true
 #| code-fold: true
-#| tbl-cap: Transcription method by year with re-transcribed data being conducted from 2007 - 2024.
+#| tbl-cap: Transcription method by year with re-transcribed data being conducted from 2007 - 2025.
 
 transcription_table <- tibble(
   Years = c("2007-2020", "2021-2022", "2023-2025", "2007-2011"),
@@ -481,7 +498,9 @@ For the purpose of these analyses abundance was defined as the count of individu
 
 ### Location correlation {#sec-location-correction}
 
-To assess spatial autocorrelation among bird survey locations across years, we examined the spatial relationship between survey points based on total species abundance per location and year in order to determine whether spatial clustering or spatial dependence exists in the species abundance data. Given that survey points are typically 300 meters apart, we used the `knearneigh()` function to identify the nearest neighbours within this threshold. This function calculates the closest neighboring survey points for each location. We then constructed a spatial weight matrix using the `knn2nb()` function. To evaluate whether spatial proximity among sampling locations influenced annual count estimates, we tested for spatial autocorrelation using Moran’s *I*. Annual minimum counts were calculated for each location by estimating the maximum number of individuals per species detected within a year and summing across species. Spatial coordinates for each location were derived from geographic point data and used to construct spatial neighbor relationships. Global spatial autocorrelation was assessed using Moran’s I under a randomization assumption. Neighbors were defined using a k-nearest-neighbor approach (k = 1) based on great-circle distances, and row-standardized spatial weights were applied. Non-finite values were excluded prior to analysis to ensure valid estimation. To assess whether spatial dependence was driven by localized clusters, we further calculated Local Indicators of Spatial Association (LISA) using local Moran’s I. Local statistics were used to identify potential high–high, low–low, and spatial outlier patterns, with statistical significance evaluated at α = 0.05. While global Moran’s I indicated significant positive spatial autocorrelation, local Moran’s I did not identify statistically significant local clusters. This suggests that spatial dependence in counts was diffuse across the study area.
+To inform our subsequent modeling choices, we first evaluated the bird survey data for spatial autocorrelation (e.g., survey points close to one another exhibit similar bird counts). To test for this, we calculated a total abundance index for each location and year by summing the maximum number of individuals detected, representing the minimum number of individuals known to be present.
+Because survey points were typically spaced 300 m apart, we defined spatial neighbor relationships using a 1-nearest-neighbor approach (*k* = 1) based on great-circle distances. We derived spatial coordinates from geographic point data, excluding non-finite values to ensure valid estimation. Using the `knearneigh()` and `knn2nb()` functions in R, we constructed a spatial weights matrix with row-standardized weights to reflect immediate adjacency between points. We assessed global spatial autocorrelation in total abundance using Moran’s *I* under a randomization assumption. This statistic evaluates whether the landscape is spatially structured—specifically, whether nearby locations tend to have similar abundance values more often than expected by chance. To determine if this dependence was driven by localized clustering, we further calculated Local Indicators of Spatial Association (LISA) using local Moran’s *I*. This allowed for the identification of potential high–high, low–low, and spatial outlier patterns, with statistical significance evaluated at *α* = 0.05. While global Moran’s I indicated significant positive spatial autocorrelation across the study area, local Moran’s I revealed no statistically significant clusters. This pattern suggests that similarities in bird counts among nearby survey locations were spread broadly rather than concentrated in distinct hotspots, consistent with spatial dependence arising from gradual, landscape‑scale ecological processes rather than localized aggregations. Therefore, in the following analyses we X, Y and Z…
+
 
 ```{r}
 #| warning: false
@@ -599,7 +618,7 @@ ggplot(janp_lisa_sf) +
 
 ### Site comparisons
 
-The 2024 Jasper Fire affected two established acoustic transects (VALLEY5 and TEKKARA). These transects were replaced in 2025 with two new montane transects (COTTONWOOD and MUSHROOM). To assess whether the replacement transects were appropriate proxies for the original sites, we evaluated how similar their species assemblages were to those observed at other existing montane transects. Specifically, we compared species detections from COTTONWOOD and MUSHROOM to the distribution of detections across all other montane transects to quantify their compositional similarity and degree of departure from the montane baseline. We assessed whether replacement transects were representative of montane communities using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity. Distances of replacement transects to the montane centroid were compared against the distribution of distances observed among existing montane transects.
+The 2024 Jasper Fire severely burned two established acoustic transects (VALLEY5 and TEKKARA). We added two control transects in 2025 in the montane (COTTONWOOD and MUSHROOM), and we plan to continue to monitor both the burned and control transects. Monitoring aims to assess the condition of the bird community in the park, so it is important to monitor bird communities in burned and unburned habitats. While only 50% of montane habitat was burned since 2023, two of three transects were severely burned so it was important to add control transects. To assess whether the replacement transects were appropriate proxies for the original sites, we evaluated how similar their species assemblages were to those observed at other existing montane transects. Specifically, we compared species detections from COTTONWOOD and MUSHROOM to the distribution of detections across all other montane transects to quantify their compositional similarity and degree of departure from the montane baseline. We assessed whether control transects were representative of montane communities using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity. Distances of replacement transects to the montane centroid were compared against the distribution of distances observed among existing montane transects.
 
 ```{r}
 #| warning: false
@@ -721,7 +740,7 @@ plot_RDA_fire
 
 ### Observer and methodological comparisons
 
-To compare species observations between the legacy dataset and those recorded in WildTrax, we first filtered the dataset to include only recordings processed twice. For each recording and species, we summarized the maximum count of individuals recorded by each observer. We then computed pairwise Pearson correlations between all observers to quantify agreement in species detection and abundance. The resulting correlations were visualized as a heatmap to provide an overview of inter-observer consistency. Additionally, the observer-by-species matrix was binarized (presence/absence) and used to compute Bray–Curtis dissimilarities between observers. Hierarchical clustering of these dissimilarities provided an alternative visualization of observer similarity based on species composition.
+To evaluate consistency between the legacy dataset and the modern WildTrax workflow, we analyzed a subset of recordings processed using both approaches. This included re-processing legacy recordings using new observers in WildTrax, allowing for direct comparison of individual observer performance between the legacy and modern protocols. For each dual-processed recording, we derived the maximum count of individuals per species identified by each specific observer. We used two different metrics to verify data continuity. First, to quantify consistency in abundance estimates, we calculated pairwise Pearson correlations between all individual observers. These relationships were visualized using a heatmap to identify any systematic deviations in counting between legacy contractors and current WildTrax observers. Second, to evaluate consistency in species detection (composition), we binarized the data to presence/absence and calculated Bray–Curtis dissimilarities between individual observers. We then applied hierarchical clustering to these dissimilarity scores to verify that the transition to WildTrax did not introduce observer-specific biases in species identification or community composition.
 
 ```{r}
 #| warning: false
@@ -805,7 +824,7 @@ plot(hc)
 
 ### Community analysis
 
-A redundancy analysis (RDA) was conducted using the `vegan` package (@vegan2025) to quantify the variation in community composition explained by ecoregions and to visualize species–ecoregion relationships with ordination plots (@Rao1964). Species‑level observations were aggregated into a species‑by‑location matrix, with abundances recorded as the maximum count of each species at each location. Ecoregions were categorized into Alpine and Montane with the Montaine ecoregions that can be further sub-divided into Upper Subalpine, Lower Subalpine, and Montane proper ecozones for all subsequent analyses. Differences in composition between Alpine and Montane groups were tested using permutational multivariate analysis of variance (PERMANOVA; @Anderson2001) on Bray–Curtis dissimilarities with 999 permutations under a reduced model.
+To characterize bird community composition, we first aggregated species-level observations into a species-by-location matrix, populated with the maximum count of each species at each location. Survey points were then classified into two primary ecoregions: alpine and forested. For the purpose of this analysis, the forested category served as a broad aggregate, grouping the upper subalpine, lower subalpine, and montane ecoregions into a single unit. We quantified the variation in community composition explained by these two ecoregions using Redundancy Analysis (RDA) in the vegan package (@Oksanen2025) and visualized species–ecoregion relationships with ordination plots (@Rao1964). Finally, to test for statistical differences in composition between the Alpine and Montane groups, we performed a permutational multivariate analysis of variance (PERMANOVA; @Anderson2001). This test was conducted on Bray–Curtis dissimilarities using 999 permutations under a reduced model.
 
 ### Functional and community-level diversity
 
@@ -922,7 +941,7 @@ yearly_rao <- yearly_rao |>
 #| message: false
 #| include: true
 #| results: hide
-#| code-fold: true
+#| code-fold: false
 
 shannon_d <- janp_main |> 
   filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
@@ -973,7 +992,13 @@ Temporal trends were quantified using the Mann–Kendall test (@mann1945non; @ha
 Some of these analyses are still a work-in-progress. Check back soon for updates and additional details.
 :::
 
-## Ecoregions
+## Jasper 2024 Fire
+
+Multivariate dispersion differed significantly between replacement and reference montane transects (PERMDISP; F₁,₁₀₁ = 16.44, p = 0.001). Replacement transects exhibited greater distances to the montane centroid (mean = 0.415) than existing montane reference transects (mean = 0.350), indicating higher compositional variability and a greater degree of departure from the montane baseline. This elevated dispersion suggests that species assemblages at the replacement transects were less tightly clustered around typical montane community structure and may reflect more heterogeneous or transitional assemblages relative to long-established montane sites. Consequently, while the replacement transects occur within montane environments, they appear to be less representative of the central tendency of montane species composition observed across the broader transect network.
+
+
+
+## Species-region associations
 
 @fig-community shows the relationship between species and ecoregion. The PERMANOVA test was performed using Bray-Curtis dissimilarity to assess whether community composition significantly differed between ecoregion groups. The analysis revealed a significant difference in community composition between alpine and montane groups. The ecoregion grouping explained approximately 27.85% of the variation in community composition, while residual variation accounted for 72.15%. These findings indicate a substantial divergence in species composition between ecoregion groups and helps to justify subsequent analyses looking at trend differences between these areas.
 
@@ -1269,6 +1294,8 @@ shannon_d
 
 janp_ready_trend <- janp_main |>
   inner_join(lc_150m, by = c("location" = "Point_ID")) |>
+  inner_join(canopy_150m, by = c("location" = "Point_ID")) |>
+  inner_join(understory_150m, by = c("location" = "Point_ID")) |>
   mutate(landcover = case_when(grepl('TEKARRA|VALLEY5', location) & year > 2024 ~ "Burned", TRUE ~ landcover)) |>
   distinct()
 
@@ -1284,19 +1311,19 @@ run_trend <- function(spp) {
              julian = yday(recording_date_time)) |>
       dplyr::select(organization, project_id, longitude, latitude, location,
                     location_id, task_id, ecoregion, landcover, prop_cover,
-                    VEGETATION_DENSITY, recording_date_time, observer, species_code,
+                    VEGETATION_DENSITY, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,
                     individual_order, abundance, detection_time) |>
       distinct() |>
       wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","human","unknown"), zerofill = T)
     
     # 2. Combine with zero sites
     base_zero <- janp_trend |>
-      dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, recording_date_time, observer) |>
+      dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
       distinct()
     
     spp_max <- janp_trend |>
-      filter(species_code == spp) |>
-      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, recording_date_time, observer, species_code) |>
+      filter(species_code == "HETH") |>
+      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY,  canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
       summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
       ungroup()
     
@@ -1305,24 +1332,26 @@ run_trend <- function(spp) {
     }
     
     jpt <- base_zero |>
-      left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "recording_date_time", "observer")) |>
+      left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY",  "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
       mutate(individual_order = tidyr::replace_na(individual_order, 0)) |>
       mutate(year = year(recording_date_time),
              hour = hour(recording_date_time),
              julian = yday(recording_date_time)) |>
       filter(!is.infinite(individual_order)) |>
-      mutate(lc_group = case_when(landcover %in% c("Tree Coniferous", "Shrub Low", "Herbaceous Mixed") ~ landcover, TRUE ~ "Other"), .after = landcover) |>
+      mutate(lc_group = case_when(landcover %in% c("Tree Coniferous", "Shrub Low", "Herbaceous Mixed", "Bedrock") ~ landcover, TRUE ~ "Other"), .after = landcover) |>
       dplyr::select(-c(landcover, VEGETATION_DENSITY)) |>
-      group_by(location, ecoregion, recording_date_time, observer, individual_order, year, hour, julian) |>
+      group_by(location, ecoregion, canopy_species, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
       pivot_wider(names_from = lc_group, values_from = prop_cover, values_fill = 0, values_fn = sum) |>
       ungroup() |>
       rename(shrub = `Shrub Low`) |>
       rename(conf = `Tree Coniferous`) |>
       rename(herb = `Herbaceous Mixed`) |>
+      rename(bedrock = `Bedrock`) |>
       rename(other = Other) |>
-      mutate(across(c(shrub, conf, herb, other, julian, hour), scale))
+      mutate(across(c(shrub, conf, herb, other, bedrock, julian, hour), scale)) |>
+      distinct()
     
-    fit <- svabu(individual_order ~ year + shrub + herb + conf | julian + hour + observer, data = jpt)
+    fit <- svabu(individual_order ~ year + shrub + herb + conf + bedrock | julian + hour + observer, data = jpt)
 
     ref_vals <- jpt |>
       summarise(observer = first(observer), 
@@ -1480,7 +1509,7 @@ kable(trendz)
 ```{r}
 #| warning: false
 #| echo: true
-#| eval: true
+#| eval: false
 #| message: false
 #| include: true
 #| code-fold: true
@@ -1515,4 +1544,3 @@ kable(trend_guild |>
 
 ## Discussion and recommendations
 
-The Discussion and Recommendations. 
