@@ -632,8 +632,8 @@ comm_matrix1 <- janp_main |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
   dplyr::select(-ecoregion) |>
   inner_join(locs_summary, by = c("location" = "Location")) |>
-  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
-                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
+  # mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+  #                              ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
   group_by(location, ecoregion, species_code) |>
   summarise(individual_order = max(individual_order)) |>
   ungroup() |>
@@ -649,7 +649,7 @@ rownames(sp_mat) <- montane_all$location
 bc_dist <- vegdist(sp_mat, method = "bray")
 group <- ifelse(
   grepl("^COTTONWOOD|^MUSHROOM", rownames(sp_mat)),
-  "Transect Replacement",
+  "Control Transects",
   "Montane Reference"
 )
 bd <- betadisper(bc_dist, group)
