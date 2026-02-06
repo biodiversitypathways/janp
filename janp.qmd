@@ -157,7 +157,7 @@ We respectfully acknowledge that Jasper National Park is located in Treaty 6 and
 
 # Introduction
 
-Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (@allan2017recent). The repercussions of habitat fragmentation (@fahrig2003effects) and loss (@hanski2011habitat), climate change (@mantyka2012interactions, @sattar2021review, @abrahms2023climate), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in managed regions in Canada (@lemieux2011state). Climate change and increasing wildfire activity in Alberta's Rocky Mountain Natural Region have significantly impacted montane bird monitoring; in 2023, two of the park's three long-term montane monitoring transects were affected by wildfires, while the third is currently undergoing wildfire risk reduction measures. Since 2007, Jasper National Park initiated a program incorporating passive acoustic monitoring of the Park's vocalizing wildlife. ARUs are compact environmental sensors that are designed to passively record the environment (@aru-overview), capturing vocalizing species like birds and amphibians, which is growing in use across the globe (@lots-of-pam). This technology enables resource managers to conduct prolonged surveys with minimal human interference, but also to create a permanent, archiveable recording of the soundscape. The subsequent data collected by these units contribute valuable information to ecological integrity metrics such as species richness, diversity, occupancy, and trends of species and human activities in National Parks over time. This data can aid in decision-making and management within the Park. Given the rapid and ease of accumulating data from these units, maintaining a high standard of data integrity is paramount to ensure future data interoperability and sharing.
+Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (@allan2017recent). The repercussions of habitat fragmentation (@fahrig2003effects) and loss (@hanski2011habitat), climate change (@mantyka2012interactions, @sattar2021review, @abrahms2023climate), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in protected areas in Canada (@lemieux2011state). Climate change and increasing wildfire activity in Alberta's Rocky Mountain Natural Region have significantly impacted montane bird monitoring; in 2023, two of the park's three long-term montane monitoring transects were affected by wildfires, while the third is currently undergoing wildfire risk reduction measures. Since 2007, Jasper National Park initiated a program incorporating passive acoustic monitoring of the Park's vocalizing wildlife. ARUs are compact environmental sensors that are designed to passively record the environment (@aru-overview), capturing vocalizing species like birds and amphibians, which is growing in use across the globe (@lots-of-pam). This technology enables resource managers to conduct prolonged surveys with minimal human interference, but also to create a permanent, archiveable recording of the soundscape. The subsequent data collected by these units contribute valuable information to ecological integrity metrics such as species richness, diversity, occupancy, and trends of species and human activities in National Parks over time. This data can aid in decision-making and management within the Park. Given the rapid and ease of accumulating data from these units, maintaining a high standard of data integrity is paramount to ensure future data interoperability and sharing.
 
 This project aims to analyze Jasper’s passive acoustic monitoring data from 2007 to 2025, assessing trends in species and guild abundance while accounting for the clustering of survey points within transects. Separate analyses will be conducted for montane and sub-alpine and alpine ecoregions to align with Ecological Integrity reporting requirements, determining time-to-first-detection usability in analysis. To enhance accessibility and reproducibility, the findings will be presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations will be developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. The objectives of this report are to:
 
@@ -499,7 +499,7 @@ tmtt_tags <- janp_main |>
 
 ![Visit photos at CAVELL-3](assets/locationphotos.png){#fig-visitphotos .float-left .fig-align-center}{.lightbox}
 
-## Analyses
+## Analytical methods
 
 ::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
 For the purpose of these analyses, abundance was defined as the count of individuals detected during point counts, rather than as a density x area relationship. All analyses took place in R 4.5.2 ‘[Not] Part in a Rumble’.
@@ -628,18 +628,16 @@ ggplot(janp_lisa_sf) +
 
 The 2024 Jasper Fire severely burned two established acoustic transects (VALLEY5 and TEKKARA). While only one-third of montane (valley-bottom) forest has burnt since 2023, two of three transects were severely burned. To continue to monitor bird communities in unburned forest, we added two control transects in 2025 in the montane (COTTONWOOD and MUSHROOM), and we plan to continue to monitor both the burned and control transects. 
 
-To assess whether the new transects were appropriate controls for the original sites, we evaluated how similar their species assemblages were to those observed at existing montane transects over the past three years, excluding the TEKARRA5 and VALLEY5 transects post-fire because these were expected to diverge substantially due to fire severity. Specifically, we compared species detections from the COTTONWOOD and MUSHROOM transects to the distribution of detections across all other montane points to quantify compositional similarity and departure from the montane baseline. Representativeness of control transects was assessed using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity, with distances of control transects to the montane centroid compared against the distribution of distances among established montane transects. Statistical significance of differences in dispersion was evaluated using a permutation test with 999 iterations.
+To assess whether the new transects were appropriate controls for the original sites, we evaluated how similar their species assemblages were to those observed at existing montane transects over the past three years, excluding the TEKARRA and VALLEY5 transects post-fire because these were expected to diverge substantially due to fire severity. Specifically, we compared species detections from the COTTONWOOD and MUSHROOM transects to the distribution of detections across all other montane points to quantify compositional similarity and departure from the montane baseline. Representativeness of control transects was assessed using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity, with distances of control transects to the montane centroid compared against the distribution of distances among established montane transects. Statistical significance of differences in dispersion was evaluated using a permutation test with 999 iterations.
 
 We summarized bird community composition on the VALLEY5 and TEKARRA transects using a species–by–site community matrix and applied redundancy analysis (RDA) to test whether community structure differed between pre-fire and post-fire periods (@fig-after-fire). The ordination visualizes shifts in species associations attributable to fire, with site scores grouped by fire period and species vectors indicating taxa contributing most strongly to observed differences.
 
-<figure>
-  <div style="display:flex; gap:10px;">
-    <img src="assets/tekarra9-2024.png" style="width:48%;" />
-    <img src="assets/tekarra9-2025.png" style="width:48%;" />
-  </div>
-  <figcaption><strong>Figure X.</strong> Tekarra 9 camera views from 2024 (A) and 2025 (B).</figcaption>
-</figure>
+::: {.figure-grid}
+![Tekarra 9 2024](assets/tekarra9-2024.png){width=48%}
+![Tekarra 9 2025](assets/tekarra9-2025.png){width=48%}
 
+Tekarra 9 site photos views from 2024 (A) pre-fire, and 2025 (B) post-fire. 
+:::
 
 ### Observer and methodological comparisons
 
@@ -859,7 +857,7 @@ yearly_rao <- yearly_rao |>
 #| message: false
 #| include: true
 #| results: hide
-#| code-fold: false
+#| code-fold: true
 
 shannon_d <- janp_main |> 
   filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
@@ -1353,7 +1351,7 @@ run_trend <- function(spp, summary = TRUE) {
       ungroup()
     
     if (nrow(spp_max) < 20) {
-      next(paste0("Probably an error in Alpine with ", spp))
+      stop(paste0("Probably an error in Alpine with ", spp))
     }
     
     jpt <- base_zero |> 
@@ -1543,9 +1541,9 @@ trendz <- janp_main |>
   group_by(species_code) |>
   tally() |>
   arrange(-n) |>
-  slice(1:11) |>
-  filter(species_code != "NONE") |>
-  mutate(trend = map(species_code, run_trend))
+  filter(!(species_code %in% c("RESQ","NONE"))) |>
+  slice(1:30) |>
+  mutate(trend = map(species_code, safe_run_trend))
 
 
 ```
@@ -1559,12 +1557,11 @@ trendz <- janp_main |>
 #| code-fold: true
 
 trend_table <- trendz %>%
+  mutate(trend = map(trend, ~ if(!is.list(.x)) list(NA) else .x)) %>%
   mutate(trend = map(trend, 1)) %>%
-  unnest_wider(trend) %>%
-  unnest() %>%
-  mutate(
-    across(where(is.numeric), ~ round(.x, 2))  # rounds all numeric columns to 2 decimals
-  )
+  unnest_wider(trend, names_sep = "_") %>%
+  unnest(cols = everything()) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
 
 datatable(trend_table)
 
@@ -1582,7 +1579,7 @@ trend_guild <- trend_table |>
   inner_join(guilds, by = "species_code")
   
 kable(trend_guild |>
-  group_by(ecoregion) |>
+  group_by(trend_ecoregion) |>
   summarise(
     total_species = n_distinct(species_code),
     declining_species = n_distinct(species_code[pct_change <= -2.5]),
@@ -1590,14 +1587,14 @@ kable(trend_guild |>
   ))
 
 kable(trend_guild |>
-  group_by(ecoregion, habitat_guild) |>   # or another guild column if desired
+  group_by(trend_ecoregion, habitat_guild) |>   # or another guild column if desired
   summarise(
     total_guild_species = n_distinct(species_code),
     declining_guild_species = n_distinct(species_code[pct_change <= -2.5]),
     percent_declining = declining_guild_species / total_guild_species * 100
   ) |>
   ungroup() |>
-  group_by(ecoregion) |>
+  group_by(trend_ecoregion) |>
   summarise(
     total_guilds = n_distinct(habitat_guild),
     guilds_with_decline = sum(percent_declining > 0),
