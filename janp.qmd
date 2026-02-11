@@ -68,7 +68,7 @@ library(spdep)
 wt_auth()
 
 load('janp.RData')
-save.image('janp.RData')
+#save.image('janp.RData')
 ```
 
 ```{r}
@@ -1663,7 +1663,8 @@ datatable(trend_table)
 #| code-fold: true
 
 trend_guild <- trend_table |>
-  inner_join(guilds, by = "species_code")
+  inner_join(guilds, by = "species_code") |>
+  drop_na(trend_ecoregion)
   
 kable(trend_guild |>
   group_by(trend_ecoregion) |>
