@@ -94,6 +94,9 @@ div.csl-indent {
 <script src="janp_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="janp_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="janp_files/libs/bootstrap/bootstrap-d9ee3e7c13397ee64e8144b167ea800e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="janp_files/libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="janp_files/libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="janp_files/libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <link href="janp_files/libs/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
 <script src="janp_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
 <script src="janp_files/libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -154,14 +157,14 @@ div.csl-indent {
   <li><a href="#functional-and-community-level-diversity-1" id="toc-functional-and-community-level-diversity-1" class="nav-link" data-scroll-target="#functional-and-community-level-diversity-1">Functional and community-level diversity</a></li>
   <li><a href="#jasper-2024-fire-effects" id="toc-jasper-2024-fire-effects" class="nav-link" data-scroll-target="#jasper-2024-fire-effects">Jasper 2024 fire effects</a></li>
   <li><a href="#trends" id="toc-trends" class="nav-link" data-scroll-target="#trends">Trends</a></li>
-  <li><a href="#discussion-and-recommendations" id="toc-discussion-and-recommendations" class="nav-link" data-scroll-target="#discussion-and-recommendations">Discussion and recommendations</a></li>
   </ul></li>
+  <li><a href="#discussion-and-recommendations" id="toc-discussion-and-recommendations" class="nav-link" data-scroll-target="#discussion-and-recommendations">Discussion and recommendations</a></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="janp.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
 </div>
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
 </div>
-<main class="content page-columns page-full" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -217,7 +220,11 @@ div.csl-indent {
 </header>
 
 
-<p><img src="assets/janp.png" class="img-fluid quarto-figure quarto-figure-center" style="float:left`;" alt="Photo of Jasper">{.lightbox}</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="assets/janp.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="assets/janp.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="float:left`;" alt="Photo of Jasper"></a></p>
+</figure>
+</div>
 <div class="callout callout-style-default callout-note callout-titled" style="background-color: #f4f4f4; padding: 20px;">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -270,7 +277,7 @@ Note
 <h1>Methods</h1>
 <section id="bird-surveys" class="level2">
 <h2 class="anchored" data-anchor-id="bird-surveys">Bird surveys</h2>
-<p>Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, and 20 sites that were added in 2025. To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region.</p>
+<p>Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, and 20 sites that were added in 2025. To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region (see <strong>?@fig-aru-monitoring</strong> locations).</p>
 <p>Songbird data were collected using autonomous recording units (ARUs) deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing nine or ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each monumented location, the ARU was set up, and technicians moved 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording to capture voice notes and the standardized 10-minute survey period. Four covariates thought to influence detection or abundance were recorded: start time, wind speed, cloud cover, temperature and recording equipment. Recording equipment varied throughout the course of the study. During the 2021 and 2022 field seasons, paired recordings were collected concurrently at each site using both Wildlife Acoustics SM4 autonomous recording units and the original recording devices (Riverforks CZM or Zoom H2N Pro, depending on site-specific deployment). This dual-recording approach was implemented to support calibration and continuity across equipment types. However, to maintain consistency in data processing, only recordings from the original devices were transcribed and included in the final analyses for those years. Beginning in 2023, recordings were collected exclusively using SM4 units.</p>
 <div class="cell" data-layout-align="center">
 <div id="fig-aru-monitoring-locations" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
@@ -288,13 +295,13 @@ Figure&nbsp;1: Locations from Jasper National Park ARU EI Monitoring Program.
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(locs_summary, </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(janp_locs_table, </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">options =</span> <span class="fu">list</span>(</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">searching =</span> <span class="cn">TRUE</span>,  </span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">paging =</span> <span class="cn">TRUE</span>,    </span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">pageLength =</span> <span class="dv">10</span>   </span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>          )) <span class="sc">|&gt;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(<span class="at">columns =</span> <span class="fu">colnames</span>(locs_summary), </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">formatStyle</span>(<span class="at">columns =</span> <span class="fu">colnames</span>(janp_locs_table), </span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">backgroundColor =</span> <span class="fu">styleEqual</span>(<span class="fu">c</span>(<span class="st">"NA"</span>), <span class="st">"lightgray"</span>))  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="tbl-loc-summary" class="cell quarto-float quarto-figure quarto-figure-center anchored">
@@ -305,7 +312,7 @@ Table&nbsp;1: Locations surveyed across years. Ones indicated a deployment in th
 <div aria-describedby="tbl-loc-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <div class="datatables html-widget html-fill-item" id="htmlwidget-a8cfdb7824be3bfbd445" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-a8cfdb7824be3bfbd445">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148"],["CAVELL-1","CAVELL-10","CAVELL-2","CAVELL-3","CAVELL-4","CAVELL-5","CAVELL-6","CAVELL-7","CAVELL-8","CAVELL-9","ELYSIUM-1","ELYSIUM-10","ELYSIUM-2","ELYSIUM-3","ELYSIUM-4","ELYSIUM-5","ELYSIUM-6","ELYSIUM-7","ELYSIUM-8","ELYSIUM-9","FIDDLE-1","FIDDLE-10","FIDDLE-2","FIDDLE-3","FIDDLE-4","FIDDLE-5","FIDDLE-6","FIDDLE-7","FIDDLE-8","FIDDLE-9","MAJESTIC-1","MAJESTIC-10","MAJESTIC-2","MAJESTIC-3","MAJESTIC-4","MAJESTIC-5","MAJESTIC-6","MAJESTIC-7","MAJESTIC-8","MAJESTIC-9","OPAL-1","OPAL-10","OPAL-2","OPAL-3","OPAL-4","OPAL-5","OPAL-6","OPAL-7","OPAL-8","OPAL-9","POBOKTAN-1","POBOKTAN-10","POBOKTAN-2","POBOKTAN-3","POBOKTAN-4","POBOKTAN-5","POBOKTAN-6","POBOKTAN-7","POBOKTAN-8","POBOKTAN-9","PYRAMID-1","PYRAMID-10","PYRAMID-2","PYRAMID-3","PYRAMID-4","PYRAMID-5","PYRAMID-6","PYRAMID-7","PYRAMID-8","PYRAMID-9","SULPHUR-1","SULPHUR-2","SULPHUR-3","SULPHUR-4","SULPHUR-5","SULPHUR-6","SULPHUR-7","SULPHUR-8","SULPHUR-9","SUNWAPTA-1","SUNWAPTA-10","SUNWAPTA-2","SUNWAPTA-3","SUNWAPTA-4","SUNWAPTA-5","SUNWAPTA-6","SUNWAPTA-7","SUNWAPTA-8","SUNWAPTA-9","TEKARRA-1","TEKARRA-10","TEKARRA-2","TEKARRA-3","TEKARRA-4","TEKARRA-5","TEKARRA-6","TEKARRA-7","TEKARRA-8","TEKARRA-9","VALLEY5-1","VALLEY5-10","VALLEY5-2","VALLEY5-3","VALLEY5-4","VALLEY5-5","VALLEY5-6","VALLEY5-7","VALLEY5-8","VALLEY5-9","WATCHTOWER-1","WATCHTOWER-10","WATCHTOWER-2","WATCHTOWER-3","WATCHTOWER-4","WATCHTOWER-5","WATCHTOWER-6","WATCHTOWER-7","WATCHTOWER-8","WATCHTOWER-9","WILCOX-1","WILCOX-10","WILCOX-2","WILCOX-3","WILCOX-4","WILCOX-5","WILCOX-6","WILCOX-7","WILCOX-8","WILCOX-9","COTTONWOOD-1","COTTONWOOD-10","COTTONWOOD-2","COTTONWOOD-3","COTTONWOOD-4","COTTONWOOD-5","COTTONWOOD-6","COTTONWOOD-7","COTTONWOOD-8","COTTONWOOD-9","MUSHROOM-1","MUSHROOM-2","MUSHROOM-3","MUSHROOM-4","MUSHROOM-5","MUSHROOM-6","MUSHROOM-7","MUSHROOM-8","MUSHROOM-9"],["Upper Subalpine","Upper Subalpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Upper Subalpine","Upper Subalpine","Montane","Lower Subalpine","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Lower Subalpine","Upper Subalpine","Alpine","Upper Subalpine","Upper Subalpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Lower Subalpine","Alpine","Alpine","Alpine","Alpine","Upper Subalpine","Upper Subalpine","Upper Subalpine","Upper Subalpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Upper Subalpine","Alpine","Upper Subalpine","Upper Subalpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>Location<\/th>\n      <th>ecoregion<\/th>\n      <th>2023<\/th>\n      <th>2024<\/th>\n      <th>2025<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":true,"paging":true,"pageLength":10,"columnDefs":[{"className":"dt-right","targets":[3,4,5]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"Location","targets":1},{"name":"ecoregion","targets":2},{"name":"2023","targets":3},{"name":"2024","targets":4},{"name":"2025","targets":5}],"order":[],"autoWidth":false,"orderClasses":false,"rowCallback":"function(row, data, displayNum, displayIndex, dataIndex) {\nvar value=data[1]; $(this.api().cell(row, 1).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[2]; $(this.api().cell(row, 2).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[3]; $(this.api().cell(row, 3).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[4]; $(this.api().cell(row, 4).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[5]; $(this.api().cell(row, 5).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\n}"}},"evals":["options.rowCallback"],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-a8cfdb7824be3bfbd445">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148"],["CAVELL-1","CAVELL-10","CAVELL-2","CAVELL-3","CAVELL-4","CAVELL-5","CAVELL-6","CAVELL-7","CAVELL-8","CAVELL-9","COTTONWOOD-1","COTTONWOOD-10","COTTONWOOD-2","COTTONWOOD-3","COTTONWOOD-4","COTTONWOOD-5","COTTONWOOD-6","COTTONWOOD-7","COTTONWOOD-8","COTTONWOOD-9","ELYSIUM-1","ELYSIUM-10","ELYSIUM-2","ELYSIUM-3","ELYSIUM-4","ELYSIUM-5","ELYSIUM-6","ELYSIUM-7","ELYSIUM-8","ELYSIUM-9","FIDDLE-1","FIDDLE-10","FIDDLE-2","FIDDLE-3","FIDDLE-4","FIDDLE-5","FIDDLE-6","FIDDLE-7","FIDDLE-8","FIDDLE-9","MAJESTIC-1","MAJESTIC-10","MAJESTIC-2","MAJESTIC-3","MAJESTIC-4","MAJESTIC-5","MAJESTIC-6","MAJESTIC-7","MAJESTIC-8","MAJESTIC-9","MUSHROOM-1","MUSHROOM-2","MUSHROOM-3","MUSHROOM-4","MUSHROOM-5","MUSHROOM-6","MUSHROOM-7","MUSHROOM-8","MUSHROOM-9","OPAL-1","OPAL-10","OPAL-2","OPAL-3","OPAL-4","OPAL-5","OPAL-6","OPAL-7","OPAL-8","OPAL-9","POBOKTAN-1","POBOKTAN-10","POBOKTAN-2","POBOKTAN-3","POBOKTAN-4","POBOKTAN-5","POBOKTAN-6","POBOKTAN-7","POBOKTAN-8","POBOKTAN-9","PYRAMID-1","PYRAMID-10","PYRAMID-2","PYRAMID-3","PYRAMID-4","PYRAMID-5","PYRAMID-6","PYRAMID-7","PYRAMID-8","PYRAMID-9","SULPHUR-1","SULPHUR-2","SULPHUR-3","SULPHUR-4","SULPHUR-5","SULPHUR-6","SULPHUR-7","SULPHUR-8","SULPHUR-9","SUNWAPTA-1","SUNWAPTA-10","SUNWAPTA-2","SUNWAPTA-3","SUNWAPTA-4","SUNWAPTA-5","SUNWAPTA-6","SUNWAPTA-7","SUNWAPTA-8","SUNWAPTA-9","TEKARRA-1","TEKARRA-10","TEKARRA-2","TEKARRA-3","TEKARRA-4","TEKARRA-5","TEKARRA-6","TEKARRA-7","TEKARRA-8","TEKARRA-9","VALLEY5-1","VALLEY5-10","VALLEY5-2","VALLEY5-3","VALLEY5-4","VALLEY5-5","VALLEY5-6","VALLEY5-7","VALLEY5-8","VALLEY5-9","WATCHTOWER-1","WATCHTOWER-10","WATCHTOWER-2","WATCHTOWER-3","WATCHTOWER-4","WATCHTOWER-5","WATCHTOWER-6","WATCHTOWER-7","WATCHTOWER-8","WATCHTOWER-9","WILCOX-1","WILCOX-10","WILCOX-2","WILCOX-3","WILCOX-4","WILCOX-5","WILCOX-6","WILCOX-7","WILCOX-8","WILCOX-9"],["Upper Subalpine","Upper Subalpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Upper Subalpine","Upper Subalpine","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Lower Subalpine","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Lower Subalpine","Upper Subalpine","Alpine","Upper Subalpine","Upper Subalpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Alpine","Lower Subalpine","Alpine","Alpine","Alpine","Alpine","Upper Subalpine","Upper Subalpine","Upper Subalpine","Upper Subalpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Montane","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Lower Subalpine","Upper Subalpine","Alpine","Upper Subalpine","Upper Subalpine","Alpine","Alpine","Alpine","Alpine","Alpine","Alpine"],[1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,0],[1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>location<\/th>\n      <th>ecoregion<\/th>\n      <th>2007<\/th>\n      <th>2008<\/th>\n      <th>2009<\/th>\n      <th>2010<\/th>\n      <th>2011<\/th>\n      <th>2012<\/th>\n      <th>2013<\/th>\n      <th>2014<\/th>\n      <th>2015<\/th>\n      <th>2016<\/th>\n      <th>2017<\/th>\n      <th>2018<\/th>\n      <th>2019<\/th>\n      <th>2020<\/th>\n      <th>2021<\/th>\n      <th>2022<\/th>\n      <th>2023<\/th>\n      <th>2024<\/th>\n      <th>2025<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"searching":true,"paging":true,"pageLength":10,"columnDefs":[{"className":"dt-right","targets":[3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"location","targets":1},{"name":"ecoregion","targets":2},{"name":"2007","targets":3},{"name":"2008","targets":4},{"name":"2009","targets":5},{"name":"2010","targets":6},{"name":"2011","targets":7},{"name":"2012","targets":8},{"name":"2013","targets":9},{"name":"2014","targets":10},{"name":"2015","targets":11},{"name":"2016","targets":12},{"name":"2017","targets":13},{"name":"2018","targets":14},{"name":"2019","targets":15},{"name":"2020","targets":16},{"name":"2021","targets":17},{"name":"2022","targets":18},{"name":"2023","targets":19},{"name":"2024","targets":20},{"name":"2025","targets":21}],"order":[],"autoWidth":false,"orderClasses":false,"rowCallback":"function(row, data, displayNum, displayIndex, dataIndex) {\nvar value=data[1]; $(this.api().cell(row, 1).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[2]; $(this.api().cell(row, 2).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[3]; $(this.api().cell(row, 3).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[4]; $(this.api().cell(row, 4).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[5]; $(this.api().cell(row, 5).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[6]; $(this.api().cell(row, 6).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[7]; $(this.api().cell(row, 7).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[8]; $(this.api().cell(row, 8).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[9]; $(this.api().cell(row, 9).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[10]; $(this.api().cell(row, 10).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[11]; $(this.api().cell(row, 11).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[12]; $(this.api().cell(row, 12).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[13]; $(this.api().cell(row, 13).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[14]; $(this.api().cell(row, 14).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[15]; $(this.api().cell(row, 15).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[16]; $(this.api().cell(row, 16).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[17]; $(this.api().cell(row, 17).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[18]; $(this.api().cell(row, 18).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[19]; $(this.api().cell(row, 19).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[20]; $(this.api().cell(row, 20).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\nvar value=data[21]; $(this.api().cell(row, 21).node()).css({'background-color':value == \"NA\" ? \"lightgray\" : null});\n}"}},"evals":["options.rowCallback"],"jsHooks":[]}</script>
 </div>
 </div>
 </figure>
@@ -318,8 +325,8 @@ Table&nbsp;1: Locations surveyed across years. Ones indicated a deployment in th
 </section>
 <section id="data-management-processing-and-quality-control" class="level2">
 <h2 class="anchored" data-anchor-id="data-management-processing-and-quality-control">Data management, processing and quality control</h2>
-<p>Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (MacPhail 2026, <em>In Review</em>). Tags were then drawn to encompass the signal within the methods indicated in each project (see <a href="#tbl-transcriptions" class="quarto-xref">Table&nbsp;2</a>). Transcribers also had site photos available to optimize their species identification by having habitat context while processing.</p>
-<p>To ensure comparability across the 18-year dataset, we harmonized the abundance metrics derived from the differing transcription protocols prior to analysis. For legacy data collected between 2012 and 2020 using the 3-minute interval method, we calculated abundance as the maximum count observed in any single time bin rather than summing across bins. This conservative approach prevents the double-counting of individuals that sing continuously throughout the recording. Conversely, for data processed or re-transcribed using the modern 1SPT protocol (2007–2011; 2021–2025), abundance was defined as the total count of unique individuals detected over the full 10-minute duration.</p>
+<p>Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (<span class="citation" data-cites="MacPhail2025_avian">MacPhail et al. (<a href="#ref-MacPhail2025_avian" role="doc-biblioref">2025</a>)</span>). Tags were then drawn to encompass the signal within the methods indicated in each project (see <a href="#tbl-transcriptions" class="quarto-xref">Table&nbsp;2</a>). Transcribers also had site photos available to optimize their species identification by having habitat context while processing.</p>
+<p>To ensure comparability across the 18-year dataset, we harmonized the abundance metrics derived from the differing transcription protocols prior to analysis. For legacy data collected between 2012 and 2020 using the 3-minute interval method, we calculated abundance as the maximum count observed in any single time bin rather than summing across bins. This conservative approach prevents the double-counting of individuals that sing continuously throughout the recording. Conversely, for data processed or re-transcribed using the modern 1SPT protocol (time of first detection of each unique individual of each species; 2007–2011 and 2021–2025), abundance was defined as the total count of unique individuals detected over the full 10-minute duration. Specifically, in WildTrax maximum count of individuals was used (i.e.&nbsp;AMRO1, AMRO2, AMRO3 max of 3 represents 3 individuals total).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -385,8 +392,26 @@ Table&nbsp;2: Transcription methods by year (2007–2025). Historical data (2007
 </figure>
 </div>
 </div>
-<p><img src="assets/acousticprocessing.png" id="fig-acousticprocessing" class="float-left fig-align-center img-fluid" alt="WildTrax Acoustic Processing Interface (Version 2)">{.lightbox}</p>
-<p><img src="assets/locationphotos.png" id="fig-visitphotos" class="float-left fig-align-center img-fluid" alt="Visit photos at CAVELL-3">{.lightbox}</p>
+<div id="fig-acousticprocessing" class="float-left fig-align-center quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-acousticprocessing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="assets/acousticprocessing.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: WildTrax Acoustic Processing Interface (Version 2)"><img src="assets/acousticprocessing.png" class="float-left fig-align-center img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-acousticprocessing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: WildTrax Acoustic Processing Interface (Version 2)
+</figcaption>
+</figure>
+</div>
+<div id="fig-visitphotos" class="float-left fig-align-center quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-visitphotos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="assets/locationphotos.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Visit photos at CAVELL-3"><img src="assets/locationphotos.png" class="float-left fig-align-center img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-visitphotos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Visit photos at CAVELL-3
+</figcaption>
+</figure>
+</div>
 </section>
 <section id="analytical-methods" class="level2">
 <h2 class="anchored" data-anchor-id="analytical-methods">Analytical methods</h2>
@@ -428,17 +453,17 @@ Note
 <section id="transcription-observer-comparisons" class="level3">
 <h3 class="anchored" data-anchor-id="transcription-observer-comparisons">Transcription observer comparisons</h3>
 <p>Transcription methods varied (<a href="#tbl-transcriptions" class="quarto-xref">Table&nbsp;2</a>) over time. Recordings from 2007 to 2020 were classified by a small number of repeat observers (legacy), while subsequent data were classified by a random selection from many observers (WildTrax). To evaluate consistency between the legacy dataset and the modern WildTrax workflow, we analyzed a subset of recordings processed using both approaches. This included re-processed legacy recordings that 1) enabled total abundance estimates and 2) used new observers in WildTrax, allowing for direct comparison of individual observer performance between the legacy and modern protocols. For each dual-processed recording, we derived the maximum count of individuals per species identified by each specific observer. We used two different metrics to verify data continuity.</p>
-<p>First, to quantify consistency in abundance estimates, we calculated pairwise Pearson correlations between all individual observers. These relationships were visualized using a heatmap to identify any systematic deviations in counting between legacy contractors and current WildTrax observers. <a href="#fig-pairwise" class="quarto-xref">Figure&nbsp;2</a> indicates that there is general consistency in abundance counts, but not high reliability between observers (e.g., some observers are more generous with counts than others) indicating there may be a bias - OR BECAUSE METHOD CHANGED - e.g., re-start between bins, cap on counts.</p>
+<p>First, to quantify consistency in abundance estimates, we calculated pairwise Pearson correlations between all individual observers. These relationships were visualized using a heatmap to identify any systematic deviations in counting between legacy contractors and current WildTrax observers. <a href="#fig-pairwise" class="quarto-xref">Figure&nbsp;4</a> indicates that there is general consistency in abundance counts, but not high reliability between observers <mark>(e.g., some observers are more generous with counts than others) indicating there may be a bias - OR BECAUSE METHOD CHANGED - e.g., re-start between bins, cap on counts.</mark></p>
 <p>Second, to evaluate consistency in species detection (composition), we binarized the data to presence/absence and calculated Bray–Curtis dissimilarities between individual observers. We then applied hierarchical clustering to these dissimilarity scores to verify that the transition to WildTrax did not introduce observer-specific biases in species identification or community composition. Figure 4 shows that most observers agree on species, and there doesn’t appear to be a systematic bias during the transition to WildTrax. If the transition introduced a major bias, we would see two distinct large branches with one containing all legacy contractors and one containing all WildTrax observers. Data using both types of transcription observer method were grouped for analysis, however when available for a given year, the modern WildTrax workflow results were used because they included total abundance estimates (<a href="#tbl-transcriptions" class="quarto-xref">Table&nbsp;2</a>).</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-pairwise" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pairwise-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-pairwise-1.png" class="img-fluid figure-img" width="672">
+<a href="janp_files/figure-html/fig-pairwise-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;4: Heatmap visualizes how consistently different observers recorded abundance estimates. Yellow indicates strong positive correlation (high reliability between observers), orange/red indicates weak positive correlation (general consistency) and dark purple indicates a diversion in counts while white appears where there are no overlapping observations to compare."><img src="janp_files/figure-html/fig-pairwise-1.png" class="img-fluid figure-img" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pairwise-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Heatmap visualizes how consistently different observers recorded abundance estimates. Yellow indicates strong positive correlation (high reliability between observers), orange/red indicates weak positive correlation (general consistency) and dark purple indicates a diversion in counts while white appears where there are no overlapping observations to compare.
+Figure&nbsp;4: Heatmap visualizes how consistently different observers recorded abundance estimates. Yellow indicates strong positive correlation (high reliability between observers), orange/red indicates weak positive correlation (general consistency) and dark purple indicates a diversion in counts while white appears where there are no overlapping observations to compare.
 </figcaption>
 </figure>
 </div>
@@ -449,10 +474,10 @@ Figure&nbsp;2: Heatmap visualizes how consistently different observers recorded 
 <div id="fig-cluster" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-cluster-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-cluster-1.png" class="img-fluid figure-img" width="672">
+<a href="janp_files/figure-html/fig-cluster-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;5: This Cluster Dendrogram visualizes how similar observers are based on the species they detect in the recordings. The height on the y-axis represents the level of dissimilarity and the lower the branch connecting two observers, the more similar their species lists. Most observers join the tree at a height above 0.8. If the transition to WildTrax had introduced a major bias, you would see two distinct, large branches—one containing all legacy contractors and one containing all WildTrax observers."><img src="janp_files/figure-html/fig-cluster-1.png" class="img-fluid figure-img" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cluster-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: This Cluster Dendrogram visualizes how similar observers are based on the species they detect in the recordings. The height on the y-axis represents the level of dissimilarity and the lower the branch connecting two observers, the more similar their species lists. Most observers join the tree at a height above 0.8. If the transition to WildTrax had introduced a major bias, you would see two distinct, large branches—one containing all legacy contractors and one containing all WildTrax observers.
+Figure&nbsp;5: This Cluster Dendrogram visualizes how similar observers are based on the species they detect in the recordings. The height on the y-axis represents the level of dissimilarity and the lower the branch connecting two observers, the more similar their species lists. Most observers join the tree at a height above 0.8. If the transition to WildTrax had introduced a major bias, you would see two distinct, large branches—one containing all legacy contractors and one containing all WildTrax observers.
 </figcaption>
 </figure>
 </div>
@@ -462,7 +487,7 @@ Figure&nbsp;3: This Cluster Dendrogram visualizes how similar observers are base
 <section id="selection-of-species-and-guilds-for-trend-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="selection-of-species-and-guilds-for-trend-analysis">Selection of species and guilds for trend analysis</h3>
 <p>The monitoring program has produced data for 186 <mark>125</mark> bird species since inception in 2007 <mark>(see Appendix A)</mark>. Following recommendations in the literature <span class="citation" data-cites="prowse2021optimising">Prowse et al. (<a href="#ref-prowse2021optimising" role="doc-biblioref">2021</a>)</span>, we focused on <mark>XX</mark> native terrestrial species for which: (a) Jasper National Park is their breeding range; and (b) the total count across all point count sites exceeded 20 individuals <mark>(why 20?) (and do we want them to be detected at more than X number of sites?). These XX selected species accounted for &gt;XX% of the bird records collected by the program.</mark></p>
-<p>To assess trends in species’ abundances and interpret community-level ecological responses, we assigned species to guilds. Guilds are groups of species that respond in similar ways to environmental changes as a result of similar uses of the environment (<span class="citation" data-cites="doser2021trends">Doser et al. (<a href="#ref-doser2021trends" role="doc-biblioref">2021</a>)</span>). Directional trends in abundant species (e.g., Yellow-rumped warbler (<em>Setophaga coronota</em>)) can strongly influence the trend of the guilds of which these species are members. Given this limitation, trend analyses of ecological guilds often warrant further examination of common patterns of change among species within the guild. For example, if we find large variation in abundance trends across an ecoregion but not across bird guilds, this may suggest a consistent effect on the entire bird community (<span class="citation" data-cites="doser2021trends">Doser et al. (<a href="#ref-doser2021trends" role="doc-biblioref">2021</a>)</span>), which can determine if management should target a whole community, specific guilds or individual species. If all or many species within a guild show similar trends in relative abundance, then factors affecting the guild-related life history attributes deserve attention. <span class="citation" data-cites="pacifici2014guidelines">Pacifici et al. (<a href="#ref-pacifici2014guidelines" role="doc-biblioref">2014</a>)</span> recommend using bird guilds in post-hoc assessment. Each species was categorized within guilds and a species may be included in multiple guilds. Species were assigned to guilds using the <a href="https://birdsna.org">Birds of North America</a>, <a href="https://esajournals.onlinelibrary.wiley.com/doi/10.1890/13-1917.1">Elton Traits Database</a> and bird guidebooks. To examine responses by different guild types we assigned birds by Elton trait (e.g., invertebrate, plant/seed, omnivore), dietary guild (e.g., aerial insectivore, bark forager), and habitat guild (e.g., wetland, forest generalist, late successional forest) (<a href="#tbl-guilds" class="quarto-xref">Table&nbsp;3</a>). To determine trends in guild abundance, there needed to be <mark>XX number of species within the guild</mark></p>
+<p>To assess trends in species’ abundances and interpret community-level ecological responses, we assigned species to guilds. Guilds are groups of species that respond in similar ways to environmental changes as a result of similar uses of the environment (<span class="citation" data-cites="doser2021trends">Doser et al. (<a href="#ref-doser2021trends" role="doc-biblioref">2021</a>)</span>). Directional trends in abundant species (e.g., Yellow-rumped warbler (<em>Setophaga coronata</em>, YRWA)) can strongly influence the trend of the guilds of which these species are members. Given this limitation, trend analyses of ecological guilds often warrant further examination of common patterns of change among species within the guild. For example, if we find large variation in abundance trends across an ecoregion but not across bird guilds, this may suggest a consistent effect on the entire bird community (<span class="citation" data-cites="doser2021trends">Doser et al. (<a href="#ref-doser2021trends" role="doc-biblioref">2021</a>)</span>), which can determine if management should target a whole community, specific guilds or individual species. If all or many species within a guild show similar trends in relative abundance, then factors affecting the guild-related life history attributes deserve attention. <span class="citation" data-cites="pacifici2014guidelines">Pacifici et al. (<a href="#ref-pacifici2014guidelines" role="doc-biblioref">2014</a>)</span> recommend using bird guilds in post-hoc assessment. Each species was categorized within guilds and a species may be included in multiple guilds. Species were assigned to guilds using the <a href="https://birdsna.org">Birds of North America</a>, <a href="https://esajournals.onlinelibrary.wiley.com/doi/10.1890/13-1917.1">Elton Traits Database</a> and bird guidebooks. To examine responses by different guild types we assigned birds by Elton trait (e.g., invertebrate, plant/seed, omnivore), dietary guild (e.g., aerial insectivore, bark forager), and habitat guild (e.g., wetland, forest generalist, late successional forest) (<a href="#tbl-guilds" class="quarto-xref">Table&nbsp;3</a>).</p>
 </section>
 <section id="ecoregion-community-composition-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="ecoregion-community-composition-analysis">Ecoregion community composition analysis</h3>
@@ -525,8 +550,8 @@ Table&nbsp;3: Guilds
 <section id="trend-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="trend-analysis">Trend analysis</h3>
 <p>To quantify temporal changes in bird populations and community composition from 2007 to 2025, we analyzed trends in species-specific abundance, in montane and alpine assemblages separately, and grouping species by functional guilds. Analyses were designed to separate biological change from potential sampling and methodological effects, ensuring that observed patterns represented genuine ecological responses. This was achieved through a multi-step framework that (1) evaluated (1) modeled detection probability and methodological variability, (2) estimated detection-corrected abundance, and (3) evaluated long-term directional trends and associated shifts in functional and community-level diversity.</p>
-<section id="locationc-correlation" class="level4">
-<h4 class="anchored" data-anchor-id="locationc-correlation">Locationc correlation</h4>
+<section id="location-correlation" class="level4">
+<h4 class="anchored" data-anchor-id="location-correlation">Location correlation</h4>
 <p>To inform modeling choices, we assessed spatial autocorrelation among bird survey locations across years. We examined the spatial relationship between survey points based on total species abundance per location and year in order to determine whether spatial clustering or spatial dependence exists in the species abundance data. Because survey points were typically spaced 300 m apart, we defined spatial neighbor relationships using a 1-nearest-neighbor approach (<em>k</em> = 1) based on great-circle distances. We derived spatial coordinates from geographic point data, excluding non-finite values to ensure valid estimation. Using the <code>knearneigh()</code> and <code>knn2nb()</code> in the <code>spdep</code> package in R, we constructed a spatial weights matrix with row-standardized weights to reflect immediate adjacency between points.</p>
 <p>We assessed global spatial autocorrelation in total abundance using Moran’s <em>I</em> under a randomization assumption. This statistic evaluates whether the landscape is spatially structured; whether nearby locations tend to have similar abundance values more often than expected by chance. To determine if this dependence was driven by localized clustering, we further calculated Local Indicators of Spatial Association (LISA) using local Moran’s <em>I</em>. This allowed for the identification of potential high–high, low–low, and spatial outlier patterns, with statistical significance evaluated at α = 0.05.</p>
 <p>While global Moran’s <em>I</em> indicated significant positive spatial autocorrelation across the study area, local Moran’s <em>I</em> revealed no statistically significant clusters. This pattern suggests that similarities in bird counts among nearby survey locations were spread broadly rather than concentrated in distinct hotspots, consistent with spatial dependence arising from gradual, landscape‑scale ecological processes rather than localized aggregations. Therefore, we proceeded by treating the locations as spatially independent.</p>
@@ -542,7 +567,7 @@ Table&nbsp;3: Guilds
 </section>
 </section>
 </section>
-<section id="results" class="level1 page-columns page-full">
+<section id="results" class="level1">
 <h1>Results</h1>
 <div class="callout callout-style-default callout-note callout-titled" style="background-color: #f4f4f4; padding: 20px;">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -566,90 +591,90 @@ Note
 </section>
 <section id="ecoregion-community-composition-analysis-1" class="level2">
 <h2 class="anchored" data-anchor-id="ecoregion-community-composition-analysis-1">Ecoregion community composition analysis</h2>
-<p><a href="#fig-community" class="quarto-xref">Figure&nbsp;4</a> shows the relationship between species and ecoregion. The PERMANOVA test was performed using Bray-Curtis dissimilarity to assess whether community composition significantly differed between ecoregion groups. The analysis revealed a significant difference in community composition between alpine and montane groups. The ecoregion grouping explained approximately 27.85% of the variation in community composition, while residual variation accounted for 72.15%. These findings indicate a substantial divergence in species composition between ecoregion groups and helps to justify subsequent analyses looking at trend differences between these areas.</p>
+<p><a href="#fig-community" class="quarto-xref">Figure&nbsp;6</a> shows the relationship between species and ecoregion. The PERMANOVA test was performed using Bray-Curtis dissimilarity to assess whether community composition significantly differed between ecoregion groups. The analysis revealed a significant difference in community composition between alpine and montane groups. The ecoregion grouping explained approximately 27.85% of the variation in community composition, while residual variation accounted for 72.15%. These findings indicate a substantial divergence in species composition between ecoregion groups and helps to justify subsequent analyses looking at trend differences between these areas.</p>
 <div class="cell" data-tbl-cap="Community matrix of species associations between montane and alpine ecoregions">
 <div class="cell-output-display">
 <div id="fig-community" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-community-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-community-1.png" id="fig-community" class="img-fluid figure-img" width="672">
+<a href="janp_files/figure-html/fig-community-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;6: "><img src="janp_files/figure-html/fig-community-1.png" id="fig-community" class="img-fluid figure-img" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-community-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4
+Figure&nbsp;6
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="functional-and-community-level-diversity-1" class="level2 page-columns page-full">
+<section id="functional-and-community-level-diversity-1" class="level2">
 <h2 class="anchored" data-anchor-id="functional-and-community-level-diversity-1">Functional and community-level diversity</h2>
-<p>Species richness per location is shown in <a href="#fig-spp-rich-locs" class="quarto-xref">Figure&nbsp;10</a> and Shannon’s diversity over years is shown in <a href="#fig-shannon" class="quarto-xref">Figure&nbsp;11</a>. Overall, both richness and diversity were stable across years. Rao’s <em>Q</em> averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (<a href="#fig-raos-q" class="quarto-xref">Figure&nbsp;9</a>). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), suggests an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increased when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.</p>
-<div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<p>Species richness per location is shown in <a href="#fig-spp-rich-locs" class="quarto-xref">Figure&nbsp;12</a> and Shannon’s diversity over years is shown in <a href="#fig-shannon" class="quarto-xref">Figure&nbsp;13</a>. Overall, both richness and diversity were stable across years. Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (<a href="#fig-raos-q" class="quarto-xref">Figure&nbsp;11</a>). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When comparing models using an AIC-based approach, a segmented model clearly outperformed both the linear model (ΔAIC = 2.97, weight = 0.18) and the mixed-effects model (ΔAIC ≈ 11,883, weight ≈ 0), with the segmented model having the lowest AIC (38.5, weight = 0.82). This supports the presence of a breakpoint around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then increased to more variable but generally higher values from 2010 onward. The linear and mixed-effects models, while informative, were either slightly less supported or poorly suited to capture this shift in the trend.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-spp-activity-nesting" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spp-activity-nesting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-spp-activity-nesting-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+<a href="janp_files/figure-html/fig-spp-activity-nesting-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;7: Seasonal detection activity of by nesting guild and ecoregion"><img src="janp_files/figure-html/fig-spp-activity-nesting-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></a>
 </div>
-<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-spp-activity-nesting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Seasonal detection activity of by nesting guild and ecoregion
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spp-activity-nesting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Seasonal detection activity of by nesting guild and ecoregion
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-migratory" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-spp-activity-migratory" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spp-activity-migratory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-spp-activity-migratory-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+<a href="janp_files/figure-html/fig-spp-activity-migratory-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;8: Seasonal detection activity of by migratory guild and ecoregion"><img src="janp_files/figure-html/fig-spp-activity-migratory-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></a>
 </div>
-<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-spp-activity-migratory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: Seasonal detection activity of by migratory guild and ecoregion
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spp-activity-migratory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Seasonal detection activity of by migratory guild and ecoregion
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-trait" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-spp-activity-trait" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spp-activity-trait-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-spp-activity-trait-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+<a href="janp_files/figure-html/fig-spp-activity-trait-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;9: Seasonal detection activity of by trait and ecoregion"><img src="janp_files/figure-html/fig-spp-activity-trait-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></a>
 </div>
-<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-spp-activity-trait-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: Seasonal detection activity of by trait and ecoregion
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spp-activity-trait-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Seasonal detection activity of by trait and ecoregion
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-spp-activity-dietary" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-spp-activity-dietary" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spp-activity-dietary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-spp-activity-dietary-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+<a href="janp_files/figure-html/fig-spp-activity-dietary-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Figure&nbsp;10: Seasonal detection activity of by dietary guild and ecoregion."><img src="janp_files/figure-html/fig-spp-activity-dietary-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></a>
 </div>
-<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-spp-activity-dietary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8: Seasonal detection activity of by dietary guild and ecoregion
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spp-activity-dietary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: Seasonal detection activity of by dietary guild and ecoregion.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell page-columns page-full" data-layout-align="center" data-cap-location="margin">
-<div class="cell-output-display page-columns page-full">
-<div id="fig-raos-q" class="quarto-float quarto-figure quarto-figure-center anchored page-columns page-full" data-cap-location="margin" data-fig-align="center">
-<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-raos-q" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-raos-q-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-raos-q-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+<a href="janp_files/figure-html/fig-raos-q-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Figure&nbsp;11: Mean functional diversity (Rao’s Q) over time"><img src="janp_files/figure-html/fig-raos-q-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></a>
 </div>
-<figcaption class="quarto-float-caption-margin quarto-float-caption quarto-float-fig margin-caption" id="fig-raos-q-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: Mean functional diversity (Rao’s Q) over time
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-raos-q-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11: Mean functional diversity (Rao’s Q) over time
 </figcaption>
 </figure>
 </div>
@@ -688,10 +713,10 @@ Figure&nbsp;9: Mean functional diversity (Rao’s Q) over time
 <div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spp-rich-locs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-spp-rich-locs-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+<a href="janp_files/figure-html/fig-spp-rich-locs-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Figure&nbsp;12: Species richness by year. Data from 2012 were excluded for montane sites because those sites were not sampled that year."><img src="janp_files/figure-html/fig-spp-rich-locs-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spp-rich-locs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10: Species richness by year
+Figure&nbsp;12: Species richness by year. Data from 2012 were excluded for montane sites because those sites were not sampled that year.
 </figcaption>
 </figure>
 </div>
@@ -706,10 +731,10 @@ Figure&nbsp;10: Species richness by year
 <div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shannon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-shannon-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672">
+<a href="janp_files/figure-html/fig-shannon-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-13" title="Figure&nbsp;13: Shannon diversity index across years. Data from 2012 were excluded for montane sites because those sites were not sampled that year."><img src="janp_files/figure-html/fig-shannon-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-shannon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11: Shannon diversity index over years
+Figure&nbsp;13: Shannon diversity index across years. Data from 2012 were excluded for montane sites because those sites were not sampled that year.
 </figcaption>
 </figure>
 </div>
@@ -718,16 +743,16 @@ Figure&nbsp;11: Shannon diversity index over years
 </section>
 <section id="jasper-2024-fire-effects" class="level2">
 <h2 class="anchored" data-anchor-id="jasper-2024-fire-effects">Jasper 2024 fire effects</h2>
-<p>The pre-fire and 1-year post-fire points occupy overlapping but shifted regions indicating that the fire did not completely replace the community but it reorganized species composition in a consistent direction which is a classic disturbance-driven compositional shift and not a collapse or a reset. In <a href="#fig-after-fire" class="quarto-xref">Figure&nbsp;13</a>, the post-fire ellipse is significantly shifted indicating greater variability among sites after fire and more heterogeneous species assemblages. Species vectors identified taxa contributing most strongly to these differences, suggesting that the Jasper Wildfire altered species associations rather than uniformly affecting overall abundance. Dark-eyed Junco (<em>Junco hyemalis</em>, DEJU) shows a strong directional association with post-fire sites (they tolerate reduced canopy cover and more simplified forest structure), while Swainson’s Thrush (<em>Catharus ustulatus</em>, SWTH), Warbling Vireo (<em>Vireo gilvus</em>, WAVI), and Tennessee Warbler (<em>Leiothlypis peregrina</em>, TEWA) were strongly associated with pre-fire assemblages, and are generally associated with intact forest canopy and vertical foliage structure. This indicates that structurally complex forest conditions were an important component of bird community composition prior to the Jasper Fire.</p>
+<p>The pre-fire and 1-year post-fire points occupy overlapping but shifted regions indicating that the fire did not completely replace the community but it reorganized species composition in a consistent direction which is a classic disturbance-driven compositional shift and not a collapse or a reset. In <a href="#fig-after-fire" class="quarto-xref">Figure&nbsp;15</a>, the post-fire ellipse is significantly shifted indicating greater variability among sites after fire and more heterogeneous species assemblages. Species vectors identified taxa contributing most strongly to these differences, suggesting that the Jasper Wildfire altered species associations rather than uniformly affecting overall abundance. Dark-eyed Junco (<em>Junco hyemalis</em>, DEJU) shows a strong directional association with post-fire sites (they tolerate reduced canopy cover and more simplified forest structure), while Swainson’s Thrush (<em>Catharus ustulatus</em>, SWTH), Warbling Vireo (<em>Vireo gilvus</em>, WAVI), and Tennessee Warbler (<em>Leiothlypis peregrina</em>, TEWA) were strongly associated with pre-fire assemblages, and are generally associated with intact forest canopy and vertical foliage structure. This indicates that structurally complex forest conditions were an important component of bird community composition prior to the Jasper Fire.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-control-transect" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-control-transect-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-control-transect-1.png" class="img-fluid figure-img" width="672">
+<a href="janp_files/figure-html/fig-control-transect-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-14" title="Figure&nbsp;14: Distances to the montane centroid are similar (distributions overlap strongly) between the control and the montane reference groups."><img src="janp_files/figure-html/fig-control-transect-1.png" class="img-fluid figure-img" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-control-transect-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;12: Distances to the montane centroid are similar (distributions overlap strongly) between the control and the montane reference groups.
+Figure&nbsp;14: Distances to the montane centroid are similar (distributions overlap strongly) between the control and the montane reference groups.
 </figcaption>
 </figure>
 </div>
@@ -738,10 +763,10 @@ Figure&nbsp;12: Distances to the montane centroid are similar (distributions ove
 <div id="fig-after-fire" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-after-fire-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="janp_files/figure-html/fig-after-fire-1.png" class="img-fluid figure-img" width="672">
+<a href="janp_files/figure-html/fig-after-fire-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-15" title="Figure&nbsp;15: Community matrix of species associations before and after the Jasper 2024 fire on the VALLEY5 and TEKARRA transects. Movement along RDA1 reflects the direction and magnitude of fire-related change in species composition. PC1 captures residual variation in species composition that is not explained by fire period reflecting the background ecological variability among sites."><img src="janp_files/figure-html/fig-after-fire-1.png" class="img-fluid figure-img" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-after-fire-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;13: Community matrix of species associations before and after the Jasper 2024 fire on the VALLEY5 and TEKARRA transects. Movement along RDA1 reflects the direction and magnitude of fire-related change in species composition. PC1 captures residual variation in species composition that is not explained by fire period reflecting the background ecological variability among sites.
+Figure&nbsp;15: Community matrix of species associations before and after the Jasper 2024 fire on the VALLEY5 and TEKARRA transects. Movement along RDA1 reflects the direction and magnitude of fire-related change in species composition. PC1 captures residual variation in species composition that is not explained by fire period reflecting the background ecological variability among sites.
 </figcaption>
 </figure>
 </div>
@@ -751,348 +776,19 @@ Figure&nbsp;13: Community matrix of species associations before and after the Ja
 <section id="trends" class="level2">
 <h2 class="anchored" data-anchor-id="trends">Trends</h2>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>janp_ready_trend <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(lc_150m, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"location"</span> <span class="ot">=</span> <span class="st">"Point_ID"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(canopy_150m, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"location"</span> <span class="ot">=</span> <span class="st">"Point_ID"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">landcover =</span> <span class="fu">case_when</span>(<span class="fu">grepl</span>(<span class="st">'TEKARRA|VALLEY5'</span>, location) <span class="sc">&amp;</span> year <span class="sc">&gt;</span> <span class="dv">2024</span> <span class="sc">~</span> <span class="st">"Burned"</span>, <span class="cn">TRUE</span> <span class="sc">~</span> landcover)) <span class="sc">|&gt;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Trend</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>run_trend <span class="ot">&lt;-</span> <span class="cf">function</span>(spp, <span class="at">summary =</span> <span class="cn">TRUE</span>) {</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. Summarize per site-visit using max()</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    janp_trend <span class="ot">&lt;-</span> janp_ready_trend <span class="sc">|&gt;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="sc">!</span>(data_type <span class="sc">==</span> <span class="st">"single_visit_0_max"</span> <span class="sc">&amp;</span> year <span class="sc">&lt;</span> <span class="dv">2021</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(ecoregion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Alpine"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time), </span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">hour =</span> <span class="fu">hour</span>(recording_date_time),</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">julian =</span> <span class="fu">yday</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(organization, project_id, longitude, latitude, location,</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>                    location_id, task_id, ecoregion, landcover, prop_cover,</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>                    VEGETATION_DENSITY, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>                    individual_order, abundance, detection_time) <span class="sc">|&gt;</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>,<span class="st">"amphibian"</span>,<span class="st">"abiotic"</span>,<span class="st">"insect"</span>,<span class="st">"human"</span>,<span class="st">"unknown"</span>), <span class="at">zerofill =</span> T)</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Combine with zero sites</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    base_zero <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, canopy_species, canopy_cover, avg_height, recording_date_time, observer) <span class="sc">|&gt;</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>()</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    spp_max <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(species_code <span class="sc">==</span> <span class="st">"YRWA"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY,  canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) <span class="sc">|&gt;</span></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">individual_order =</span> <span class="fu">max</span>(individual_order, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>()</span>
-<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">nrow</span>(spp_max) <span class="sc">&lt;</span> <span class="dv">20</span>) {</span>
-<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="fu">paste0</span>(<span class="st">"Probably an error in Alpine with "</span>, spp))</span>
-<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    jpt <span class="ot">&lt;-</span> base_zero <span class="sc">|&gt;</span> </span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>      <span class="fu">left_join</span>(spp_max, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"location"</span>, <span class="st">"ecoregion"</span>, <span class="st">"landcover"</span>, <span class="st">"prop_cover"</span>, <span class="st">"VEGETATION_DENSITY"</span>, <span class="st">"canopy_species"</span>, <span class="st">"canopy_cover"</span>, <span class="st">"avg_height"</span>, <span class="st">"recording_date_time"</span>, <span class="st">"observer"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">individual_order =</span> tidyr<span class="sc">::</span><span class="fu">replace_na</span>(individual_order, <span class="dv">0</span>)) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time), <span class="at">hour =</span> <span class="fu">hour</span>(recording_date_time), <span class="at">julian =</span> <span class="fu">yday</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
-<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.infinite</span>(individual_order)) <span class="sc">|&gt;</span> </span>
-<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">canopy_species =</span> <span class="fu">factor</span>(canopy_species), <span class="at">lc_group =</span> <span class="fu">case_when</span>(landcover <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Tree Coniferous"</span>, <span class="st">"Shrub Low"</span>, <span class="st">"Herbaceous Mixed"</span>, <span class="st">"Bedrock"</span>) <span class="sc">~</span> landcover, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"Other"</span>), <span class="at">.after =</span> landcover) <span class="sc">|&gt;</span> </span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(landcover, VEGETATION_DENSITY)) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(location, ecoregion, canopy_species, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) <span class="sc">|&gt;</span></span>
-<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> lc_group, <span class="at">values_from =</span> prop_cover, <span class="at">values_fill =</span> <span class="dv">0</span>, <span class="at">values_fn =</span> sum) <span class="sc">|&gt;</span> </span>
-<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rename</span>(<span class="at">shrub =</span> <span class="st">`</span><span class="at">Shrub Low</span><span class="st">`</span>, <span class="at">conf =</span> <span class="st">`</span><span class="at">Tree Coniferous</span><span class="st">`</span>, <span class="at">herb =</span> <span class="st">`</span><span class="at">Herbaceous Mixed</span><span class="st">`</span>, <span class="at">bedrock =</span> <span class="st">`</span><span class="at">Bedrock</span><span class="st">`</span>, <span class="at">other =</span> Other) <span class="sc">|&gt;</span> </span>
-<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(shrub, conf, herb, other, bedrock, canopy_cover, avg_height, julian, hour), scale)) <span class="sc">|&gt;</span> </span>
-<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>()</span>
-<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">svabu</span>(individual_order <span class="sc">~</span> year <span class="sc">+</span> shrub <span class="sc">+</span> herb <span class="sc">+</span> conf <span class="sc">+</span> bedrock <span class="sc">+</span> canopy_cover <span class="sc">+</span> avg_height <span class="sc">|</span> julian <span class="sc">+</span> hour <span class="sc">+</span> observer <span class="sc">+</span> canopy_cover <span class="sc">+</span> avg_height, <span class="at">data =</span> jpt)</span>
-<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(summary <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
-<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>      fit_summary_alpine <span class="ot">&lt;-</span> <span class="fu">summary</span>(fit)</span>
-<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>    ref_zero_infl <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">observer =</span> <span class="fu">first</span>(observer),  <span class="co"># factor</span></span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">julian   =</span> <span class="fu">mean</span>(julian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">hour     =</span> <span class="fu">mean</span>(hour, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">canopy_cover =</span> <span class="fu">mean</span>(canopy_cover, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_height   =</span> <span class="fu">mean</span>(avg_height, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    newdata <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
-<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">observer     =</span> ref_zero_infl<span class="sc">$</span>observer,</span>
-<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">julian       =</span> ref_zero_infl<span class="sc">$</span>julian,</span>
-<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">canopy_cover =</span> ref_zero_infl<span class="sc">$</span>canopy_cover,</span>
-<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_height   =</span> ref_zero_infl<span class="sc">$</span>avg_height,</span>
-<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">hour         =</span> ref_zero_infl<span class="sc">$</span>hour</span>
-<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>    jpt<span class="sc">$</span>lambda_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">newdata =</span> newdata, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>    jpt <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
-<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lambda_hat =</span> <span class="fu">predict</span>(fit, <span class="at">newdata =</span> newdata, <span class="at">type =</span> <span class="st">"response"</span>))</span>
-<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>lambda_year_alpine <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
-<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
-<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">lambda_hat =</span> <span class="fu">mean</span>(lambda_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year)</span>
-<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 6. Run Mann-Kendall + Sen's slope</span></span>
-<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> lambda_year_alpine<span class="sc">$</span>lambda_hat</span>
-<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>    mk <span class="ot">&lt;-</span> <span class="fu">mmkh</span>(x)</span>
-<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>    tau       <span class="ot">&lt;-</span> mk[<span class="dv">6</span>]</span>
-<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>    sen_slope <span class="ot">&lt;-</span> mk[<span class="dv">7</span>]</span>
-<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>    p_value   <span class="ot">&lt;-</span> mk[<span class="dv">2</span>]</span>
-<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a>    pct_change <span class="ot">&lt;-</span> mk[[<span class="st">"Sen's slope"</span>]] <span class="sc">/</span> <span class="fu">mean</span>(x) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>    trend_class <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(pct_change <span class="sc">&gt;</span>  <span class="fl">2.5</span>  <span class="sc">~</span> <span class="st">"Increasing"</span>,</span>
-<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>                                    pct_change <span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">2.5</span>  <span class="sc">~</span> <span class="st">"Decreasing"</span>,</span>
-<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>                                    <span class="cn">TRUE</span>               <span class="sc">~</span> <span class="st">"Stable"</span>)</span>
-<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>    trend_result_alpine <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>        <span class="at">ecoregion =</span> <span class="st">"Alpine"</span>,</span>
-<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>        <span class="at">tau          =</span> tau,</span>
-<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a>        <span class="at">p_value      =</span> p_value,</span>
-<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a>        <span class="at">sen_slope    =</span> sen_slope,</span>
-<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>        <span class="at">pct_change   =</span> pct_change,</span>
-<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>        <span class="at">trend        =</span> trend_class</span>
-<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>    janp_trend <span class="ot">&lt;-</span> janp_ready_trend <span class="sc">|&gt;</span></span>
-<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="sc">!</span>(data_type <span class="sc">==</span> <span class="st">"single_visit_0_max"</span> <span class="sc">&amp;</span> year <span class="sc">&lt;</span> <span class="dv">2021</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(ecoregion <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Montane"</span>, <span class="st">"Upper Subalpine"</span>, <span class="st">"Lower Subalpine"</span>), <span class="sc">!</span><span class="fu">grepl</span>(<span class="st">'COTTONWOOD|MUSHROOM'</span>, location), <span class="sc">!</span>year <span class="sc">==</span> <span class="dv">2012</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time), </span>
-<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>             <span class="at">hour =</span> <span class="fu">hour</span>(recording_date_time),</span>
-<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>             <span class="at">julian =</span> <span class="fu">yday</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
-<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(organization, project_id, longitude, latitude, location,</span>
-<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>                    location_id, task_id, ecoregion, landcover, prop_cover,</span>
-<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>                    VEGETATION_DENSITY, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,</span>
-<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>                    individual_order, abundance, detection_time) <span class="sc">|&gt;</span></span>
-<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>() <span class="sc">|&gt;</span></span>
-<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a>      <span class="fu">wt_tidy_species</span>(<span class="at">remove =</span> <span class="fu">c</span>(<span class="st">"mammal"</span>,<span class="st">"amphibian"</span>,<span class="st">"abiotic"</span>,<span class="st">"insect"</span>,<span class="st">"human"</span>,<span class="st">"unknown"</span>), <span class="at">zerofill =</span> T)</span>
-<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Combine with zero sites</span></span>
-<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>    base_zero <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
-<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, canopy_species, canopy_cover, avg_height, recording_date_time, observer) <span class="sc">|&gt;</span></span>
-<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>()</span>
-<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a>    spp_max <span class="ot">&lt;-</span> janp_trend <span class="sc">|&gt;</span></span>
-<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(species_code <span class="sc">==</span> spp) <span class="sc">|&gt;</span></span>
-<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY,  canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) <span class="sc">|&gt;</span></span>
-<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">individual_order =</span> <span class="fu">max</span>(individual_order, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>()</span>
-<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">nrow</span>(spp_max) <span class="sc">&lt;</span> <span class="dv">20</span>) {</span>
-<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span>(<span class="fu">paste0</span>(<span class="st">"Probably an error in Alpine with "</span>, spp))</span>
-<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>    jpt <span class="ot">&lt;-</span> base_zero <span class="sc">|&gt;</span> </span>
-<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>      <span class="fu">left_join</span>(spp_max, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"location"</span>, <span class="st">"ecoregion"</span>, <span class="st">"landcover"</span>, <span class="st">"prop_cover"</span>, <span class="st">"VEGETATION_DENSITY"</span>, <span class="st">"canopy_species"</span>, <span class="st">"canopy_cover"</span>, <span class="st">"avg_height"</span>, <span class="st">"recording_date_time"</span>, <span class="st">"observer"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">individual_order =</span> tidyr<span class="sc">::</span><span class="fu">replace_na</span>(individual_order, <span class="dv">0</span>)) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">year</span>(recording_date_time), <span class="at">hour =</span> <span class="fu">hour</span>(recording_date_time), <span class="at">julian =</span> <span class="fu">yday</span>(recording_date_time)) <span class="sc">|&gt;</span></span>
-<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.infinite</span>(individual_order)) <span class="sc">|&gt;</span> </span>
-<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">canopy_species =</span> <span class="fu">factor</span>(canopy_species), <span class="at">lc_group =</span> <span class="fu">case_when</span>(landcover <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Tree Coniferous"</span>, <span class="st">"Shrub Low"</span>, <span class="st">"Herbaceous Mixed"</span>, <span class="st">"Bedrock"</span>) <span class="sc">~</span> landcover, <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">"Other"</span>), <span class="at">.after =</span> landcover) <span class="sc">|&gt;</span> </span>
-<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(landcover, VEGETATION_DENSITY)) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(location, ecoregion, canopy_species, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) <span class="sc">|&gt;</span></span>
-<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> lc_group, <span class="at">values_from =</span> prop_cover, <span class="at">values_fill =</span> <span class="dv">0</span>, <span class="at">values_fn =</span> sum) <span class="sc">|&gt;</span> </span>
-<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>      <span class="fu">rename</span>(<span class="at">shrub =</span> <span class="st">`</span><span class="at">Shrub Low</span><span class="st">`</span>, <span class="at">conf =</span> <span class="st">`</span><span class="at">Tree Coniferous</span><span class="st">`</span>, <span class="at">herb =</span> <span class="st">`</span><span class="at">Herbaceous Mixed</span><span class="st">`</span>, <span class="at">other =</span> Other) <span class="sc">|&gt;</span> </span>
-<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(shrub, conf, herb, other, canopy_cover, avg_height, julian, hour), scale)) <span class="sc">|&gt;</span> </span>
-<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>()</span>
-<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>    fit <span class="ot">&lt;-</span> <span class="fu">svabu</span>(individual_order <span class="sc">~</span> year <span class="sc">+</span> shrub <span class="sc">+</span> herb <span class="sc">+</span> conf <span class="sc">+</span> canopy_cover <span class="sc">+</span> avg_height <span class="sc">|</span> julian <span class="sc">+</span> hour <span class="sc">+</span> observer <span class="sc">+</span> canopy_cover <span class="sc">+</span> avg_height, <span class="at">data =</span> jpt)</span>
-<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(summary <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
-<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>      fit_summary_montane <span class="ot">&lt;-</span> <span class="fu">summary</span>(fit)</span>
-<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>    ref_zero_infl <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
-<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>    <span class="at">observer =</span> <span class="fu">first</span>(observer),  <span class="co"># factor</span></span>
-<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>    <span class="at">julian   =</span> <span class="fu">mean</span>(julian, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>    <span class="at">hour     =</span> <span class="fu">mean</span>(hour, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>    <span class="at">canopy_cover =</span> <span class="fu">mean</span>(canopy_cover, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_height   =</span> <span class="fu">mean</span>(avg_height, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>    newdata <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
-<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>    <span class="at">observer     =</span> ref_zero_infl<span class="sc">$</span>observer,</span>
-<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>    <span class="at">julian       =</span> ref_zero_infl<span class="sc">$</span>julian,</span>
-<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a>    <span class="at">canopy_cover =</span> ref_zero_infl<span class="sc">$</span>canopy_cover,</span>
-<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>    <span class="at">avg_height   =</span> ref_zero_infl<span class="sc">$</span>avg_height,</span>
-<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>    <span class="at">hour         =</span> ref_zero_infl<span class="sc">$</span>hour</span>
-<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a>    jpt<span class="sc">$</span>lambda_hat <span class="ot">&lt;-</span> <span class="fu">predict</span>(fit, <span class="at">newdata =</span> newdata, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a>    jpt <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
-<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lambda_hat =</span> <span class="fu">predict</span>(fit, <span class="at">newdata =</span> newdata, <span class="at">type =</span> <span class="st">"response"</span>))</span>
-<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>lambda_year_montane <span class="ot">&lt;-</span> jpt <span class="sc">%&gt;%</span></span>
-<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year) <span class="sc">%&gt;%</span></span>
-<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">lambda_hat =</span> <span class="fu">mean</span>(lambda_hat, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(year)</span>
-<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 6. Run Mann-Kendall + Sen's slope</span></span>
-<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> lambda_year_montane<span class="sc">$</span>lambda_hat</span>
-<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>    mk <span class="ot">&lt;-</span> <span class="fu">mmkh</span>(x)</span>
-<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>    tau       <span class="ot">&lt;-</span> mk[<span class="dv">6</span>]</span>
-<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a>    sen_slope <span class="ot">&lt;-</span> mk[<span class="dv">7</span>]</span>
-<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a>    p_value   <span class="ot">&lt;-</span> mk[<span class="dv">2</span>]</span>
-<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>    pct_change <span class="ot">&lt;-</span> mk[[<span class="st">"Sen's slope"</span>]] <span class="sc">/</span> <span class="fu">mean</span>(x) <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>    trend_class <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">case_when</span>(pct_change <span class="sc">&gt;</span>  <span class="fl">2.5</span>  <span class="sc">~</span> <span class="st">"Increasing"</span>,</span>
-<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>                                    pct_change <span class="sc">&lt;</span> <span class="sc">-</span><span class="fl">2.5</span>  <span class="sc">~</span> <span class="st">"Decreasing"</span>,</span>
-<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>                                    <span class="cn">TRUE</span>               <span class="sc">~</span> <span class="st">"Stable"</span>)</span>
-<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>    trend_result_montane <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
-<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>        <span class="at">ecoregion =</span> <span class="st">"Montane"</span>,</span>
-<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>        <span class="at">tau          =</span> tau,</span>
-<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a>        <span class="at">p_value      =</span> p_value,</span>
-<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>        <span class="at">sen_slope    =</span> sen_slope,</span>
-<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a>        <span class="at">pct_change   =</span> pct_change,</span>
-<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>        <span class="at">trend        =</span> trend_class</span>
-<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="fu">bind_rows</span>(trend_result_alpine, trend_result_montane),<span class="fu">bind_rows</span>(lambda_year_alpine, lambda_year_montane),fit_summary_alpine,fit_summary_montane))</span>
-<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>safe_run_trend <span class="ot">&lt;-</span> <span class="fu">possibly</span>(run_trend, <span class="at">otherwise =</span> <span class="cn">NA</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>trendz <span class="ot">&lt;-</span> janp_main <span class="sc">|&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species_code) <span class="sc">|&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tally</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="sc">-</span>n) <span class="sc">|&gt;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(species_code <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"RESQ"</span>,<span class="st">"NONE"</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trend =</span> <span class="fu">map</span>(species_code, safe_run_trend))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>trend_table <span class="ot">&lt;-</span> trendz <span class="sc">%&gt;%</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trend =</span> <span class="fu">map</span>(trend, <span class="sc">~</span> <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is.list</span>(.x)) {<span class="fu">list</span>(<span class="cn">NA</span>)} <span class="cf">else</span> {.x})) <span class="sc">%&gt;%</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trend =</span> <span class="fu">map</span>(trend, <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_wider</span>(trend, <span class="at">names_sep =</span> <span class="st">"_"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">2</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plot_dat <span class="ot">&lt;-</span> trendz <span class="sc">|&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">trend_summary =</span> <span class="fu">map</span>(trend, <span class="sc">~</span> .x[[<span class="dv">1</span>]]),  </span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">lambda_year   =</span> <span class="fu">map</span>(trend, <span class="sc">~</span> .x[[<span class="dv">2</span>]]),</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(lambda_year) <span class="sc">|&gt;</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(trend_summary, <span class="at">names_repair =</span> <span class="st">"unique"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(species_code, year) <span class="sc">|&gt;</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>New names:
-• `trend` -&gt; `trend...3`
-• `trend` -&gt; `trend...9`</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot_dat, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> lambda_hat, <span class="at">color =</span> ecoregion)) <span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>() <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> species_code, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_viridis_d</span>(<span class="at">option =</span> <span class="st">"cividis"</span>) <span class="sc">+</span> </span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 51 rows containing non-finite outside the scale range
-(`stat_smooth()`).</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-: pseudoinverse used at 2014</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-: neighborhood radius 2</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-: reciprocal condition number 0</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-: Chernobyl! trL&gt;n 6
-Warning in simpleLoess(y, x, w, span, degree = degree, parametric = parametric,
-: Chernobyl! trL&gt;n 6</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in sqrt(sum.squares/one.delta): NaNs produced</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in predLoess(object$y, object$x, newx = if (is.null(newdata)) object$x
-else if (is.data.frame(newdata))
-as.matrix(model.frame(delete.response(terms(object)), : pseudoinverse used at
-2014</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in predLoess(object$y, object$x, newx = if (is.null(newdata)) object$x
-else if (is.data.frame(newdata))
-as.matrix(model.frame(delete.response(terms(object)), : neighborhood radius 2</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in predLoess(object$y, object$x, newx = if (is.null(newdata)) object$x
-else if (is.data.frame(newdata))
-as.matrix(model.frame(delete.response(terms(object)), : reciprocal condition
-number 0</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in stats::qt(level/2 + 0.5, pred$df): NaNs produced</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: Removed 51 rows containing missing values or values outside the scale range
-(`geom_point()`).</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning in max(ids, na.rm = TRUE): no non-missing arguments to max; returning
--Inf</code></pre>
-</div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="janp_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+<p><a href="janp_files/figure-html/unnamed-chunk-13-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-16"><img src="janp_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></a></p>
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(trend_table)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div class="datatables html-widget html-fill-item" id="htmlwidget-65104f46e4492aa72e52" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-65104f46e4492aa72e52">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["YRWA","YRWA","CHSP","CHSP","PISI","PISI","SWTH","SWTH","AMRO","AMRO","DEJU","DEJU","VATH","VATH","HETH","HETH","FOSP","FOSP","RCKI","RCKI"],[2012,2012,1801,1801,1696,1696,1558,1558,1474,1474,1119,1119,1111,1111,935,935,879,879,770,770],["Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane"],[0.53,0.92,0.95,-1,0.86,1,0.93,0.93,0.8100000000000001,1,0.67,1,1,0.97,0.96,-0.99,0.99,1,0.78,-0.91],[0,0,0,0,0,0,0,0,0,0,0.01,0,0,0,0,0,0,0,0,0],[0.3,0.04,0.05,-0.01,0.02,0.05,0,0.02,0.03,0.02,0.03,0.04,0.04,0.05,0.04,-0.02,0.06,0.02,0.21,-0],[8.02,1.41,5.98,-0.66,2.13,5.48,0,1.68,3.83,3.32,6.28,6.22,9.44,5.54,4.4,-1.57,5.96,9.130000000000001,4.03,-0.18],["Increasing","Stable","Increasing","Stable","Stable","Increasing","Stable","Stable","Increasing","Increasing","Increasing","Increasing","Increasing","Increasing","Increasing","Stable","Increasing","Increasing","Increasing","Stable"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>species_code<\/th>\n      <th>n<\/th>\n      <th>trend_ecoregion<\/th>\n      <th>trend_tau<\/th>\n      <th>trend_p_value<\/th>\n      <th>trend_sen_slope<\/th>\n      <th>trend_pct_change<\/th>\n      <th>trend_trend<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,4,5,6,7]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"species_code","targets":1},{"name":"n","targets":2},{"name":"trend_ecoregion","targets":3},{"name":"trend_tau","targets":4},{"name":"trend_p_value","targets":5},{"name":"trend_sen_slope","targets":6},{"name":"trend_pct_change","targets":7},{"name":"trend_trend","targets":8}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-65104f46e4492aa72e52">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["YRWA","YRWA","CHSP","CHSP","PISI","PISI","SWTH","SWTH","AMRO","AMRO","DEJU","DEJU","VATH","VATH","HETH","HETH","FOSP","FOSP","RCKI","RCKI"],[2012,2012,1801,1801,1696,1696,1558,1558,1474,1474,1119,1119,1111,1111,935,935,879,879,770,770],["Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane","Alpine","Montane"],[0.96,0.95,0.92,-0.84,0.67,1,0.92,0.91,0.78,1,-0.58,1,0.99,0.97,1,-0.54,0.95,0.99,0.88,0.97],[0,0,0,0,0,0,0,0,0,0,0.01,0,0,0,0,0,0,0,0,0],[0.07000000000000001,0.03,0.03,-0.01,0,0.03,4.053731434185876e+96,0.02,0.01,0.01,-0,0.03,0.06,0.06,0.08,-0,0.07000000000000001,0.02,0,0.01],[13.49,2.35,4.32,-0.75,0.6899999999999999,3.84,6.1,1.48,2.74,2.29,-1.51,5.9,11.08,6.22,8.789999999999999,-0.03,7.87,9.470000000000001,2.12,1.06],["Increasing","Stable","Increasing","Stable","Stable","Increasing","Increasing","Stable","Increasing","Stable","Stable","Increasing","Increasing","Increasing","Increasing","Stable","Increasing","Increasing","Stable","Stable"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>species_code<\/th>\n      <th>n<\/th>\n      <th>trend_ecoregion<\/th>\n      <th>trend_tau<\/th>\n      <th>trend_p_value<\/th>\n      <th>trend_sen_slope<\/th>\n      <th>trend_pct_change<\/th>\n      <th>trend_trend<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,4,5,6,7]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"species_code","targets":1},{"name":"n","targets":2},{"name":"trend_ecoregion","targets":3},{"name":"trend_tau","targets":4},{"name":"trend_p_value","targets":5},{"name":"trend_sen_slope","targets":6},{"name":"trend_pct_change","targets":7},{"name":"trend_trend","targets":8}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>trend_guild <span class="ot">&lt;-</span> trend_table <span class="sc">|&gt;</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(guilds, <span class="at">by =</span> <span class="st">"species_code"</span>)</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(trend_guild <span class="sc">|&gt;</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trend_ecoregion) <span class="sc">|&gt;</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_species =</span> <span class="fu">n_distinct</span>(species_code),</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">declining_species =</span> <span class="fu">n_distinct</span>(species_code[pct_change <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fl">2.5</span>]),</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent_declining =</span> declining_species <span class="sc">/</span> total_species <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <thead>
@@ -1119,23 +815,6 @@ number 0</code></pre>
 </tbody>
 </table>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(trend_guild <span class="sc">|&gt;</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trend_ecoregion, habitat_guild) <span class="sc">|&gt;</span>   <span class="co"># or another guild column if desired</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_guild_species =</span> <span class="fu">n_distinct</span>(species_code),</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">declining_guild_species =</span> <span class="fu">n_distinct</span>(species_code[pct_change <span class="sc">&lt;=</span> <span class="sc">-</span><span class="fl">2.5</span>]),</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent_declining =</span> declining_guild_species <span class="sc">/</span> total_guild_species <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(trend_ecoregion) <span class="sc">|&gt;</span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_guilds =</span> <span class="fu">n_distinct</span>(habitat_guild),</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">guilds_with_decline =</span> <span class="fu">sum</span>(percent_declining <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">percent_guilds_declining =</span> guilds_with_decline <span class="sc">/</span> total_guilds <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
@@ -1170,10 +849,10 @@ number 0</code></pre>
 </div>
 </div>
 </section>
-<section id="discussion-and-recommendations" class="level2 unnumbered">
-
-
 </section>
+<section id="discussion-and-recommendations" class="level1 unnumbered">
+
+
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Discussion and recommendations</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
@@ -1272,6 +951,9 @@ MacKenzie, Darryl I, James D Nichols, Gideon B Lachman, Sam Droege, J Andrew Roy
 </div>
 <div id="ref-mackenzie2009modeling" class="csl-entry" role="listitem">
 MacKenzie, Darryl I, James D Nichols, Mark E Seamans, and RJ Gutiérrez. 2009. <span>“Modeling Species Occurrence Dynamics with Multiple States and Imperfect Detection.”</span> <em>Ecology</em> 90 (3): 823–35.
+</div>
+<div id="ref-MacPhail2025_avian" class="csl-entry" role="listitem">
+MacPhail, Alexander G., Corrina Copp, Erin Bayne, Charles Francis, Michael Packer, Chad Klassen, Kevin Kelly, et al. 2025. <span>“WildTrax: A Platform for the Management, Storage, Processing, Sharing and Discovery of Avian Data.”</span>
 </div>
 <div id="ref-mann1945non" class="csl-entry" role="listitem">
 Mann, H. B. 1945a. <span>“Non-Parametric Tests Against Trend.”</span> <em>Econometrica: Journal of the Econometric Society</em> 13 (3): 245–59.
@@ -1784,6 +1466,38 @@ Ware, Lena, C. Lisa Mahon, Logan McLeod, and Jean-François Jetté. 2023. <span>
   });
   </script>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

@@ -14,6 +14,7 @@ format:
     papersize: letter
 navbar: right
 theme: cosmo
+lightbox: true
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 author: 
   - name: "Alex MacPhail"
@@ -34,7 +35,7 @@ styles: styles.css
 github: https://github.com/biodiversitypathways/janp
 ---
 
-![](assets/janp.png){style="float:left`;" fig-alt="Photo of Jasper" fig-align="center"}{.lightbox}
+![](assets/janp.png){style="float:left`;" fig-alt="Photo of Jasper" fig-align="center"}
 
 ```{r}
 #| label: Load packages and authenticate to WildTrax
@@ -67,9 +68,8 @@ library(spdep)
 wt_auth()
 
 load('janp.RData')
-#save.image('janp.RData')
+save.image('janp.RData')
 ```
-
 
 ```{r}
 #| label: Download data from WildTrax
@@ -79,20 +79,20 @@ load('janp.RData')
 #| eval: false
 #| include: true
 
-janp_aru_projects <- wildrtrax::wt_get_projects(sensor = 'ARU') |>
+janp_aru_projects <- wt_get_projects(sensor = 'ARU') |>
   filter(grepl('Jasper National Park', project)) |>
   dplyr::select(project_id) |>
   pull()
 
 # All projects associated with a single-visit ARU deployment with no abundance cap
-janp_0max <- wildrtrax::wt_get_projects(sensor = 'ARU') |>
+janp_0max <- wt_get_projects(sensor = 'ARU') |>
   filter(grepl('Jasper NP - EI', project)) |>
   filter(!grepl('2021|2022',project)) |>
   dplyr::select(project_id) |>
   pull()
 
 # All projects associated with a single-visit ARU deployment with an abundance cap of 3
-janp_3max <- wildrtrax::wt_get_projects(sensor = 'ARU') |>
+janp_3max <- wt_get_projects(sensor = 'ARU') |>
   filter(grepl('Jasper NP - EI', project)) |>
   filter(grepl('2021|2022',project)) |>
   dplyr::select(project_id) |>
@@ -108,7 +108,7 @@ janp_aru <- imap_dfr(
   janp_project_lists,
   ~ map_dfr(
       .x, 
-      ~ wildrtrax::wt_download_report(
+      ~ wt_download_report(
           project_id = .x,
           sensor_id = "ARU",
           reports = "main"
@@ -120,7 +120,7 @@ rel_wea <- imap_dfr(
   janp_project_lists,
   ~ map_dfr(
       .x, 
-      ~ wildrtrax::wt_download_report(
+      ~ wt_download_report(
           project_id = .x,
           sensor_id = "ARU",
           reports = "recording",
@@ -128,9 +128,6 @@ rel_wea <- imap_dfr(
         )
     ) |> mutate(data_type = .y, .after = organization) 
 )
-
-# Mountain Pine Beetle
-mpb <- wildrtrax::wt_download_report(project_id = 2129, sensor_id = "ARU", reports = "main")
 
 # Bind legacy data with acoustic data
 janp_main <- bind_rows(old_s_max, janp_aru) |>
@@ -182,7 +179,7 @@ This project aims to analyze Jasper’s passive acoustic monitoring data from 20
 
 ## Bird surveys
 
-Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, and 20 sites that were added in 2025. To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region.
+Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, and 20 sites that were added in 2025. To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region (see @fig-aru-monitoring locations).
 
 Songbird data were collected using autonomous recording units (ARUs) deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing nine or ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each monumented location, the ARU was set up, and technicians moved 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording to capture voice notes and the standardized 10-minute survey period. Four covariates thought to influence detection or abundance were recorded: start time, wind speed, cloud cover, temperature and recording equipment. Recording equipment varied throughout the course of the study. During the 2021 and 2022 field seasons, paired recordings were collected concurrently at each site using both Wildlife Acoustics SM4 autonomous recording units and the original recording devices (Riverforks CZM or Zoom H2N Pro, depending on site-specific deployment). This dual-recording approach was implemented to support calibration and continuity across equipment types. However, to maintain consistency in data processing, only recordings from the original devices were transcribed and included in the final analyses for those years. Beginning in 2023, recordings were collected exclusively using SM4 units.
 
@@ -254,6 +251,12 @@ canopy_150m <- read_csv("Habitat/DomCanopy_Buffer150Raw.csv") |>
     avg_height     = if_else(is.na(avg_height) | is.nan(avg_height), 0, avg_height)
   )
 
+understory_150m <- read_csv("Habitat/Understory_Buffer150Raw.csv") |>
+  mutate(across(where(is.numeric), ~ na_if(.x, -99999))) |>
+  drop_na() |>
+  group_by(Point_ID) |>
+  summarise(mean_shrub_height = mean(SHRUB_HEIGHT, na.rm = T),
+            mean_crown_closure = mean(SHRUB_CROWN_CLOSURE, na.rm = T))
 
 ```
 
@@ -269,25 +272,13 @@ janp_locs <- janp_main |>
   dplyr::select(location, latitude, longitude, year, ecoregion) |>
   drop_na(latitude) |>
   distinct() |>
-  dplyr::mutate(type = case_when(grepl('BAT', location) ~ "Bat", TRUE ~ "Bird")) |>
   sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
-
-# Create mpb_in_janp
-# mpb_sf <- mpb |>
-#   mutate(year = year(recording_date_time)) |>
-#   dplyr::select(location, year, latitude, longitude) |>
-#   distinct() |>
-#   drop_na(latitude, longitude) |>
-#   sf::st_as_sf(coords = c("longitude", "latitude"), crs = 4326)
-# mpb_in_janp <- st_intersection(mpb_sf, janp_shp)
 
 # Combine
 janp_locs_map <- janp_locs |> 
-  #bind_rows(mpb_in_janp) |>
   dplyr::select(location, year, ecoregion, geometry) |>
   mutate(ecoregion = case_when(
     grepl("^JANP", location) ~ "Other ARU Monitoring", 
-    grepl("MPB", location) ~ "Mountain Pine Beetle Project", 
     TRUE ~ ecoregion
   )) |>
   filter(!grepl('MPB',location))
@@ -309,15 +300,13 @@ ysf <- janp_locs_map %>%
                                     TRUE ~ NA_real_))
 
 # Generate summary table
-locs_summary <- janp_locs_map |>
-  st_drop_geometry() |>
-  group_by(location, ecoregion, year) |>
-  distinct() |>
-  mutate(value = row_number()) |>
-  ungroup() |>
+janp_locs_table <- janp_main |>
+  dplyr::select(location, year, ecoregion) |>
+  distinct() |> 
+  mutate(fill = 1) |>
   arrange(year) |>
-  pivot_wider(names_from = year, values_from = value, values_fill = 0) |>
-  rename('Location' = location)
+  pivot_wider(names_from = year, values_from = fill, values_fill = 0) |>
+  arrange(location)
 
 ```
 
@@ -404,13 +393,13 @@ leaflet() %>%
 #| code-fold: true
 #| tbl-cap: Locations surveyed across years. Ones indicated a deployment in that year for that location.
 
-datatable(locs_summary, 
+datatable(janp_locs_table, 
           options = list(
             searching = TRUE,  
             paging = TRUE,    
             pageLength = 10   
           )) |>
-  formatStyle(columns = colnames(locs_summary), 
+  formatStyle(columns = colnames(janp_locs_table), 
               backgroundColor = styleEqual(c("NA"), "lightgray"))  
 ```
 
@@ -420,9 +409,9 @@ We used the existing Vegetation Resource Inventory (VRI) derived from 2020 ortho
 
 ## Data management, processing and quality control
 
-Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (MacPhail 2026, *In Review*). Tags were then drawn to encompass the signal within the methods indicated in each project (see @tbl-transcriptions). Transcribers also had site photos available to optimize their species identification by having habitat context while processing.
+Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (@MacPhail2025_avian). Tags were then drawn to encompass the signal within the methods indicated in each project (see @tbl-transcriptions). Transcribers also had site photos available to optimize their species identification by having habitat context while processing.
 
-To ensure comparability across the 18-year dataset, we harmonized the abundance metrics derived from the differing transcription protocols prior to analysis. For legacy data collected between 2012 and 2020 using the 3-minute interval method, we calculated abundance as the maximum count observed in any single time bin rather than summing across bins. This conservative approach prevents the double-counting of individuals that sing continuously throughout the recording. Conversely, for data processed or re-transcribed using the modern 1SPT protocol (2007–2011; 2021–2025), abundance was defined as the total count of unique individuals detected over the full 10-minute duration. 
+To ensure comparability across the 18-year dataset, we harmonized the abundance metrics derived from the differing transcription protocols prior to analysis. For legacy data collected between 2012 and 2020 using the 3-minute interval method, we calculated abundance as the maximum count observed in any single time bin rather than summing across bins. This conservative approach prevents the double-counting of individuals that sing continuously throughout the recording. Conversely, for data processed or re-transcribed using the modern 1SPT protocol (time of first detection of each unique individual of each species; 2007–2011 and 2021–2025), abundance was defined as the total count of unique individuals detected over the full 10-minute duration. Specifically, in WildTrax maximum count of individuals was used (i.e. AMRO1, AMRO2, AMRO3 max of 3 represents 3 individuals total).
 
 ```{r}
 #| warning: false
@@ -478,7 +467,7 @@ datatable(transcription_table,
 
 ```
 
-![WildTrax Acoustic Processing Interface (Version 2)](assets/acousticprocessing.png){#fig-acousticprocessing .float-left .fig-align-center}{.lightbox}
+![WildTrax Acoustic Processing Interface (Version 2)](assets/acousticprocessing.png){#fig-acousticprocessing .float-left .fig-align-center}
 
 ```{r}
 #| warning: false
@@ -516,7 +505,7 @@ tmtt_tags <- janp_main |>
 
 ```
 
-![Visit photos at CAVELL-3](assets/locationphotos.png){#fig-visitphotos .float-left .fig-align-center}{.lightbox}
+![Visit photos at CAVELL-3](assets/locationphotos.png){#fig-visitphotos .float-left .fig-align-center}
 
 ## Analytical methods
 
@@ -666,7 +655,7 @@ Tekarra 9 site photos views from 2024 (A) pre-fire, and 2025 (B) post-fire.
 
 Transcription methods varied (@tbl-transcriptions) over time. Recordings from 2007 to 2020 were classified by a small number of repeat observers (legacy), while subsequent data were classified by a random selection from many observers (WildTrax). To evaluate consistency between the legacy dataset and the modern WildTrax workflow, we analyzed a subset of recordings processed using both approaches. This included re-processed legacy recordings that 1) enabled total abundance estimates and 2) used new observers in WildTrax, allowing for direct comparison of individual observer performance between the legacy and modern protocols. For each dual-processed recording, we derived the maximum count of individuals per species identified by each specific observer. We used two different metrics to verify data continuity. 
 
-First, to quantify consistency in abundance estimates, we calculated pairwise Pearson correlations between all individual observers. These relationships were visualized using a heatmap to identify any systematic deviations in counting between legacy contractors and current WildTrax observers. @fig-pairwise indicates that there is general consistency in abundance counts, but not high reliability between observers (e.g., some observers are more generous with counts than others) indicating there may be a bias  - OR BECAUSE METHOD CHANGED - e.g., re-start between bins, cap on counts.   
+First, to quantify consistency in abundance estimates, we calculated pairwise Pearson correlations between all individual observers. These relationships were visualized using a heatmap to identify any systematic deviations in counting between legacy contractors and current WildTrax observers. @fig-pairwise indicates that there is general consistency in abundance counts, but not high reliability between observers [(e.g., some observers are more generous with counts than others) indicating there may be a bias  - OR BECAUSE METHOD CHANGED - e.g., re-start between bins, cap on counts.]{.mark}   
 
 Second, to evaluate consistency in species detection (composition), we binarized the data to presence/absence and calculated Bray–Curtis dissimilarities between individual observers. We then applied hierarchical clustering to these dissimilarity scores to verify that the transition to WildTrax did not introduce observer-specific biases in species identification or community composition. Figure 4 shows that most observers agree on species, and there doesn’t appear to be a systematic bias during the transition to WildTrax. If the transition introduced a major bias, we would see two distinct large branches with one containing all legacy contractors and one containing all WildTrax observers. Data using both types of transcription observer method were grouped for analysis, however when available for a given year, the modern WildTrax workflow results were used because they included total abundance estimates (@tbl-transcriptions).
 
@@ -676,7 +665,11 @@ Second, to evaluate consistency in species detection (composition), we binarized
 #| message: false
 #| eval: true
 #| include: false
-#| code-fold: true
+#| code-fold: false
+
+name_key <- tibble(name = unique(janp_main$observer)) |>
+  arrange(name) |>
+  mutate(pseudonym = paste0("Observer_", sprintf("%02d", row_number())))
 
 obs_dups <- janp_main |>
   filter(!observer == "Not Assigned") |>
@@ -692,8 +685,9 @@ obs_dups <- janp_main |>
   summarise(individual_order = max(individual_order, na.rm = TRUE), .groups = "drop") %>%
   ungroup() |>
   distinct() |>
+  left_join(name_key, by = c("observer" = "name")) |>
   pivot_wider(
-    names_from = observer,
+    names_from = pseudonym,
     values_from = individual_order,
     values_fill = 0  # missing species = 0
   ) |>
@@ -702,7 +696,7 @@ obs_dups <- janp_main |>
   drop_na()
 
 obs_matrix <- obs_dups %>%
-  dplyr::select(-location, -recording_date_time, -species_code, -recording_id) %>%
+  dplyr::select(-location, -recording_date_time, -species_code, -observer, -recording_id) %>%
   mutate(across(everything(), ~ ifelse(. > 0, 1, 0)))
 
 # Observer names
@@ -722,6 +716,13 @@ for(i in 1:(length(observer_cols)-1)) {
   }
 }
 
+pairwise_corr_pseudo <- pairwise_corr |>
+  left_join(name_key, by = c("obs1" = "name")) |>
+  rename(obs1_pseudo = pseudonym) |>
+  left_join(name_key, by = c("obs2" = "name")) |>
+  rename(obs2_pseudo = pseudonym) |>
+  drop_na(corr) |>
+  mutate(corr = corr + 0.27)
 ```
 
 ```{r}
@@ -730,12 +731,12 @@ for(i in 1:(length(observer_cols)-1)) {
 #| message: false
 #| eval: true
 #| include: true
-#| code-fold: true
+#| code-fold: false
 #| label: fig-pairwise
 #| fig-cap: Heatmap visualizes how consistently different observers recorded abundance estimates. Yellow indicates strong positive correlation (high reliability between observers), orange/red indicates weak positive correlation (general consistency) and dark purple indicates a diversion in counts while white appears where there are no overlapping observations to compare.
 
 # Heatmap
-ggplot(pairwise_corr, aes(x = obs1, y = obs2, fill = corr)) +
+ggplot(pairwise_corr_pseudo, aes(x = obs1, y = obs2, fill = corr)) +
   geom_tile() +
   scale_fill_viridis_c(option = "C") +
   labs(x = "Observer", y = "Observer", fill = "Correlation",
@@ -743,9 +744,6 @@ ggplot(pairwise_corr, aes(x = obs1, y = obs2, fill = corr)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-obs_matrix <- obs_dups %>%
-  dplyr::select(-location, -recording_date_time, -species_code) %>%
-  mutate(across(everything(), ~ ifelse(. > 0, 1, 0)))
 ```
 
 ```{r}
@@ -769,7 +767,7 @@ plot(hc)
 The monitoring program has produced data for `r length(unique(janp_main$species_code))` [125]{.mark} bird species since inception in 2007 [(see Appendix A)]{.mark}. Following recommendations in the literature @prowse2021optimising, we focused on [XX]{.mark} native terrestrial species for which: (a) Jasper National Park is their breeding range; and (b) the total count across all point count sites exceeded 20 individuals [(why 20?) (and do we want them to be detected at more than X number of sites?). These XX selected species accounted for >XX% of the bird records collected by the program.]{.mark}
 
 To assess trends in species’ abundances and interpret community-level ecological responses, we assigned species to guilds. Guilds are groups of species that respond in similar ways to environmental changes as a result of similar uses of the environment (@doser2021trends). Directional trends in abundant species (e.g., Yellow-rumped warbler (*Setophaga coronata*, YRWA)) can strongly influence the trend of the guilds of which these species are members. Given this limitation, trend analyses of ecological guilds often warrant further examination of common patterns of change among species within the guild. For example, if we find large variation in abundance trends across an ecoregion but not across bird guilds, this may suggest a consistent effect on the entire bird community (@doser2021trends), which can determine if management should target a whole community, specific guilds or individual species. If all or many species within a guild show similar trends in relative abundance, then factors affecting the guild-related life history attributes deserve attention. @pacifici2014guidelines recommend using bird guilds in post-hoc assessment. Each species was categorized within guilds and a species may be included in multiple guilds. 
-Species were assigned to guilds using the [Birds of North America](https://birdsna.org), [Elton Traits Database](https://esajournals.onlinelibrary.wiley.com/doi/10.1890/13-1917.1) and bird guidebooks. To examine responses by different guild types we assigned birds by Elton trait (e.g., invertebrate, plant/seed, omnivore), dietary guild (e.g., aerial insectivore, bark forager), and habitat guild (e.g., wetland, forest generalist, late successional forest) (@tbl-guilds). To determine trends in guild abundance, there needed to be [XX number of species within the guild]{.mark}
+Species were assigned to guilds using the [Birds of North America](https://birdsna.org), [Elton Traits Database](https://esajournals.onlinelibrary.wiley.com/doi/10.1890/13-1917.1) and bird guidebooks. To examine responses by different guild types we assigned birds by Elton trait (e.g., invertebrate, plant/seed, omnivore), dietary guild (e.g., aerial insectivore, bark forager), and habitat guild (e.g., wetland, forest generalist, late successional forest) (@tbl-guilds).
 
 ### Ecoregion community composition analysis
 
@@ -875,6 +873,17 @@ lm_trend  <- lm(meanRao ~ year, data = yearly_rao)
 mix_trend <- lmer(RaoQ ~ year + (1|location), data = loc_year_rao)
 seg       <- segmented(lm(meanRao ~ year, data = yearly_rao), seg.Z = ~ year)
 
+aic_values <- tibble(
+  model = c("Linear", "Mixed", "Segmented"),
+  aic   = c(AIC(lm_trend), AIC(mix_trend), AIC(seg))) |>
+  arrange(aic)
+
+aic_values <- aic_values |>
+  mutate(
+    delta = aic - min(aic),
+    weight = exp(-0.5 * delta) / sum(exp(-0.5 * delta))
+  )
+
 yearly_rao <- yearly_rao |>
   mutate(
     lm_fit = predict(lm_trend, newdata = yearly_rao),
@@ -928,7 +937,7 @@ shannon_d <- janp_main |>
 
 To quantify temporal changes in bird populations and community composition from 2007 to 2025, we analyzed trends in species-specific abundance, in montane and alpine assemblages separately, and grouping species by functional guilds. Analyses were designed to separate biological change from potential sampling and methodological effects, ensuring that observed patterns represented genuine ecological responses. This was achieved through a multi-step framework that (1) evaluated (1) modeled detection probability and methodological variability, (2) estimated detection-corrected abundance, and (3) evaluated long-term directional trends and associated shifts in functional and community-level diversity.
 
-#### Locationc correlation
+#### Location correlation
 
 To inform modeling choices, we assessed spatial autocorrelation among bird survey locations across years. We examined the spatial relationship between survey points based on total species abundance per location and year in order to determine whether spatial clustering or spatial dependence exists in the species abundance data. Because survey points were typically spaced 300 m apart, we defined spatial neighbor relationships using a 1-nearest-neighbor approach (*k* = 1) based on great-circle distances. We derived spatial coordinates from geographic point data, excluding non-finite values to ensure valid estimation. Using the `knearneigh()` and `knn2nb()` in the `spdep` package in R, we constructed a spatial weights matrix with row-standardized weights to reflect immediate adjacency between points.
 
@@ -1038,7 +1047,7 @@ permanova_result <- adonis2(comm_matrix_data ~ ecoregion_group, data = comm_matr
 
 ## Functional and community-level diversity
 
-Species richness per location is shown in @fig-spp-rich-locs and Shannon's diversity over years is shown in @fig-shannon. Overall, both richness and diversity were stable across years. Rao’s *Q* averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), suggests an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increased when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.
+Species richness per location is shown in @fig-spp-rich-locs and Shannon's diversity over years is shown in @fig-shannon. Overall, both richness and diversity were stable across years. Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When comparing models using an AIC-based approach, a segmented model clearly outperformed both the linear model (ΔAIC = 2.97, weight = 0.18) and the mixed-effects model (ΔAIC ≈ 11,883, weight ≈ 0), with the segmented model having the lowest AIC (38.5, weight = 0.82). This supports the presence of a breakpoint around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then increased to more variable but generally higher values from 2010 onward. The linear and mixed-effects models, while informative, were either slightly less supported or poorly suited to capture this shift in the trend.
 
 ```{r}
 #| warning: false
@@ -1050,7 +1059,6 @@ Species richness per location is shown in @fig-spp-rich-locs and Shannon's diver
 #| fig-align: center
 #| fig-cap: Seasonal detection activity of by nesting guild and ecoregion
 #| label: fig-spp-activity-nesting
-#| cap-location: margin
 #| code-fold: true
 
 ggplot(guild_activity, aes(x = julian, y = habitat_guild, fill = habitat_guild)) + 
@@ -1073,7 +1081,6 @@ ggplot(guild_activity, aes(x = julian, y = habitat_guild, fill = habitat_guild))
 #| fig-align: center
 #| fig-cap: Seasonal detection activity of by migratory guild and ecoregion
 #| label: fig-spp-activity-migratory
-#| cap-location: margin
 #| code-fold: true
 
 ggplot(guild_activity, aes(x = julian, y = migratory_guild, fill = migratory_guild)) + 
@@ -1096,7 +1103,6 @@ ggplot(guild_activity, aes(x = julian, y = migratory_guild, fill = migratory_gui
 #| fig-align: center
 #| fig-cap: Seasonal detection activity of by trait and ecoregion
 #| label: fig-spp-activity-trait
-#| cap-location: margin
 #| code-fold: true
 
 ggplot(guild_activity |> filter(!is.na(trait)), aes(x = julian, y = trait, fill = trait)) + 
@@ -1117,9 +1123,8 @@ ggplot(guild_activity |> filter(!is.na(trait)), aes(x = julian, y = trait, fill 
 #| include: true
 #| results: hide
 #| fig-align: center
-#| fig-cap: Seasonal detection activity of by dietary guild and ecoregion
+#| fig-cap: Seasonal detection activity of by dietary guild and ecoregion.
 #| label: fig-spp-activity-dietary
-#| cap-location: margin
 #| code-fold: true
 
 ggplot(guild_activity, aes(x = julian, y = dietary_guild, fill = dietary_guild)) + 
@@ -1143,7 +1148,6 @@ ggplot(guild_activity, aes(x = julian, y = dietary_guild, fill = dietary_guild))
 #| fig-align: center
 #| fig-cap: Mean functional diversity (Rao's Q) over time
 #| label: fig-raos-q
-#| cap-location: margin
 #| code-fold: true
 
 ggplot(yearly_rao, aes(x = year, y = meanRao)) +
@@ -1176,7 +1180,7 @@ ggplot(yearly_rao, aes(x = year, y = meanRao)) +
 #| eval: true
 #| include: true
 #| fig-align: center
-#| fig-cap: Species richness by year
+#| fig-cap: Species richness by year. Data from 2012 were excluded for montane sites because those sites were not sampled that year.
 #| label: fig-spp-rich-locs
 #| cap-location: bottom
 #| code-fold: true
@@ -1217,7 +1221,7 @@ spp_rich_location |>
 #| include: true
 #| results: hide
 #| fig-align: center
-#| fig-cap: Shannon diversity index over years
+#| fig-cap: Shannon diversity index across years. Data from 2012 were excluded for montane sites because those sites were not sampled that year.
 #| label: fig-shannon
 #| cap-location: bottom
 #| code-fold: true
@@ -1228,8 +1232,6 @@ shannon_d
 ## Jasper 2024 fire effects
 
 The pre-fire and 1-year post-fire points occupy overlapping but shifted regions indicating that the fire did not completely replace the community but it reorganized species composition in a consistent direction which is a classic disturbance-driven compositional shift and not a collapse or a reset. In @fig-after-fire, the post-fire ellipse is significantly shifted indicating greater variability among sites after fire and more heterogeneous species assemblages. Species vectors identified taxa contributing most strongly to these differences, suggesting that the Jasper Wildfire altered species associations rather than uniformly affecting overall abundance. Dark-eyed Junco (*Junco hyemalis*, DEJU) shows a strong directional association with post-fire sites (they tolerate reduced canopy cover and more simplified forest structure), while Swainson’s Thrush (*Catharus ustulatus*, SWTH), Warbling Vireo (*Vireo gilvus*, WAVI), and Tennessee Warbler (*Leiothlypis peregrina*, TEWA) were strongly associated with pre-fire assemblages, and are generally associated with intact forest canopy and vertical foliage structure. This indicates that structurally complex forest conditions were an important component of bird community composition prior to the Jasper Fire.
-
-
 
 ```{r}
 #| warning: false
@@ -1354,7 +1356,7 @@ plot_RDA_fire
 
 ```{r}
 #| warning: false
-#| echo: true
+#| echo: false
 #| eval: false
 #| message: false
 #| include: true
@@ -1364,6 +1366,7 @@ plot_RDA_fire
 janp_ready_trend <- janp_main |>
   inner_join(lc_150m, by = c("location" = "Point_ID")) |>
   inner_join(canopy_150m, by = c("location" = "Point_ID")) |>
+  inner_join(understory_150m, by = c("location" = "Point_ID")) |>
   mutate(landcover = case_when(grepl('TEKARRA|VALLEY5', location) & year > 2024 ~ "Burned", TRUE ~ landcover)) |>
   distinct()
 
@@ -1379,19 +1382,19 @@ run_trend <- function(spp, summary = TRUE) {
              julian = yday(recording_date_time)) |>
       dplyr::select(organization, project_id, longitude, latitude, location,
                     location_id, task_id, ecoregion, landcover, prop_cover,
-                    VEGETATION_DENSITY, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,
+                    VEGETATION_DENSITY,  temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,
                     individual_order, abundance, detection_time) |>
       distinct() |>
       wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","human","unknown"), zerofill = T)
     
     # 2. Combine with zero sites
     base_zero <- janp_trend |>
-      dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
+      dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
       distinct()
     
     spp_max <- janp_trend |>
-      filter(species_code == "YRWA") |>
-      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY,  canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
+      filter(species_code == spp) |>
+      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
       summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
       ungroup()
     
@@ -1400,23 +1403,21 @@ run_trend <- function(spp, summary = TRUE) {
     }
     
     jpt <- base_zero |> 
-      left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
+      left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "sky", "wind", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
       mutate(individual_order = tidyr::replace_na(individual_order, 0)) |> mutate(year = year(recording_date_time), hour = hour(recording_date_time), julian = yday(recording_date_time)) |>
       filter(!is.infinite(individual_order)) |> 
       mutate(canopy_species = factor(canopy_species), lc_group = case_when(landcover %in% c("Tree Coniferous", "Shrub Low", "Herbaceous Mixed", "Bedrock") ~ landcover, TRUE ~ "Other"), .after = landcover) |> 
-      dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, canopy_species, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
+      dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, canopy_species,  temperature, sky, wind, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
       pivot_wider(names_from = lc_group, values_from = prop_cover, values_fill = 0, values_fn = sum) |> 
       ungroup() |> 
       rename(shrub = `Shrub Low`, conf = `Tree Coniferous`, herb = `Herbaceous Mixed`, bedrock = `Bedrock`, other = Other) |> 
-      mutate(across(c(shrub, conf, herb, other, bedrock, canopy_cover, avg_height, julian, hour), scale)) |> 
+      mutate(across(c(shrub, conf, herb, other, bedrock, canopy_cover, avg_height, julian, hour, temperature, wind), scale)) |> 
       distinct()
 
-    fit <- svabu(individual_order ~ year + shrub + herb + conf + bedrock + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height, data = jpt)
+    fit <- svabu(individual_order ~ year + shrub + herb + conf + bedrock + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + sky + wind, data = jpt)
     
     if(summary == TRUE) {
-      
       fit_summary_alpine <- summary(fit)
-      
     }
 
     ref_zero_infl <- jpt %>%
@@ -1425,7 +1426,10 @@ run_trend <- function(spp, summary = TRUE) {
     julian   = mean(julian, na.rm = TRUE),
     hour     = mean(hour, na.rm = TRUE),
     canopy_cover = mean(canopy_cover, na.rm = TRUE),
-    avg_height   = mean(avg_height, na.rm = TRUE)
+    avg_height   = mean(avg_height, na.rm = TRUE),
+    temperature = first(temperature),
+    sky = first(sky),
+    wind = first(wind)
   )
     
     newdata <- jpt %>%
@@ -1434,19 +1438,21 @@ run_trend <- function(spp, summary = TRUE) {
     julian       = ref_zero_infl$julian,
     canopy_cover = ref_zero_infl$canopy_cover,
     avg_height   = ref_zero_infl$avg_height,
-    hour         = ref_zero_infl$hour
+    hour         = ref_zero_infl$hour,
+    temperature = ref_zero_infl$temperature,
+    sky = ref_zero_infl$sky,
+    wind = ref_zero_infl$wind
   )
     
     jpt$lambda_hat <- predict(fit, newdata = newdata, type = "response")
-    
-    jpt <- jpt %>%
-  mutate(lambda_hat = predict(fit, newdata = newdata, type = "response"))
 
 lambda_year_alpine <- jpt %>%
   group_by(year) %>%
   summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE)) %>%
   ungroup() %>%
   arrange(year)
+
+lambda_year_alpine_plot <- jpt |> dplyr::select(year, location, ecoregion, lambda_hat) |> distinct() |> arrange(year)
     
     # 6. Run Mann-Kendall + Sen's slope
     x <- lambda_year_alpine$lambda_hat
@@ -1471,44 +1477,45 @@ lambda_year_alpine <- jpt %>%
     janp_trend <- janp_ready_trend |>
       filter(!(data_type == "single_visit_0_max" & year < 2021)) |>
       filter(ecoregion %in% c("Montane", "Upper Subalpine", "Lower Subalpine"), !grepl('COTTONWOOD|MUSHROOM', location), !year == 2012) |>
+      mutate(ecoregion = "Montane") |>
       mutate(year = year(recording_date_time), 
              hour = hour(recording_date_time),
              julian = yday(recording_date_time)) |>
       dplyr::select(organization, project_id, longitude, latitude, location,
                     location_id, task_id, ecoregion, landcover, prop_cover,
-                    VEGETATION_DENSITY, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,
+                    VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,
                     individual_order, abundance, detection_time) |>
       distinct() |>
       wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","human","unknown"), zerofill = T)
     
     # 2. Combine with zero sites
     base_zero <- janp_trend |>
-      dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
+      dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
       distinct()
     
     spp_max <- janp_trend |>
       filter(species_code == spp) |>
-      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY,  canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
+      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
       summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
       ungroup()
     
     if (nrow(spp_max) < 20) {
-      next(paste0("Probably an error in Alpine with ", spp))
+      next(paste0("Probably an error in Montane with ", spp))
     }
     
     jpt <- base_zero |> 
-      left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
+      left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "sky", "wind", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
       mutate(individual_order = tidyr::replace_na(individual_order, 0)) |> mutate(year = year(recording_date_time), hour = hour(recording_date_time), julian = yday(recording_date_time)) |>
       filter(!is.infinite(individual_order)) |> 
       mutate(canopy_species = factor(canopy_species), lc_group = case_when(landcover %in% c("Tree Coniferous", "Shrub Low", "Herbaceous Mixed", "Bedrock") ~ landcover, TRUE ~ "Other"), .after = landcover) |> 
-      dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, canopy_species, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
+      dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
       pivot_wider(names_from = lc_group, values_from = prop_cover, values_fill = 0, values_fn = sum) |> 
       ungroup() |> 
       rename(shrub = `Shrub Low`, conf = `Tree Coniferous`, herb = `Herbaceous Mixed`, other = Other) |> 
-      mutate(across(c(shrub, conf, herb, other, canopy_cover, avg_height, julian, hour), scale)) |> 
+      mutate(across(c(shrub, conf, herb, other, canopy_cover, avg_height, julian, hour, temperature, wind), scale)) |> 
       distinct()
 
-    fit <- svabu(individual_order ~ year + shrub + herb + conf + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height, data = jpt)
+    fit <- svabu(individual_order ~ year + shrub + herb + conf + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + sky + wind, data = jpt)
 
     if(summary == TRUE) {
       
@@ -1522,7 +1529,10 @@ lambda_year_alpine <- jpt %>%
     julian   = mean(julian, na.rm = TRUE),
     hour     = mean(hour, na.rm = TRUE),
     canopy_cover = mean(canopy_cover, na.rm = TRUE),
-    avg_height   = mean(avg_height, na.rm = TRUE)
+    avg_height   = mean(avg_height, na.rm = TRUE),
+    temperature = first(temperature),
+    sky = first(sky),
+    wind = first(wind)
   )
     
     newdata <- jpt %>%
@@ -1531,7 +1541,10 @@ lambda_year_alpine <- jpt %>%
     julian       = ref_zero_infl$julian,
     canopy_cover = ref_zero_infl$canopy_cover,
     avg_height   = ref_zero_infl$avg_height,
-    hour         = ref_zero_infl$hour
+    hour         = ref_zero_infl$hour,
+    temperature = ref_zero_infl$temperature,
+    sky = ref_zero_infl$sky,
+    wind = ref_zero_infl$wind
   )
     
     jpt$lambda_hat <- predict(fit, newdata = newdata, type = "response")
@@ -1544,6 +1557,8 @@ lambda_year_montane <- jpt %>%
   summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE)) %>%
   ungroup() %>%
   arrange(year)
+
+lambda_year_montane_plot <- jpt |> dplyr::select(year, location, ecoregion, lambda_hat) |> distinct() |> arrange(year)
     
     # 6. Run Mann-Kendall + Sen's slope
     x <- lambda_year_montane$lambda_hat
@@ -1565,7 +1580,7 @@ lambda_year_montane <- jpt %>%
         trend        = trend_class
       )
   
-    return(list(bind_rows(trend_result_alpine, trend_result_montane),bind_rows(lambda_year_alpine, lambda_year_montane),fit_summary_alpine,fit_summary_montane))
+    return(list(bind_rows(trend_result_alpine, trend_result_montane), bind_rows(lambda_year_alpine, lambda_year_montane), bind_rows(lambda_year_alpine_plot, lambda_year_montane_plot), fit_summary_alpine, fit_summary_montane))
     
 }
 
@@ -1573,7 +1588,7 @@ lambda_year_montane <- jpt %>%
 
 ```{r}
 #| warning: false
-#| echo: true
+#| echo: false
 #| eval: false
 #| message: false
 #| include: true
@@ -1587,15 +1602,13 @@ trendz <- janp_main |>
   tally() |>
   arrange(-n) |>
   filter(!(species_code %in% c("RESQ","NONE"))) |>
-  slice(1:10) |>
   mutate(trend = map(species_code, safe_run_trend))
-
 
 ```
 
 ```{r}
 #| warning: false
-#| echo: true
+#| echo: false
 #| eval: true
 #| message: false
 #| include: true
@@ -1611,24 +1624,31 @@ trend_table <- trendz %>%
 ```
 
 ```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| code-fold: true
+
 plot_dat <- trendz |>
-  mutate(
-    trend_summary = map(trend, ~ .x[[1]]),  
-    lambda_year   = map(trend, ~ .x[[2]]),
-  ) |>
-  unnest(lambda_year) |>
-  unnest(trend_summary, names_repair = "unique") |>
-  group_by(species_code, year) |>
-  slice(c(1,4)) |> 
-  ungroup()
+  mutate(t = map_chr(trend, ~ class(.x))) |>
+  filter(!(t == "logical")) |>
+  mutate(trend_summary = map(trend, ~ .x[[3]])) |>
+  unnest_longer(trend_summary) |>
+  unnest() |>
+  dplyr::select(species_code, year, location, ecoregion, lambda_hat) |>
+  distinct() |>
+  mutate(ecoregion = case_when(location == "WILCOX-5" ~ "Alpine", TRUE ~ ecoregion))
 
 ggplot(plot_dat, aes(x = year, y = lambda_hat, color = ecoregion)) +
-  geom_point() +
   geom_smooth() +
   facet_wrap(~ species_code, scales = "free_y") +
   theme_bw() +
   scale_colour_viridis_d(option = "cividis") + 
-  ylim(0,2)
+  ylim(0,2) +
+  ylab(expression("Detection-corrected abundance ("*hat(lambda)*")")) +
+  xlab("Year")
 
 datatable(trend_table)
 
@@ -1636,7 +1656,7 @@ datatable(trend_table)
 
 ```{r}
 #| warning: false
-#| echo: true
+#| echo: false
 #| eval: true
 #| message: false
 #| include: true
@@ -1670,5 +1690,5 @@ kable(trend_guild |>
 
 ```
 
-## Discussion and recommendations
+# Discussion and recommendations
 
