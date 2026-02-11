@@ -157,21 +157,34 @@ We respectfully acknowledge that Jasper National Park is located in Treaty 6 and
 
 # Introduction
 
-Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (@allan2017recent). The repercussions of habitat fragmentation (@fahrig2003effects) and loss (@hanski2011habitat), climate change (@mantyka2012interactions, @sattar2021review, @abrahms2023climate), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in protected areas in Canada (@lemieux2011state). Climate change and increasing wildfire activity in Alberta's Rocky Mountain Natural Region have significantly impacted montane bird monitoring; in 2023, two of the park's three long-term montane monitoring transects were affected by wildfires, while the third is currently undergoing wildfire risk reduction measures. Since 2007, Jasper National Park initiated a program incorporating passive acoustic monitoring of the Park's vocalizing wildlife. ARUs are compact environmental sensors that are designed to passively record the environment (@aru-overview), capturing vocalizing species like birds and amphibians, which is growing in use across the globe (@lots-of-pam). This technology enables resource managers to conduct prolonged surveys with minimal human interference, but also to create a permanent, archiveable recording of the soundscape. The subsequent data collected by these units contribute valuable information to ecological integrity metrics such as species richness, diversity, occupancy, and trends of species and human activities in National Parks over time. This data can aid in decision-making and management within the Park. Given the rapid and ease of accumulating data from these units, maintaining a high standard of data integrity is paramount to ensure future data interoperability and sharing.
+Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (@allan2017recent). The repercussions of habitat fragmentation (@fahrig2003effects) and loss (@hanski2011habitat), climate change (@mantyka2012interactions, @sattar2021review, @abrahms2023climate), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in protected areas in Canada (@lemieux2011state). In Alberta’s Rocky Mountain Natural Region, these pressures are compounded by increasing wildfire activity, which has significantly impacted montane bird monitoring. Studies have shown large declines in bird abundance in the last several decades across large regions of North America (@rosenberg2019decline), suggesting the need for parkwide monitoring of bird abundance.
+
+In 2007, Jasper National Park initiated a program incorporating passive acoustic monitoring of the park’s vocalizing wildlife. Autonomous Recording Units (ARUs) are compact environmental sensors that are designed to passively record the environment (@aru-overview), capturing vocalizing species like birds and amphibians—a method growing in use across the globe (@lots-of-pam). This technology enables biologists to conduct prolonged surveys with minimal human interference, while creating a permanent, archiveable recording of the soundscape. Given the rapidity and ease of accumulating data from these units, maintaining a high standard of data integrity is paramount to ensure future data interoperability and sharing. The data collected by these units contribute valuable information to ecological integrity metrics such as species richness, diversity, occupancy, abundance trends of species and human activities in National Parks over time. 
+
+This project analyzes Jasper’s passive acoustic monitoring data from 2007 to 2025, to assess trends while accounting for the clustering of survey points within transects and determining time-to-first-detection usability in analysis. We selected species abundance as our primary monitoring measure following recommendations in [Fletcher et al. (2025)]{.mark}. Measures that reflect abundance, reproductive performance, survival, dispersal, habitat quality, and role in ecosystem functioning provide richer insights for the achievement of conservation goals than species richness or species incidence. For example, incidence alone does not mean that a species’ presence is meaningful from a conservation perspective because a single observation is treated the same as an abundant species. As changes in abundance are more closely linked to extinction risk than species incidence, abundance-based metrics have been promoted to better assess goals in biodiversity conservation. Abundance can fluctuate more than occurrence and may therefore better track key changes in the environment, although care should be taken to not overinterpret “noisy” abundance variation. Information on abundance is essential for diagnosing decline and recovery of species and may better capture the resilience of biodiversity to ongoing environmental threats
+
+Jasper National Park reports on the condition of three park ecosystems in its State of the Park Report: freshwater, alpine and forest (montane). Since birds are indicators in both the forest and alpine ecosystems, separate analyses were conducted for the montane ecoregion (grouping of the upper subalpine, lower subalpine, and true montane ecoregions) and alpine ecoregion. To enhance accessibility and reproducibility, the findings were presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations were developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. 
 
 This project aims to analyze Jasper’s passive acoustic monitoring data from 2007 to 2025, assessing trends in species and guild abundance while accounting for the clustering of survey points within transects. Separate analyses will be conducted for montane and sub-alpine and alpine ecoregions to align with Ecological Integrity reporting requirements, determining time-to-first-detection usability in analysis. To enhance accessibility and reproducibility, the findings will be presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations will be developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. The objectives of this report are to:
 
--   Describe the data management and processing procedures for the acoustic data collected from 2007 to 2025;
--   Comparing data processing methods on count of species and individuals heard on recordings;
--   Report on transects in montane/sub-alpine and alpine ecoregions, including time-to-first-detection where possible, with key metrics such as the percentage of bird species and guilds declining by ≥2.5% in both montane/sub-alpine and alpine regions.
--   Recommendations for prioritizing previous years’ data for re-transcription to 1SPT, determine the best approach for annual reporting, e.g. baseline comparisons or 10-year trend assessments, adjust methods for evaluating species trends against thresholds, and review guilds and traits used in assessments
--   Facilitate data publication to the public, resource managers, academic institutions, and any other relevant agencies
+- Describe the data management and processing procedures for acoustic data collected from 2007 to 2025.
+- Compare how different data processing methods influence the count of species and individuals detected on recordings.
+- Report on trends in bird abundance by species and by guild in the montane (forest indicator) and alpine (alpine indicator) ecoregions, incorporating time-to-first-detection analysis
+  - Summarize results by ecoregion as the percentage of species and guilds declining by ≥2.5% in both montane and alpine regions.
+- Estimate species richness trends to determine if they provides insight about bird community conditions.
+- Provide recommendations for: 
+  - Prioritizing previous years’ data for re-transcription to 1SPT; 
+  - Optimizing annual reporting methods (e.g., baseline comparisons vs. 10-year trends); and 
+  - Refining methods for evaluating species trends against thresholds and reviewing guilds and traits used in assessments
+- Facilitate data publication to the public, resource managers, academic institutions, and any other relevant agencies
 
 # Methods
 
-## Data collection
+## Bird surveys
 
-Songbird data was collected using autonomous recording units (ARUs), deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each monumented location, the ARU is set up, and technicians move 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording for voice notes and activation and de-activation of the units.
+Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, and 20 sites that were added in 2025. To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region.
+
+Songbird data were collected using autonomous recording units (ARUs) deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing nine or ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each monumented location, the ARU was set up, and technicians moved 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording to capture voice notes and the standardized 10-minute survey period. Four covariates thought to influence detection or abundance were recorded: start time, wind speed, cloud cover, temperature and recording equipment. Recording equipment varied throughout the course of the study. During the 2021 and 2022 field seasons, paired recordings were collected concurrently at each site using both Wildlife Acoustics SM4 autonomous recording units and the original recording devices (Riverforks CZM or Zoom H2N Pro, depending on site-specific deployment). This dual-recording approach was implemented to support calibration and continuity across equipment types. However, to maintain consistency in data processing, only recordings from the original devices were transcribed and included in the final analyses for those years. Beginning in 2023, recordings were collected exclusively using SM4 units.
 
 ```{r}
 #| echo: false
@@ -401,9 +414,15 @@ datatable(locs_summary,
               backgroundColor = styleEqual(c("NA"), "lightgray"))  
 ```
 
+## Habitat and survey variables
+
+We used the existing Vegetation Resource Inventory (VRI) derived from 2020 orthophoto imagery, before the 2022 Chetamon and 2024 Jasper Wildfire to describe habitat conditions. We extracted variables describing dominant land cover (including conifer, broadleaf, shrub, herbaceous, and exposed soil classes), forest structure (canopy height, age), and understory characteristics (shrub height, crown closure). To account for the severe habitat alteration caused by the 2024 Jasper Wildfire, we manually reclassified the land cover variable for all sites on the TEKARRA and VALLEY5 transects as "Burned" for the 2025 data. This classification replaced the pre-fire VRI categories (e.g., conifer, shrub) in the analysis.
+
 ## Data management, processing and quality control
 
 Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (MacPhail 2026, *In Review*). Tags were then drawn to encompass the signal within the methods indicated in each project (see @tbl-transcriptions). Transcribers also had site photos available to optimize their species identification by having habitat context while processing.
+
+To ensure comparability across the 18-year dataset, we harmonized the abundance metrics derived from the differing transcription protocols prior to analysis. For legacy data collected between 2012 and 2020 using the 3-minute interval method, we calculated abundance as the maximum count observed in any single time bin rather than summing across bins. This conservative approach prevents the double-counting of individuals that sing continuously throughout the recording. Conversely, for data processed or re-transcribed using the modern 1SPT protocol (2007–2011; 2021–2025), abundance was defined as the total count of unique individuals detected over the full 10-minute duration. 
 
 ```{r}
 #| warning: false
@@ -414,7 +433,7 @@ Recordings were clipped and organized to only include the 10-minute count. Befor
 #| label: tbl-transcriptions
 #| collapse: true
 #| code-fold: true
-#| tbl-cap: Transcription method by year with re-transcribed data being conducted from 2007 - 2025.
+#| tbl-cap: Transcription methods by year (2007–2025). Historical data (2007–2020) are undergoing re-transcription to align with the standardized protocol used from 2021 onwards.
 
 transcription_table <- tibble(
   Years = c("2007-2020", "2021-2022", "2023-2025", "2007-2011"),
@@ -504,6 +523,12 @@ tmtt_tags <- janp_main |>
 ::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
 For the purpose of these analyses, abundance was defined as the count of individuals detected during point counts, rather than as a density x area relationship. All analyses took place in R 4.5.2 ‘[Not] Part in a Rumble’.
 :::
+
+Our analysis proceeded in the following steps. We:
+
+- Assessed if the new forest sites were effective controls for fire-affected sites;
+- Evaluated consistency in species identification and abundance estimates between transcription methods and observers;
+- Selected species and grouped species by guild for trend analysis;
 
 ### Location correlation {#sec-location-correction}
 
@@ -624,13 +649,11 @@ ggplot(janp_lisa_sf) +
 
 ```
 
-### Fire-affected site comparisons
+### Control site comparisons
 
-The 2024 Jasper Fire severely burned two established acoustic transects (VALLEY5 and TEKKARA). While only one-third of montane (valley-bottom) forest has burnt since 2023, two of three transects were severely burned. To continue to monitor bird communities in unburned forest, we added two control transects in 2025 in the montane (COTTONWOOD and MUSHROOM), and we plan to continue to monitor both the burned and control transects. 
+The 2024 Jasper Wildfire severely burned two established acoustic transects (VALLEY5 and TEKKARA). While only one-third of true montane (valley-bottom) forest has burnt since 2023, two of three transects were severely burned. To continue to monitor bird communities in unburned forest, we added two control transects in 2025 in the true montane (COTTONWOOD and MUSHROOM), and we plan to continue to monitor both the burned and control transects. 
 
-To assess whether the new transects were appropriate controls for the original sites, we evaluated how similar their species assemblages were to those observed at existing montane transects over the past three years, excluding the TEKARRA and VALLEY5 transects post-fire because these were expected to diverge substantially due to fire severity. Specifically, we compared species detections from the COTTONWOOD and MUSHROOM transects to the distribution of detections across all other montane points to quantify compositional similarity and departure from the montane baseline. Representativeness of control transects was assessed using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity, with distances of control transects to the montane centroid compared against the distribution of distances among established montane transects. Statistical significance of differences in dispersion was evaluated using a permutation test with 999 iterations.
-
-We summarized bird community composition on the VALLEY5 and TEKARRA transects using a species–by–site community matrix and applied redundancy analysis (RDA) to test whether community structure differed between pre-fire and post-fire periods (@fig-after-fire). The ordination visualizes shifts in species associations attributable to fire, with site scores grouped by fire period and species vectors indicating taxa contributing most strongly to observed differences.
+To assess whether the new transects were appropriate controls for montane transects, we evaluated how similar their species assemblages were to those observed at existing true montane transects over the past three years, excluding the TEKARRA5 and VALLEY5 transects post-fire because these were expected to diverge substantially due to fire severity. Specifically, we compared species detections from the COTTONWOOD and MUSHROOM transects to the distribution of detections across all other true montane points to quantify compositional similarity and departure from the true montane baseline. Representativeness of control transects was assessed using a multivariate dispersion analysis (PERMDISP) based on Bray–Curtis dissimilarity, with distances of control transects to the true montane centroid compared against the distribution of distances among established true montane transects. Statistical significance of differences in dispersion was evaluated using a permutation test with 999 iterations.
 
 ::: {.figure-grid}
 ![Tekarra 9 2024](assets/tekarra9-2024.png){width=48%}
@@ -639,10 +662,13 @@ We summarized bird community composition on the VALLEY5 and TEKARRA transects us
 Tekarra 9 site photos views from 2024 (A) pre-fire, and 2025 (B) post-fire. 
 :::
 
-### Observer and methodological comparisons
+### Transcription observer comparisons
 
-Transcription methods varied (Table 2) and recordings from 2007 to 2020 were classified by a single observer (legacy), while subsequent data were classified by a random selection of observers (WildTrax). To evaluate consistency between the legacy dataset and the modern WildTrax workflow, we analyzed a subset of recordings processed using both approaches. This included re-processing legacy recordings using new observers in WildTrax, allowing for direct comparison of individual observer performance between the legacy and modern protocols. For each dual-processed recording, we derived the maximum count of individuals per species identified by each specific observer. We used two different metrics to verify data continuity. First, to quantify consistency in abundance estimates, we calculated pairwise Pearson correlations between all individual observers. These relationships were visualized using a heatmap to identify any systematic deviations in counting between legacy contractors and current WildTrax observers. @fig-pairwise indicates that there is general consistency in abundance counts, but not high reliability between observers (e.g., some observers are more generous with counts than others) indicating there may be a bias *- OR BECAUSE METHOD CHANGED - e.g., re-start between bins, cap on counts*. Second, to evaluate consistency in species detection (composition), we binarized the data to presence/absence and calculated Bray–Curtis dissimilarities between individual observers. We then applied hierarchical clustering to these dissimilarity scores to verify that the transition to WildTrax did not introduce observer-specific biases in species identification or community composition. @fig-cluster shows that most observers agree on species, and there doesn’t appear to be a systematic bias during the transition to WildTrax. If the transition introduced a major bias, we would see two distinct large branches with one containing all legacy contractors and one containing all WildTrax observers.  
+Transcription methods varied (@tbl-transcriptions) over time. Recordings from 2007 to 2020 were classified by a small number of repeat observers (legacy), while subsequent data were classified by a random selection from many observers (WildTrax). To evaluate consistency between the legacy dataset and the modern WildTrax workflow, we analyzed a subset of recordings processed using both approaches. This included re-processed legacy recordings that 1) enabled total abundance estimates and 2) used new observers in WildTrax, allowing for direct comparison of individual observer performance between the legacy and modern protocols. For each dual-processed recording, we derived the maximum count of individuals per species identified by each specific observer. We used two different metrics to verify data continuity. 
 
+First, to quantify consistency in abundance estimates, we calculated pairwise Pearson correlations between all individual observers. These relationships were visualized using a heatmap to identify any systematic deviations in counting between legacy contractors and current WildTrax observers. @fig-pairwise indicates that there is general consistency in abundance counts, but not high reliability between observers (e.g., some observers are more generous with counts than others) indicating there may be a bias  - OR BECAUSE METHOD CHANGED - e.g., re-start between bins, cap on counts.   
+
+Second, to evaluate consistency in species detection (composition), we binarized the data to presence/absence and calculated Bray–Curtis dissimilarities between individual observers. We then applied hierarchical clustering to these dissimilarity scores to verify that the transition to WildTrax did not introduce observer-specific biases in species identification or community composition. Figure 4 shows that most observers agree on species, and there doesn’t appear to be a systematic bias during the transition to WildTrax. If the transition introduced a major bias, we would see two distinct large branches with one containing all legacy contractors and one containing all WildTrax observers. Data using both types of transcription observer method were grouped for analysis, however when available for a given year, the modern WildTrax workflow results were used because they included total abundance estimates (@tbl-transcriptions).
 
 ```{r}
 #| warning: false
@@ -738,14 +764,22 @@ plot(hc)
 
 ```
 
-### Community analysis
+### Selection of species and guilds for trend analysis
 
-To characterize bird community composition, we first aggregated species-level observations into a species-by-location matrix, populated with the maximum count of each species at each location. Survey points were then classified into two primary ecoregions: alpine and montane. For the purpose of this analysis, the montane category served as a broad aggregate, grouping the upper subalpine, lower subalpine, and montane ecoregions into a single unit. We quantified the variation in community composition explained by these two ecoregions using Redundancy Analysis (RDA) in the vegan package (@Oksanen2025) and visualized species–ecoregion relationships with ordination plots (@Rao1964). Finally, to test for statistical differences in composition between the Alpine and Montane groups, we performed a permutational multivariate analysis of variance (PERMANOVA; @Anderson2001). This test was conducted on Bray–Curtis dissimilarities using 999 permutations under a reduced model.
+The monitoring program has produced data for `r length(unique(janp_main$species_code))` [125]{.mark} bird species since inception in 2007 [(see Appendix A)]{.mark}. Following recommendations in the literature @prowse2021optimising, we focused on [XX]{.mark} native terrestrial species for which: (a) Jasper National Park is their breeding range; and (b) the total count across all point count sites exceeded 20 individuals [(why 20?) (and do we want them to be detected at more than X number of sites?). These XX selected species accounted for >XX% of the bird records collected by the program.]{.mark}
+
+To assess trends in species’ abundances and interpret community-level ecological responses, we assigned species to guilds. Guilds are groups of species that respond in similar ways to environmental changes as a result of similar uses of the environment (@doser2021trends). Directional trends in abundant species (e.g., Yellow-rumped warbler (*Setophaga coronata*, YRWA)) can strongly influence the trend of the guilds of which these species are members. Given this limitation, trend analyses of ecological guilds often warrant further examination of common patterns of change among species within the guild. For example, if we find large variation in abundance trends across an ecoregion but not across bird guilds, this may suggest a consistent effect on the entire bird community (@doser2021trends), which can determine if management should target a whole community, specific guilds or individual species. If all or many species within a guild show similar trends in relative abundance, then factors affecting the guild-related life history attributes deserve attention. @pacifici2014guidelines recommend using bird guilds in post-hoc assessment. Each species was categorized within guilds and a species may be included in multiple guilds. 
+Species were assigned to guilds using the [Birds of North America](https://birdsna.org), [Elton Traits Database](https://esajournals.onlinelibrary.wiley.com/doi/10.1890/13-1917.1) and bird guidebooks. To examine responses by different guild types we assigned birds by Elton trait (e.g., invertebrate, plant/seed, omnivore), dietary guild (e.g., aerial insectivore, bark forager), and habitat guild (e.g., wetland, forest generalist, late successional forest) (@tbl-guilds). To determine trends in guild abundance, there needed to be [XX number of species within the guild]{.mark}
+
+### Ecoregion community composition analysis
+
+To characterize bird community composition, we first aggregated species-level observations into a species-by-location matrix, populated with the maximum count of each species at each location. Survey points were then classified into two primary ecoregions: alpine and montane (high elevation forest). For the purpose of this analysis, the montane category served as a broad aggregate, grouping the upper subalpine, lower subalpine, and montane ecoregions into a single unit that refers to high elevation habitat below treeline. We quantified the variation in community composition explained by these two ecoregions using Redundancy Analysis (RDA) in the vegan package (@Oksanen2025) and visualized species–ecoregion relationships with ordination plots (@Rao1964). Finally, to test for statistical differences in composition between the Alpine and Montane groups, we performed a permutational multivariate analysis of variance (PERMANOVA; @Anderson2001). This test was conducted on Bray–Curtis dissimilarities using 999 permutations under a reduced model.
 
 ### Functional and community-level diversity
 
-To evaluate community-level ecological responses, we examined temporal changes in functional diversity, species richness, and community evenness. Functional diversity was quantified using Rao’s Q (@rao1982diversity; @laliberte2010adistance) via the `dbFD()` function in the `FD` package (@FDpackage). We also calculated species richness (number of unique species per location per year) and Shannon’s diversity index, which integrates richness and evenness to describe community structure. These metrics were modeled through time using linear, mixed-effects, and segmented regression models to detect both gradual and threshold-type changes. Results were summarized graphically by ecoregion and functional guild to highlight spatial variation in diversity trajectories.
+To evaluate community-level ecological responses, we examined temporal changes in functional diversity, species richness, and community evenness. Functional diversity was quantified using Rao’s Q (@rao1982diversity; @laliberte2010adistance) via the `dbFD()` function in the `FD` package (). We also calculated species richness (number of unique species per location per year) and Shannon’s diversity index, which integrates richness and evenness to describe community structure. These metrics were modeled through time using linear, mixed-effects, and segmented regression models to detect both gradual and threshold-type changes. Results were summarized graphically by ecoregion and functional guild to highlight spatial variation in diversity trajectories.
 
+To evaluate community-level ecological responses, we examined temporal changes in functional diversity, species richness, and community structure. First, we quantified functional diversity using Rao’s *Q* (@rao1982diversity; @laliberte2010adistance), calculated via the `dbFD()` function in the `FD` package (@FDpackage). This metric estimates the average difference in functional traits between any two random individuals in the community. We also calculated species richness (number of unique species per location per year) and Shannon’s diversity index, which integrates richness and evenness to describe community structure. These metrics were modeled through time using linear, mixed-effects, and segmented regression models to detect both gradual and threshold-type changes. Results were summarized graphically by ecoregion and functional guild to highlight spatial variation in diversity trajectories.
 
 ```{r}
 #| warning: false
@@ -892,7 +926,15 @@ shannon_d <- janp_main |>
 
 ### Trend analysis
 
-To quantify temporal changes in bird populations and community composition from 2007 to 2025, we analyzed trends in species-specific abundance, forest and alpine assemblages, and functional guilds. Analyses were designed to separate biological change from potential sampling and methodological effects, ensuring that observed patterns represented genuine ecological responses. This was achieved through a multi-step framework that (1) modeled detection probability and methodological variability, (2) estimated detection-corrected abundance, and (3) evaluated long-term directional trends and associated shifts in functional and community-level diversity.
+To quantify temporal changes in bird populations and community composition from 2007 to 2025, we analyzed trends in species-specific abundance, in montane and alpine assemblages separately, and grouping species by functional guilds. Analyses were designed to separate biological change from potential sampling and methodological effects, ensuring that observed patterns represented genuine ecological responses. This was achieved through a multi-step framework that (1) evaluated (1) modeled detection probability and methodological variability, (2) estimated detection-corrected abundance, and (3) evaluated long-term directional trends and associated shifts in functional and community-level diversity.
+
+#### Locationc correlation
+
+To inform modeling choices, we assessed spatial autocorrelation among bird survey locations across years. We examined the spatial relationship between survey points based on total species abundance per location and year in order to determine whether spatial clustering or spatial dependence exists in the species abundance data. Because survey points were typically spaced 300 m apart, we defined spatial neighbor relationships using a 1-nearest-neighbor approach (*k* = 1) based on great-circle distances. We derived spatial coordinates from geographic point data, excluding non-finite values to ensure valid estimation. Using the `knearneigh()` and `knn2nb()` in the `spdep` package in R, we constructed a spatial weights matrix with row-standardized weights to reflect immediate adjacency between points.
+
+We assessed global spatial autocorrelation in total abundance using Moran’s *I* under a randomization assumption. This statistic evaluates whether the landscape is spatially structured; whether nearby locations tend to have similar abundance values more often than expected by chance. To determine if this dependence was driven by localized clustering, we further calculated Local Indicators of Spatial Association (LISA) using local Moran’s *I*. This allowed for the identification of potential high–high, low–low, and spatial outlier patterns, with statistical significance evaluated at α = 0.05. 
+
+While global Moran’s *I* indicated significant positive spatial autocorrelation across the study area, local Moran’s *I* revealed no statistically significant clusters. This pattern suggests that similarities in bird counts among nearby survey locations were spread broadly rather than concentrated in distinct hotspots, consistent with spatial dependence arising from gradual, landscape‑scale ecological processes rather than localized aggregations. Therefore, we proceeded by treating the locations as spatially independent.
 
 #### Detection-corrected abundance estimation
 
@@ -908,133 +950,11 @@ Temporal trends were quantified using the Mann–Kendall test (@mann1945non; @ha
 Some of these analyses are still a work-in-progress. Check back soon for updates and additional details.
 :::
 
-## Jasper 2024 fire effects
+## Control site comparisons
 
-Multivariate dispersion differed significantly between control and reference montane transects (PERMDISP; F₁,₅₅ = 4.05, p = 0.05). Control transects exhibited slightly higher distances to the group centroid (mean = 0.415) compared with montane reference transects (mean = 0.384), indicating greater compositional variability. This suggests that species assemblages at control transects were less tightly clustered around the central tendency of montane communities and may reflect more heterogeneous or transitional assemblages relative to established montane sites, but only by a small margin. Consequently, while control transects occur within montane environments, their communities show somewhat more variability than the broader montane baseline used in this analysis.
+Multivariate dispersion differed significantly between control and reference montane transects (PERMDISP; *F* = 4.05, *p* = 0.05). Although control transects exhibited a slightly higher median distance (mean = 0.421), their distributions overlapped strongly with those of the true montane reference transects (Mean = 0.415), and there was no evidence of increased dispersion or outliers unique to replacement sites (Figure X). This suggests that replacement transects are not compositionally distinct from existing montane transects and fall within the natural variability of montane bird communities already sampled. Consequently, the addition of replacement sites is unlikely to introduce systematic bias, supporting their use as valid representatives of montane bird communities for pre- and post-fire comparisons.
 
-```{r}
-#| warning: false
-#| echo: false
-#| message: false
-#| eval: true
-#| include: true
-#| code-fold: true
-#| label: fig-control-transect
-#| fig-cap: Control transects
-
-comm_matrix1 <- janp_main |>
-  filter(!(grepl("VALLEY5|TEKARRA",location) & year > 2024), year %in% c(2023:2025)) |>
-  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
-  dplyr::select(-ecoregion) |>
-  inner_join(locs_summary, by = c("location" = "Location")) |>
-  # mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
-  #                              ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
-  group_by(location, ecoregion, species_code) |>
-  summarise(individual_order = max(individual_order)) |>
-  ungroup() |>
-  drop_na(ecoregion) |>
-  drop_na(individual_order) |>
-  pivot_wider(names_from = species_code, values_from = individual_order, values_fill = 0)
-
-montane_all <- comm_matrix1 |> filter(ecoregion == "Montane")
-sp_mat <- montane_all |> dplyr::select(-location, -ecoregion)
-sp_mat <- as.data.frame(sp_mat)
-rownames(sp_mat) <- montane_all$location
-bc_dist <- vegdist(sp_mat, method = "bray")
-group <- ifelse(
-  grepl("^COTTONWOOD|^MUSHROOM", rownames(sp_mat)),
-  "Control Transects",
-  "Montane Reference"
-)
-bd <- betadisper(bc_dist, group)
-permu_bd <- permutest(bd)
-dist_df <- data.frame(
-  location = rownames(sp_mat),
-  group = group,
-  dist_to_centroid = bd$distances
-)
-#summary(dist_df$dist_to_centroid[group == "Reference"])
-#dist_df %>% filter(group == "Replacement")
-ggplot(dist_df, aes(x=group, y=dist_to_centroid, fill=group)) +
-  geom_boxplot() +
-  geom_point(alpha = 0.2) +
-  scale_fill_viridis_d(option = "cividis") +
-  ylab("Distance to Montane Centroid") + xlab("Group") +
-  theme_bw() +
-  ylim(0,1)
-```
-
-The pre-fire and 1-year post-fire points occupy overlapping but shifted regions indicating that the fire did not completely replace the community but it reorganized species composition in a consistent direction which is a classic disturbance-driven compositional shift and not a collapse or a reset. 
-In @fig-after-fire, the post-fire ellipse has significantly shifted among sites after fire and more heterogeneous species assemblages. Species vectors identified taxa contributing most strongly to these differences, suggesting that the Jasper Fire altered species associations rather than uniformly affecting overall abundance. Dark-eyed Junco (DEJU) shows a strong directional association with post-fire sites (they tolerate reduced canopy cover and more simplified forest structure), while Warbling Vireo (WAVI) was strongly associated with pre-fire assemblages, indicating that canopy-associated species contributed disproportionately to community composition prior to the fire. 
-
-```{r}
-#| warning: false
-#| echo: false
-#| message: false
-#| eval: true
-#| include: true
-#| code-fold: true
-#| label: fig-after-fire
-#| fig-cap: Community matrix of species associations before and after the Jasper 2024 fire on the VALLEY5 and TEKARRA transects. Movement along RDA1 reflects the direction and magnitude of fire-related change in species composition. PC1 captures residual variation in species composition that is not explained by fire period reflecting the background ecological variability among sites.
-
-
-janp_fire_comm <- janp_main |>
-  filter(grepl("VALLEY5|TEKARRA",location)) |>
-  group_by(location, year, species_code) |>
-  summarise(individual_order = max(individual_order)) |>
-  ungroup() |>
-  mutate(fire_period = if_else(year < 2025, "Pre-fire", "Post-fire")) |>
-  filter(!(species_code == "NONE"))
- 
-comm_mat_fire <- janp_fire_comm |>
-  pivot_wider(
-    names_from = species_code,
-    values_from = individual_order,
-    values_fill = 0) |>
-  drop_na()
-
-env_fire <- comm_mat_fire |>
-  mutate(
-    location = factor(location),
-    fire_period = factor(fire_period)
-  ) |>
-  drop_na()
-
-t3_fire <- rda(comm_mat_fire[,-c(1:3)] ~ fire_period, data = env_fire)
-t3scores_fire <- scores(t3_fire, display = "sites") |>
-  as.data.frame() |>
-  rownames_to_column("site") |>
-  bind_cols(env_fire)
-t3vect_fire <- scores(t3_fire, display = "species") |>
-  as.data.frame()
-
-plot_RDA_fire <- ggplot(data = t3scores_fire, aes(x = RDA1, y = PC1)) +
-  geom_point(data = t3scores_fire, aes(x = RDA1, y = PC1, colour = fire_period), 
-             alpha = 0.7, size = 3, shape = 16) +
-  stat_ellipse(data = t3scores_fire, aes(colour = fire_period), 
-               linetype = 1, type = 'norm', level = 0.67, size = 1) +
-  geom_vline(xintercept = 0, color = "#A19E99", linetype = 2, size = 1) +
-  geom_hline(yintercept = 0, color = "#A19E99", linetype = 2, size = 1) +
-  geom_segment(data = t3vect_fire, aes(x = 0, y = 0, xend = RDA1, yend = PC1), 
-               arrow = arrow(length = unit(0.2, "cm")), size = 0.3) +
-  geom_text_repel(data = t3vect_fire, aes(x = RDA1, y = PC1, label = rownames(t3vect_fire)), 
-                  size = 3, colour = "black", fontface = "italic", 
-                  max.overlaps = 10, 
-                  segment.color = "grey70") +
-  theme_bw() +
-  scale_colour_viridis_d(option = "cividis", end = 0.9) +
-  labs(x = "RDA1", y = "PC1", title = "Pre-post Jasper Fire species associations", 
-       colour = "Fire Period") +
-  theme(legend.position = "right", 
-        legend.title = element_text(size = 10), 
-        legend.text = element_text(size = 9), 
-        plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
-
-plot_RDA_fire
-
-```
-
-## Species-ecoregion associations
+## Ecoregion community composition analysis
 
 @fig-community shows the relationship between species and ecoregion. The PERMANOVA test was performed using Bray-Curtis dissimilarity to assess whether community composition significantly differed between ecoregion groups. The analysis revealed a significant difference in community composition between alpine and montane groups. The ecoregion grouping explained approximately 27.85% of the variation in community composition, while residual variation accounted for 72.15%. These findings indicate a substantial divergence in species composition between ecoregion groups and helps to justify subsequent analyses looking at trend differences between these areas.
 
@@ -1116,9 +1036,9 @@ permanova_result <- adonis2(comm_matrix_data ~ ecoregion_group, data = comm_matr
 
 ```
 
-## Species richness and functional diversity
+## Functional and community-level diversity
 
-Activity patterns across nesting, dietary and migratory guilds are illustrated in @fig-spp-activity-nesting onwards. A notable pattern emerges across all four guilds of the proportion of tags detected being detected later in the alpine ecoregion compared to the montane ecoregion. Species richness per location is at @fig-spp-rich-locs and Shannon's diversity index over years at @fig-shannon. Overall, both richness and diversity were stable across years. Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), again suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increases when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.
+Species richness per location is shown in @fig-spp-rich-locs and Shannon's diversity over years is shown in @fig-shannon. Overall, both richness and diversity were stable across years. Rao’s *Q* averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), suggests an upward trend that narrowly misses the conventional 0.05 significance threshold. When we account for repeated measures at each location via a mixed‑effects model (random intercepts by location), the year effect becomes highly significant (slope = 0.058 Rao’s Q units per year; t ≈ 4.3), demonstrating that functional diversity has increased when location‑level variation is considered. Finally, breakpoint analysis identifies a shift around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then rose to more variable but generally higher values from 2010 onward.
 
 ```{r}
 #| warning: false
@@ -1305,6 +1225,131 @@ spp_rich_location |>
 shannon_d
 ```
 
+## Jasper 2024 fire effects
+
+The pre-fire and 1-year post-fire points occupy overlapping but shifted regions indicating that the fire did not completely replace the community but it reorganized species composition in a consistent direction which is a classic disturbance-driven compositional shift and not a collapse or a reset. In @fig-after-fire, the post-fire ellipse is significantly shifted indicating greater variability among sites after fire and more heterogeneous species assemblages. Species vectors identified taxa contributing most strongly to these differences, suggesting that the Jasper Wildfire altered species associations rather than uniformly affecting overall abundance. Dark-eyed Junco (*Junco hyemalis*, DEJU) shows a strong directional association with post-fire sites (they tolerate reduced canopy cover and more simplified forest structure), while Swainson’s Thrush (*Catharus ustulatus*, SWTH), Warbling Vireo (*Vireo gilvus*, WAVI), and Tennessee Warbler (*Leiothlypis peregrina*, TEWA) were strongly associated with pre-fire assemblages, and are generally associated with intact forest canopy and vertical foliage structure. This indicates that structurally complex forest conditions were an important component of bird community composition prior to the Jasper Fire.
+
+
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: true
+#| include: true
+#| code-fold: true
+#| label: fig-control-transect
+#| fig-cap: Distances to the montane centroid are similar (distributions overlap strongly) between the control and the montane reference groups.
+
+comm_matrix1 <- janp_main |>
+  filter(!(grepl("VALLEY5|TEKARRA",location) & year > 2024), year %in% c(2023:2025)) |>
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
+  dplyr::select(-ecoregion) |>
+  inner_join(locs_summary, by = c("location" = "Location")) |>
+  # mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+  #                              ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
+  group_by(location, ecoregion, species_code) |>
+  summarise(individual_order = max(individual_order)) |>
+  ungroup() |>
+  drop_na(ecoregion) |>
+  drop_na(individual_order) |>
+  pivot_wider(names_from = species_code, values_from = individual_order, values_fill = 0)
+
+montane_all <- comm_matrix1 |> filter(ecoregion == "Montane")
+sp_mat <- montane_all |> dplyr::select(-location, -ecoregion)
+sp_mat <- as.data.frame(sp_mat)
+rownames(sp_mat) <- montane_all$location
+bc_dist <- vegdist(sp_mat, method = "bray")
+group <- ifelse(
+  grepl("^COTTONWOOD|^MUSHROOM", rownames(sp_mat)),
+  "Control Transects",
+  "Montane Reference"
+)
+bd <- betadisper(bc_dist, group)
+permu_bd <- permutest(bd)
+dist_df <- data.frame(
+  location = rownames(sp_mat),
+  group = group,
+  dist_to_centroid = bd$distances
+)
+#summary(dist_df$dist_to_centroid[group == "Reference"])
+#dist_df %>% filter(group == "Replacement")
+ggplot(dist_df, aes(x=group, y=dist_to_centroid, fill=group)) +
+  geom_boxplot() +
+  geom_point(alpha = 0.2) +
+  scale_fill_viridis_d(option = "cividis") +
+  ylab("Distance to Montane Centroid") + xlab("Group") +
+  theme_bw() +
+  ylim(0,1)
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: true
+#| include: true
+#| code-fold: true
+#| label: fig-after-fire
+#| fig-cap: Community matrix of species associations before and after the Jasper 2024 fire on the VALLEY5 and TEKARRA transects. Movement along RDA1 reflects the direction and magnitude of fire-related change in species composition. PC1 captures residual variation in species composition that is not explained by fire period reflecting the background ecological variability among sites.
+
+
+janp_fire_comm <- janp_main |>
+  filter(grepl("VALLEY5|TEKARRA",location)) |>
+  group_by(location, year, species_code) |>
+  summarise(individual_order = max(individual_order)) |>
+  ungroup() |>
+  mutate(fire_period = if_else(year < 2025, "Pre-fire", "Post-fire")) |>
+  filter(!(species_code == "NONE"))
+ 
+comm_mat_fire <- janp_fire_comm |>
+  pivot_wider(
+    names_from = species_code,
+    values_from = individual_order,
+    values_fill = 0) |>
+  drop_na()
+
+env_fire <- comm_mat_fire |>
+  mutate(
+    location = factor(location),
+    fire_period = factor(fire_period)
+  ) |>
+  drop_na()
+
+t3_fire <- rda(comm_mat_fire[,-c(1:3)] ~ fire_period, data = env_fire)
+t3scores_fire <- scores(t3_fire, display = "sites") |>
+  as.data.frame() |>
+  rownames_to_column("site") |>
+  bind_cols(env_fire)
+t3vect_fire <- scores(t3_fire, display = "species") |>
+  as.data.frame()
+
+plot_RDA_fire <- ggplot(data = t3scores_fire, aes(x = RDA1, y = PC1)) +
+  geom_point(data = t3scores_fire, aes(x = RDA1, y = PC1, colour = fire_period), 
+             alpha = 0.7, size = 3, shape = 16) +
+  stat_ellipse(data = t3scores_fire, aes(colour = fire_period), 
+               linetype = 1, type = 'norm', level = 0.67, size = 1) +
+  geom_vline(xintercept = 0, color = "#A19E99", linetype = 2, size = 1) +
+  geom_hline(yintercept = 0, color = "#A19E99", linetype = 2, size = 1) +
+  geom_segment(data = t3vect_fire, aes(x = 0, y = 0, xend = RDA1, yend = PC1), 
+               arrow = arrow(length = unit(0.2, "cm")), size = 0.3) +
+  geom_text_repel(data = t3vect_fire, aes(x = RDA1, y = PC1, label = rownames(t3vect_fire)), 
+                  size = 3, colour = "black", fontface = "italic", 
+                  max.overlaps = 10, 
+                  segment.color = "grey70") +
+  theme_bw() +
+  scale_colour_viridis_d(option = "cividis", end = 0.9) +
+  labs(x = "RDA1", y = "PC1", title = "Pre-post Jasper Fire species associations", 
+       colour = "Fire Period") +
+  theme(legend.position = "right", 
+        legend.title = element_text(size = 10), 
+        legend.text = element_text(size = 9), 
+        plot.title = element_text(hjust = 0.5, size = 14, face = "bold"))
+
+plot_RDA_fire
+
+```
+
 ## Trends
 
 ```{r}
@@ -1345,7 +1390,7 @@ run_trend <- function(spp, summary = TRUE) {
       distinct()
     
     spp_max <- janp_trend |>
-      filter(species_code == spp) |>
+      filter(species_code == "YRWA") |>
       group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY,  canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
       summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
       ungroup()
@@ -1397,14 +1442,14 @@ run_trend <- function(spp, summary = TRUE) {
     jpt <- jpt %>%
   mutate(lambda_hat = predict(fit, newdata = newdata, type = "response"))
 
-lambda_year <- jpt %>%
+lambda_year_alpine <- jpt %>%
   group_by(year) %>%
   summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE)) %>%
   ungroup() %>%
   arrange(year)
     
     # 6. Run Mann-Kendall + Sen's slope
-    x <- lambda_year$lambda_hat
+    x <- lambda_year_alpine$lambda_hat
     mk <- mmkh(x)
     tau       <- mk[6]
     sen_slope <- mk[7]
@@ -1494,14 +1539,14 @@ lambda_year <- jpt %>%
     jpt <- jpt %>%
   mutate(lambda_hat = predict(fit, newdata = newdata, type = "response"))
 
-lambda_year <- jpt %>%
+lambda_year_montane <- jpt %>%
   group_by(year) %>%
   summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE)) %>%
   ungroup() %>%
   arrange(year)
     
     # 6. Run Mann-Kendall + Sen's slope
-    x <- lambda_year$lambda_hat
+    x <- lambda_year_montane$lambda_hat
     mk <- mmkh(x)
     tau       <- mk[6]
     sen_slope <- mk[7]
@@ -1520,7 +1565,7 @@ lambda_year <- jpt %>%
         trend        = trend_class
       )
   
-    return(list(bind_rows(trend_result_alpine, trend_result_montane),fit_summary_alpine,fit_summary_montane))
+    return(list(bind_rows(trend_result_alpine, trend_result_montane),bind_rows(lambda_year_alpine, lambda_year_montane),fit_summary_alpine,fit_summary_montane))
     
 }
 
@@ -1542,7 +1587,7 @@ trendz <- janp_main |>
   tally() |>
   arrange(-n) |>
   filter(!(species_code %in% c("RESQ","NONE"))) |>
-  slice(1:30) |>
+  slice(1:10) |>
   mutate(trend = map(species_code, safe_run_trend))
 
 
@@ -1557,11 +1602,33 @@ trendz <- janp_main |>
 #| code-fold: true
 
 trend_table <- trendz %>%
-  mutate(trend = map(trend, ~ if(!is.list(.x)) list(NA) else .x)) %>%
+  mutate(trend = map(trend, ~ if(!is.list(.x)) {list(NA)} else {.x})) %>%
   mutate(trend = map(trend, 1)) %>%
   unnest_wider(trend, names_sep = "_") %>%
   unnest(cols = everything()) %>%
   mutate(across(where(is.numeric), ~ round(.x, 2)))
+
+```
+
+```{r}
+plot_dat <- trendz |>
+  mutate(
+    trend_summary = map(trend, ~ .x[[1]]),  
+    lambda_year   = map(trend, ~ .x[[2]]),
+  ) |>
+  unnest(lambda_year) |>
+  unnest(trend_summary, names_repair = "unique") |>
+  group_by(species_code, year) |>
+  slice(c(1,4)) |> 
+  ungroup()
+
+ggplot(plot_dat, aes(x = year, y = lambda_hat, color = ecoregion)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~ species_code, scales = "free_y") +
+  theme_bw() +
+  scale_colour_viridis_d(option = "cividis") + 
+  ylim(0,2)
 
 datatable(trend_table)
 
