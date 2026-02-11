@@ -23,7 +23,7 @@ old_s_max <- old_data |>
              survey_duration, observer, species_code, species_common_name, TTFD) |>
     summarise(individual_order = as.numeric(max(across(starts_with("abundance"))))) |>
     ungroup() |>
-    dplyr::select(location, latitude, longitude, ecoregion, recording_date_time, observer, species_code,
+    dplyr::select(location, latitude, longitude, ecoregion, temperature, sky, wind, recording_date_time, observer, species_code,
                   species_common_name, TTFD, individual_order) |>
     distinct() |>
     rename(detection_time = TTFD) |>
