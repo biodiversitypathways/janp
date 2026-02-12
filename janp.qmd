@@ -1373,8 +1373,8 @@ janp_ready_trend <- janp_main |>
 # Trend
 run_trend <- function(spp, summary = TRUE) {
   
-    # 1. Summarize per site-visit using max()
-    janp_trend <- janp_ready_trend |>
+  #### Alpine
+  janp_trend <- janp_ready_trend |>
       filter(!(data_type == "single_visit_0_max" & year < 2021)) |>
       filter(ecoregion %in% c("Alpine")) |>
       mutate(year = year(recording_date_time), 
@@ -1386,21 +1386,31 @@ run_trend <- function(spp, summary = TRUE) {
                     individual_order, abundance, detection_time) |>
       distinct() |>
       wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","human","unknown"), zerofill = T)
-    
-    # 2. Combine with zero sites
-    base_zero <- janp_trend |>
+  
+  base_zero <- janp_trend |>
       dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
       distinct()
-    
-    spp_max <- janp_trend |>
+  
+  spp_max <- janp_trend |>
       filter(species_code == spp) |>
       group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
       summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
       ungroup()
+  
+  if (nrow(spp_max |> filter(species_code == spp)) < 20) {
     
-    if (nrow(spp_max) < 20) {
-      stop(paste0("Probably an error in Alpine with ", spp))
-    }
+      warning(paste0("Probably an error in Alpine with ", spp))
+      trend_result_alpine <- tibble(
+        ecoregion = "Alpine",
+        tau          = NA,
+        p_value      = NA,
+        sen_slope    = NA,
+        pct_change   = NA,
+        trend        = NA)
+      
+      lambda_year_alpine_plot <- NA
+      
+  } else {
     
     jpt <- base_zero |> 
       left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "sky", "wind", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
@@ -1415,56 +1425,47 @@ run_trend <- function(spp, summary = TRUE) {
       distinct()
 
     fit <- svabu(individual_order ~ year + shrub + herb + conf + bedrock + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + sky + wind, data = jpt)
-    
-    if(summary == TRUE) {
-      fit_summary_alpine <- summary(fit)
-    }
 
-    ref_zero_infl <- jpt %>%
-  summarise(
-    observer = first(observer),  # factor
-    julian   = mean(julian, na.rm = TRUE),
-    hour     = mean(hour, na.rm = TRUE),
-    canopy_cover = mean(canopy_cover, na.rm = TRUE),
-    avg_height   = mean(avg_height, na.rm = TRUE),
-    temperature = first(temperature),
-    sky = first(sky),
-    wind = first(wind)
-  )
-    
-    newdata <- jpt %>%
-  mutate(
-    observer     = ref_zero_infl$observer,
-    julian       = ref_zero_infl$julian,
-    canopy_cover = ref_zero_infl$canopy_cover,
-    avg_height   = ref_zero_infl$avg_height,
-    hour         = ref_zero_infl$hour,
-    temperature = ref_zero_infl$temperature,
-    sky = ref_zero_infl$sky,
-    wind = ref_zero_infl$wind
-  )
+    ref_zero_infl <- jpt |>
+      summarise(observer = first(observer),
+                julian = mean(julian, na.rm = TRUE),
+                hour = mean(hour, na.rm = TRUE),
+                canopy_cover = mean(canopy_cover, na.rm = TRUE),
+                avg_height = mean(avg_height, na.rm = TRUE),
+                temperature = first(temperature),
+                sky = first(sky),
+                wind = first(wind))
+  
+    newdata <- jpt |>
+      mutate(observer = ref_zero_infl$observer,
+             julian = ref_zero_infl$julian,
+             canopy_cover = ref_zero_infl$canopy_cover,
+             avg_height = ref_zero_infl$avg_height,
+             hour = ref_zero_infl$hour,
+             temperature = ref_zero_infl$temperature,
+             sky = ref_zero_infl$sky,
+             wind = ref_zero_infl$wind)
     
     jpt$lambda_hat <- predict(fit, newdata = newdata, type = "response")
-
-lambda_year_alpine <- jpt %>%
-  group_by(year) %>%
-  summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE)) %>%
-  ungroup() %>%
-  arrange(year)
-
-lambda_year_alpine_plot <- jpt |> dplyr::select(year, location, ecoregion, lambda_hat) |> distinct() |> arrange(year)
     
-    # 6. Run Mann-Kendall + Sen's slope
+    lambda_year_alpine <- jpt |>
+      group_by(year) |>
+      summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE)) |>
+      ungroup() |>
+      arrange(year)
+    
+    lambda_year_alpine_plot <- jpt |> dplyr::select(year, location, ecoregion, lambda_hat) |> distinct() |> arrange(year)
+    
     x <- lambda_year_alpine$lambda_hat
     mk <- mmkh(x)
-    tau       <- mk[6]
+    tau <- mk[6]
     sen_slope <- mk[7]
-    p_value   <- mk[2]
+    p_value <- mk[2]
     pct_change <- mk[["Sen's slope"]] / mean(x) * 100
     trend_class <- dplyr::case_when(pct_change >  2.5  ~ "Increasing",
                                     pct_change < -2.5  ~ "Decreasing",
                                     TRUE               ~ "Stable")
-    
+  
     trend_result_alpine <- tibble(
         ecoregion = "Alpine",
         tau          = tau,
@@ -1473,6 +1474,8 @@ lambda_year_alpine_plot <- jpt |> dplyr::select(year, location, ecoregion, lambd
         pct_change   = pct_change,
         trend        = trend_class
       )
+    
+    }
     
     janp_trend <- janp_ready_trend |>
       filter(!(data_type == "single_visit_0_max" & year < 2021)) |>
@@ -1488,7 +1491,6 @@ lambda_year_alpine_plot <- jpt |> dplyr::select(year, location, ecoregion, lambd
       distinct() |>
       wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","human","unknown"), zerofill = T)
     
-    # 2. Combine with zero sites
     base_zero <- janp_trend |>
       dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
       distinct()
@@ -1499,88 +1501,87 @@ lambda_year_alpine_plot <- jpt |> dplyr::select(year, location, ecoregion, lambd
       summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
       ungroup()
     
-    if (nrow(spp_max) < 20) {
-      next(paste0("Probably an error in Montane with ", spp))
-    }
-    
-    jpt <- base_zero |> 
-      left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "sky", "wind", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
-      mutate(individual_order = tidyr::replace_na(individual_order, 0)) |> mutate(year = year(recording_date_time), hour = hour(recording_date_time), julian = yday(recording_date_time)) |>
-      filter(!is.infinite(individual_order)) |> 
-      mutate(canopy_species = factor(canopy_species), lc_group = case_when(landcover %in% c("Tree Coniferous", "Shrub Low", "Herbaceous Mixed", "Bedrock") ~ landcover, TRUE ~ "Other"), .after = landcover) |> 
-      dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
-      pivot_wider(names_from = lc_group, values_from = prop_cover, values_fill = 0, values_fn = sum) |> 
-      ungroup() |> 
-      rename(shrub = `Shrub Low`, conf = `Tree Coniferous`, herb = `Herbaceous Mixed`, other = Other) |> 
-      mutate(across(c(shrub, conf, herb, other, canopy_cover, avg_height, julian, hour, temperature, wind), scale)) |> 
-      distinct()
-
-    fit <- svabu(individual_order ~ year + shrub + herb + conf + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + sky + wind, data = jpt)
-
-    if(summary == TRUE) {
+    if (nrow(spp_max |> filter(species_code == spp)) < 20) {
+      warning(paste0("Probably an error in Montane with ", spp))
       
-      fit_summary_montane <- summary(fit)
+      trend_result_montane <- tibble(
+        ecoregion = "Montane",
+        tau          = NA,
+        p_value      = NA,
+        sen_slope    = NA,
+        pct_change   = NA,
+        trend        = NA)
       
-    }
-    
-    ref_zero_infl <- jpt %>%
-  summarise(
-    observer = first(observer),  # factor
-    julian   = mean(julian, na.rm = TRUE),
-    hour     = mean(hour, na.rm = TRUE),
-    canopy_cover = mean(canopy_cover, na.rm = TRUE),
-    avg_height   = mean(avg_height, na.rm = TRUE),
-    temperature = first(temperature),
-    sky = first(sky),
-    wind = first(wind)
-  )
-    
-    newdata <- jpt %>%
-  mutate(
-    observer     = ref_zero_infl$observer,
-    julian       = ref_zero_infl$julian,
-    canopy_cover = ref_zero_infl$canopy_cover,
-    avg_height   = ref_zero_infl$avg_height,
-    hour         = ref_zero_infl$hour,
-    temperature = ref_zero_infl$temperature,
-    sky = ref_zero_infl$sky,
-    wind = ref_zero_infl$wind
-  )
-    
-    jpt$lambda_hat <- predict(fit, newdata = newdata, type = "response")
-    
-    jpt <- jpt %>%
-  mutate(lambda_hat = predict(fit, newdata = newdata, type = "response"))
+      lambda_year_montane_plot <- NA
+      
+    } else {
+      
+      jpt <- base_zero |> 
+        left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "sky", "wind", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
+        mutate(individual_order = tidyr::replace_na(individual_order, 0)) |> mutate(year = year(recording_date_time), hour = hour(recording_date_time), julian = yday(recording_date_time)) |>
+        filter(!is.infinite(individual_order)) |> 
+        mutate(canopy_species = factor(canopy_species), lc_group = case_when(landcover %in% c("Tree Coniferous", "Shrub Low", "Herbaceous Mixed", "Bedrock") ~ landcover, TRUE ~ "Other"), .after = landcover) |> 
+        dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
+        pivot_wider(names_from = lc_group, values_from = prop_cover, values_fill = 0, values_fn = sum) |> 
+        ungroup() |> 
+        rename(shrub = `Shrub Low`, conf = `Tree Coniferous`, herb = `Herbaceous Mixed`, other = Other) |> 
+        mutate(across(c(shrub, conf, herb, other, canopy_cover, avg_height, julian, hour, temperature, wind), scale)) |> 
+        distinct()
 
-lambda_year_montane <- jpt %>%
-  group_by(year) %>%
-  summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE)) %>%
-  ungroup() %>%
-  arrange(year)
+      fit <- svabu(individual_order ~ year + shrub + herb + conf + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + sky + wind, data = jpt)
+      
+      ref_zero_infl <- jpt |>
+          summarise(
+          observer = first(observer),  # factor
+          julian   = mean(julian, na.rm = TRUE),
+          hour     = mean(hour, na.rm = TRUE),
+          canopy_cover = mean(canopy_cover, na.rm = TRUE),
+          avg_height   = mean(avg_height, na.rm = TRUE),
+          temperature = first(temperature),
+          sky = first(sky),
+          wind = first(wind))
+      
+      newdata <- jpt %>%
+          mutate(observer     = ref_zero_infl$observer,
+                 julian       = ref_zero_infl$julian,
+                 canopy_cover = ref_zero_infl$canopy_cover,
+                 avg_height   = ref_zero_infl$avg_height,
+                 hour         = ref_zero_infl$hour,
+                 temperature = ref_zero_infl$temperature,
+                 sky = ref_zero_infl$sky,
+                 wind = ref_zero_infl$wind)
+      
+      jpt$lambda_hat <- predict(fit, newdata = newdata, type = "response")
 
-lambda_year_montane_plot <- jpt |> dplyr::select(year, location, ecoregion, lambda_hat) |> distinct() |> arrange(year)
-    
-    # 6. Run Mann-Kendall + Sen's slope
-    x <- lambda_year_montane$lambda_hat
-    mk <- mmkh(x)
-    tau       <- mk[6]
-    sen_slope <- mk[7]
-    p_value   <- mk[2]
-    pct_change <- mk[["Sen's slope"]] / mean(x) * 100
-    trend_class <- dplyr::case_when(pct_change >  2.5  ~ "Increasing",
+      lambda_year_montane <- jpt |>
+          group_by(year) |>
+          summarise(lambda_hat = mean(lambda_hat, na.rm = TRUE)) |>
+          ungroup() |>
+          arrange(year)
+      
+      lambda_year_montane_plot <- jpt |> dplyr::select(year, location, ecoregion, lambda_hat) |> distinct() |> arrange(year)
+      
+      x <- lambda_year_montane$lambda_hat
+        mk <- mmkh(x)
+        tau       <- mk[6]
+        sen_slope <- mk[7]
+        p_value   <- mk[2]
+        pct_change <- mk[["Sen's slope"]] / mean(x) * 100
+        trend_class <- dplyr::case_when(pct_change >  2.5  ~ "Increasing",
                                     pct_change < -2.5  ~ "Decreasing",
                                     TRUE               ~ "Stable")
     
-    trend_result_montane <- tibble(
+      trend_result_montane <- tibble(
         ecoregion = "Montane",
         tau          = tau,
         p_value      = p_value,
         sen_slope    = sen_slope,
         pct_change   = pct_change,
-        trend        = trend_class
-      )
-  
-    return(list(bind_rows(trend_result_alpine, trend_result_montane), bind_rows(lambda_year_alpine, lambda_year_montane), bind_rows(lambda_year_alpine_plot, lambda_year_montane_plot), fit_summary_alpine, fit_summary_montane))
+        trend        = trend_class)
+      
+    }
+    
+    return(list(bind_rows(trend_result_alpine, trend_result_montane), bind_rows(lambda_year_alpine, lambda_year_montane), bind_rows(lambda_year_alpine_plot, lambda_year_montane_plot)))
     
 }
 
@@ -1602,7 +1603,11 @@ trendz <- janp_main |>
   tally() |>
   arrange(-n) |>
   filter(!(species_code %in% c("RESQ","NONE"))) |>
+  slice(1:2) |>
   mutate(trend = map(species_code, safe_run_trend))
+
+trendz <- trendz |>
+  filter(!grepl('^UN',species_code))
 
 ```
 
@@ -1689,6 +1694,19 @@ kable(trend_guild |>
     percent_guilds_declining = guilds_with_decline / total_guilds * 100
   ))
 
+```
+
+```{r}
+
+plot_sum <- plot_dat %>%
+  arrange(desc(pct_change)) %>%
+  mutate(species_code = factor(species_code, levels = unique(species_code)))
+
+ggplot(plot_sum, aes(x = pct_change, y = species_code)) +
+  geom_point() +
+  facet_wrap(~ ecoregion) +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  theme_bw()
 ```
 
 # Discussion and recommendations
