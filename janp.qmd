@@ -803,28 +803,23 @@ ggplot(pairwise_corr_pseudo, aes(x = obs1, y = obs2, fill = corr)) +
 
 ```
 
-```{r}
-#| warning: false
-#| echo: false
-#| message: false
-#| eval: true
-#| include: true
-#| code-fold: true
-#| label: fig-cluster
-#| fig-cap: This Cluster Dendrogram visualizes how similar observers are based on the species they detect in the recordings. The height on the y-axis represents the level of dissimilarity and the lower the branch connecting two observers, the more similar their species lists. Most observers join the tree at a height above 0.8. If the transition to WildTrax had introduced a major bias, you would see two distinct, large branches—one containing all legacy contractors and one containing all WildTrax observers. 
+### Selection of species and guilds for trend analysis
 
-dist_obs <- vegdist(t(obs_matrix), method = "bray")
-hc <- hclust(dist_obs)
-plot(hc)
+```{r}
+
+species_select <- janp_main |>
+  mutate(species_code = case_when(species_code == "VESP" ~ "FOSP", TRUE ~ species_code)) |>
+  filter(!(species_code %in% c("NONE","DOGG","HOMA","UROPAR","HORS","VIRA"))) |>
+  filter(!(grepl('^Unidentified',species_common_name))) |>
+  group_by(species_code) |>
+  tally() |>
+  inner_join(wt_get_species() |> dplyr::select(species_code, species_common_name, species_order, species_class) |> distinct())
 
 ```
 
-### Selection of species and guilds for trend analysis
+The monitoring program dataset produced detections for 143 species of birds and 6 species of mammals (American Pika, Elk, Hoary Marmot, Red Squirrel, Columbian Ground Squirrel and White-tailed Deer). Following recommendations in the literature @prowse2021optimising, we focused on native terrestrial species for which: (a) Jasper National Park is their breeding range; and (b) the total count across all point count sites exceeded 20 individuals (see @tbl-guilds).
 
-The monitoring program has produced data for `r length(unique(janp_main$species_code))` [125]{.mark} bird species since inception in 2007 [(see Appendix A)]{.mark}. Following recommendations in the literature @prowse2021optimising, we focused on [XX]{.mark} native terrestrial species for which: (a) Jasper National Park is their breeding range; and (b) the total count across all point count sites exceeded 20 individuals [(why 20?) (and do we want them to be detected at more than X number of sites?). These XX selected species accounted for >XX% of the bird records collected by the program.]{.mark}
-
-To assess trends in species’ abundances and interpret community-level ecological responses, we assigned species to guilds. Guilds are groups of species that respond in similar ways to environmental changes as a result of similar uses of the environment (@doser2021trends). Directional trends in abundant species (e.g., Yellow-rumped warbler (*Setophaga coronata*, YRWA)) can strongly influence the trend of the guilds of which these species are members. Given this limitation, trend analyses of ecological guilds often warrant further examination of common patterns of change among species within the guild. For example, if we find large variation in abundance trends across an ecoregion but not across bird guilds, this may suggest a consistent effect on the entire bird community (@doser2021trends), which can determine if management should target a whole community, specific guilds or individual species. If all or many species within a guild show similar trends in relative abundance, then factors affecting the guild-related life history attributes deserve attention. @pacifici2014guidelines recommend using bird guilds in post-hoc assessment. Each species was categorized within guilds and a species may be included in multiple guilds. 
-Species were assigned to guilds using the [Birds of North America](https://birdsna.org), [Elton Traits Database](https://esajournals.onlinelibrary.wiley.com/doi/10.1890/13-1917.1) and bird guidebooks. To examine responses by different guild types we assigned birds by Elton trait (e.g., invertebrate, plant/seed, omnivore), dietary guild (e.g., aerial insectivore, bark forager), and habitat guild (e.g., wetland, forest generalist, late successional forest) (@tbl-guilds).
+To assess trends in species’ abundances and interpret community-level ecological responses, we assigned species to guilds. Guilds are groups of species that respond in similar ways to environmental changes as a result of similar uses of the environment (@doser2021trends). Directional trends in abundant species (e.g., Yellow-rumped warbler (*Setophaga coronata*, YRWA)) can strongly influence the trend of the guilds of which these species are members. Given this limitation, trend analyses of ecological guilds often warrant further examination of common patterns of change among species within the guild. For example, if we find large variation in abundance trends across an ecoregion but not across bird guilds, this may suggest a consistent effect on the entire bird community (@doser2021trends), which can determine if management should target a whole community, specific guilds or individual species. If all or many species within a guild show similar trends in relative abundance, then factors affecting the guild-related life history attributes deserve attention. @pacifici2014guidelines recommend using bird guilds in post-hoc assessment. Each species was categorized within guilds and a species may be included in multiple guilds. Species were assigned to guilds using the [Birds of North America](https://birdsna.org), [Elton Traits Database](https://esajournals.onlinelibrary.wiley.com/doi/10.1890/13-1917.1) and bird guidebooks. To examine responses by different guild types we assigned birds by Elton trait (e.g., invertebrate, plant/seed, omnivore), dietary guild (e.g., aerial insectivore, bark forager), and habitat guild (e.g., wetland, forest generalist, late successional forest) (@tbl-guilds).
 
 ### Ecoregion community composition analysis
 
@@ -832,10 +827,8 @@ To characterize bird community composition, we first aggregated species-level ob
 
 ### Functional and community-level diversity
 
-To evaluate community-level ecological responses, we examined temporal changes in functional diversity, species richness, and community evenness. Functional diversity was quantified using Rao’s Q (@rao1982diversity; @laliberte2010adistance) via the `dbFD()` function in the `FD` package (). We also calculated species richness (number of unique species per location per year) and Shannon’s diversity index, which integrates richness and evenness to describe community structure. These metrics were modeled through time using linear, mixed-effects, and segmented regression models to detect both gradual and threshold-type changes. Results were summarized graphically by ecoregion and functional guild to highlight spatial variation in diversity trajectories.
-
-To evaluate community-level ecological responses, we examined temporal changes in functional diversity, species richness, and community structure. First, we quantified functional diversity using Rao’s *Q* (@rao1982diversity; @laliberte2010adistance), calculated via the `dbFD()` function in the `FD` package (@FDpackage). This metric estimates the average difference in functional traits between any two random individuals in the community. We also calculated species richness (number of unique species per location per year) and Shannon’s diversity index, which integrates richness and evenness to describe community structure. These metrics were modeled through time using linear, mixed-effects, and segmented regression models to detect both gradual and threshold-type changes. Results were summarized graphically by ecoregion and functional guild to highlight spatial variation in diversity trajectories.
-
+To evaluate community-level ecological responses, we examined temporal changes in functional diversity, species richness, and community structure. First, we quantified functional diversity using Rao’s *Q* (@rao1982diversity; @laliberte2010adistance), calculated via the `dbFD()` function in the `FD` package (@FDpackage). This metric estimates the average difference in functional traits between any two random individuals in the community. We also calculated species richness (number of unique species per location per year) and Shannon’s diversity index, which integrates richness and evenness to describe community structure. These metrics were modeled through time using linear, mixed-effects, and segmented regression models to detect both gradual and threshold-type changes. Results were summarized graphically by ecoregion and functional guild to highlight spatial variation in diversity trajectories. We also calculated species richness (number of unique species per location per year) and Shannon’s diversity index, which integrates richness and evenness to describe community structure. We assessed temporal changes in Shannon diversity and species richness using a linear mixed-effects model, with Shannon diversity and species count as the response variable. Year was centered at the mean to estimate temporal trends, and ecoregion (alpine vs. forested) was included as a fixed effect to account for differences between the two ecoregions. We included a random intercept for each location and the model was fit using restricted maximum likelihood (REML) with the `lmer()` function from the `lme4` package.
+ 
 ```{r}
 #| warning: false
 #| echo: false
@@ -872,7 +865,7 @@ guild_activity <- janp_main |>
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
                                ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"))
 
-datatable(guilds, 
+datatable(guilds |> left_join(guild_activity |> dplyr::select(species_code, n)), 
           options = list(
             searching = TRUE,  
             paging = TRUE,    
@@ -978,16 +971,32 @@ shannon_d <- janp_main |>
   group_by(location, ecoregion, year) |>
   summarise(shannon_index = diversity(total_count, index = "shannon")) |>
   ungroup() |>
-  filter(!(year == 2012 & ecoregion == "Montane")) |>
-  ggplot(aes(x = factor(year), y = shannon_index, fill = factor(year))) +
-  geom_boxplot() +
-  geom_point(alpha = 0.6, colour = "grey") +
-  labs(x = "Year",
-       y = "Shannon diversity index per location") +
-  theme_bw() +
-  guides(fill = guide_legend(title = "Year")) +
-  scale_fill_viridis_d(alpha = 0.8, option = "cividis") +
-  facet_wrap(~ecoregion, ncol = 1)
+  filter(!(year == 2012 & ecoregion == "Montane"))
+
+shannon_d$year_c <- shannon_d$year - mean(shannon_d$year)
+shannon_d$ecoregion <- factor(shannon_d$ecoregion, levels = c("Alpine", "Montane"))
+shannon_mod <- lmer(shannon_index ~ year_c + ecoregion + (1|location), data = shannon_d)
+summary(shannon_mod)
+
+spp_rich_location <- janp_main |>
+  filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
+  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
+  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
+  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
+  dplyr::select(location, year, species_code) |>
+  distinct() |>
+  group_by(location, year) |>
+  summarise(species_count = n_distinct(species_code)) |>
+  ungroup() |>
+  inner_join(locs_summary, by = c("location" = "Location")) |>
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
+  filter(!(year == 2012 & ecoregion == "Montane"))
+
+spp_rich_location$year_c <- spp_rich_location$year - mean(spp_rich_location$year)
+spp_rich_location$ecoregion <- factor(spp_rich_location$ecoregion, levels = c("Alpine", "Montane"))
+spp_rich_mod <- lmer(species_count ~ year_c + ecoregion + (1|location), data = spp_rich_location)
+summary(spp_rich_mod)
 ```
 
 ### Trend analysis
@@ -1104,7 +1113,7 @@ permanova_result <- adonis2(comm_matrix_data ~ ecoregion_group, data = comm_matr
 
 ## Functional and community-level diversity
 
-Species richness per location is shown in @fig-spp-rich-locs and Shannon's diversity over years is shown in @fig-shannon. Overall, both richness and diversity were stable across years. Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When comparing models using an AIC-based approach, a segmented model clearly outperformed both the linear model (ΔAIC = 2.97, weight = 0.18) and the mixed-effects model (ΔAIC ≈ 11,883, weight ≈ 0), with the segmented model having the lowest AIC (38.5, weight = 0.82). This supports the presence of a breakpoint around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then increased to more variable but generally higher values from 2010 onward. The linear and mixed-effects models, while informative, were either slightly less supported or poorly suited to capture this shift in the trend.
+Species richness per location is shown in @fig-spp-rich-locs and Shannon's diversity over years is shown in @fig-shannon. Shannon diversity increased slightly over time (β = 0.0063 per year, SE = 0.0015, t = 4.20), after accounting for differences among locations and ecoregions. Montane communities exhibited higher diversity than Alpine (β = 0.28 ± 0.067, t = 4.15), and location-level variation remained substantial (SD = 0.35). Rao’s Q averaged between about 8.2 and 10.5 across survey locations, with a clear upward tendency over time (@fig-raos-q). The non‑parametric Mann–Kendall test gave a Kendall’s τ of 0.32 (p ≈ 0.07), indicating a positive but marginally non‑significant monotonic increase in functional diversity. A simple linear regression of mean Rao’s Q against year yielded a slope of 0.051 units per year (p ≈ 0.06), suggesting an upward trend that narrowly misses the conventional 0.05 significance threshold. When comparing models using an AIC-based approach, a segmented model clearly outperformed both the linear model (ΔAIC = 2.97, weight = 0.18) and the mixed-effects model (ΔAIC ≈ 11,883, weight ≈ 0), with the segmented model having the lowest AIC (38.5, weight = 0.82). This supports the presence of a breakpoint around 2009, suggesting that functional diversity was relatively low and stable from 2007–2009, then increased to more variable but generally higher values from 2010 onward. The linear and mixed-effects models, while informative, were either slightly less supported or poorly suited to capture this shift in the trend.
 
 ```{r}
 #| warning: false
@@ -1153,21 +1162,6 @@ ggplot(yearly_rao, aes(x = year, y = meanRao)) +
 #| cap-location: bottom
 #| code-fold: true
 
-spp_rich_location <- janp_main |>
-  filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
-  filter(data_type %in% c("legacy","single_visit_3_max","single_visit_0_max")) |>
-  filter(!(data_type == "single_visit_0_max" & year < 2023)) |>
-  wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = F) |>
-  dplyr::select(location, year, species_code) |>
-  distinct() |>
-  group_by(location, year) |>
-  summarise(species_count = n_distinct(species_code)) |>
-  ungroup() |>
-  inner_join(locs_summary, by = c("location" = "Location")) |>
-  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
-                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
-  filter(!(year == 2012 & ecoregion == "Montane"))
-
 spp_rich_location |>
   ggplot(aes(x=as.factor(year), y=species_count, fill=year)) +
   geom_boxplot() +
@@ -1194,7 +1188,16 @@ spp_rich_location |>
 #| cap-location: bottom
 #| code-fold: true
 
-shannon_d
+shannon_d |>
+  ggplot(aes(x = factor(year), y = shannon_index, fill = factor(year))) +
+  geom_boxplot() +
+  geom_point(alpha = 0.6, colour = "grey") +
+  labs(x = "Year",
+       y = "Shannon diversity index per location") +
+  theme_bw() +
+  guides(fill = guide_legend(title = "Year")) +
+  scale_fill_viridis_d(alpha = 0.8, option = "cividis") +
+  facet_wrap(~ecoregion, ncol = 1)
 ```
 
 ## Jasper 2024 fire effects
@@ -1331,13 +1334,11 @@ plot_RDA_fire
 #| results: hide
 #| code-fold: true
 
-janp_main_out <- janp_main |>
+janp_ready_trend <- janp_main |>
   mutate(equipment_make = case_when(year >= 2023 ~ "Wildlife Acoustics", 
                                     TRUE ~ "RiverForks"),
          equipment_model = case_when(year >= 2023 ~ "SM4",
-                                     TRUE ~ "RiverForks"))
-
-janp_ready_trend <- janp_main_out |>
+                                     TRUE ~ "RiverForks")) |>
   inner_join(lc_150m, by = c("location" = "Point_ID")) |>
   inner_join(canopy_150m, by = c("location" = "Point_ID")) |>
   inner_join(understory_150m, by = c("location" = "Point_ID")) |>
@@ -1610,7 +1611,7 @@ trendz <- janp_main |>
 #| code-fold: true
 
 socb <- read_csv("species-status.csv") |>
-  select(1:2) |>
+  dplyr::select(1:2) |>
   distinct() |>
   rename(species = 1,
          trend_status_socb = 2) |>
@@ -1623,8 +1624,11 @@ trend_table <- trendz %>%
   unnest_wider(trend, names_sep = "_") %>%
   unnest(cols = everything()) %>%
   mutate(across(where(is.numeric), ~ round(.x, 2))) %>%
-  left_join(wt_get_species() |> select(species_code, species_common_name), by = "species_code") |>
-  left_join(socb, by = c("species_common_name" = "species"))
+  left_join(wt_get_species() |> dplyr::select(species_code, species_common_name), by = "species_code") |>
+  left_join(socb, by = c("species_common_name" = "species")) |>
+  rename(trend_jasper = trend_trend) |>
+  relocate(trend_jasper, .after = trend_ecoregion) |>
+  relocate(trend_status_socb, .after = trend_jasper)
 
 ```
 
@@ -1635,25 +1639,8 @@ trend_table <- trendz %>%
 #| message: false
 #| include: true
 #| code-fold: true
-
-plot_dat <- trendz |>
-  mutate(t = map_chr(trend, ~ class(.x))) |>
-  filter(!(t == "logical")) |>
-  mutate(trend_summary = map(trend, ~ .x[[3]])) |>
-  unnest_longer(trend_summary) |>
-  unnest() |>
-  dplyr::select(species_code, year, location, ecoregion, lambda_hat) |>
-  distinct() |>
-  mutate(ecoregion = case_when(location == "WILCOX-5" ~ "Alpine", TRUE ~ ecoregion))
-
-ggplot(plot_dat, aes(x = year, y = lambda_hat, color = ecoregion)) +
-  geom_smooth() +
-  facet_wrap(~ species_code, scales = "free_y") +
-  theme_bw() +
-  scale_colour_viridis_d(option = "cividis") + 
-  ylim(0,2) +
-  ylab(expression("Detection-corrected abundance ("*hat(lambda)*")")) +
-  xlab("Year")
+#| label: tbl-trend
+#| tbl-cap: Summary of trend of species by ecoregion.
 
 datatable(trend_table)
 
@@ -1666,47 +1653,82 @@ datatable(trend_table)
 #| message: false
 #| include: true
 #| code-fold: true
+#| label: fig-trend-points
+#| tbl-cap: Summary of trend of species by ecoregion.
+#| fig-width: 14
+#| fig-height: 10
+
+plot_dat <- trendz |>
+  mutate(t = map_chr(trend, ~ class(.x))) |>
+  filter(!(t == "logical")) |>
+  mutate(trend_summary = map(trend, ~ .x[[3]])) |>
+  unnest_longer(trend_summary) |>
+  unnest() |>
+  dplyr::select(species_code, year, location, ecoregion, lambda_hat) |>
+  distinct() |>
+  mutate(ecoregion = case_when(location == "WILCOX-5" ~ "Alpine", TRUE ~ ecoregion))
+
+ggplot(plot_dat, aes(x = year, y = lambda_hat, color = ecoregion)) + 
+  geom_smooth() +
+  geom_point(alpha = 0.01) +
+  facet_wrap(~species_code) +
+  theme_bw() + 
+  scale_colour_viridis_d(option = "cividis") + 
+  ylim(0, 2) + 
+  ylab(expression("Detection-corrected abundance ("*hat(lambda)*")")) + 
+  xlab("Year")
+
+```
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| code-fold: true
+#| label: tbl-trend-2
+#| tbl-cap: Summary of trend of species grouped by ecoregion.
 
 trend_guild <- trend_table |>
   inner_join(guilds, by = "species_code") |>
   drop_na(trend_ecoregion)
   
-kable(trend_guild |>
-  group_by(trend_ecoregion) |>
-  summarise(
-    total_species = n_distinct(species_code),
-    declining_species = n_distinct(species_code[pct_change <= -2.5]),
-    percent_declining = declining_species / total_species * 100
-  ))
-
-kable(trend_guild |>
-  group_by(trend_ecoregion, habitat_guild) |>   # or another guild column if desired
-  summarise(
-    total_guild_species = n_distinct(species_code),
-    declining_guild_species = n_distinct(species_code[pct_change <= -2.5]),
-    percent_declining = declining_guild_species / total_guild_species * 100
-  ) |>
-  ungroup() |>
-  group_by(trend_ecoregion) |>
-  summarise(
-    total_guilds = n_distinct(habitat_guild),
-    guilds_with_decline = sum(percent_declining > 0),
-    percent_guilds_declining = guilds_with_decline / total_guilds * 100
-  ))
+trend_guild |>
+  group_by(trend_ecoregion, trend_jasper) |>
+  summarise(n = n_distinct(species_code)) |>
+  drop_na(trend_jasper) |>
+  pivot_wider(names_from = trend_jasper, values_from = n) |>
+  rowwise() |>
+  mutate(`Percent Decreasing` = round((Decreasing / sum(c(Decreasing, Increasing, Stable)) * 100),2)) |>
+  ungroup()
 
 ```
 
+
 ```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| code-fold: true
+#| label: fig-trend-vert
+#| tbl-cap: Summary of trend percent change by species and ecoregion. Colours indicated departure from baseline to increasing (+2.5%) or decreasing (-2.5%) territory.
+#| fig-width: 8
+#| fig-height: 12
 
-plot_sum <- plot_dat %>%
-  arrange(desc(pct_change)) %>%
-  mutate(species_code = factor(species_code, levels = unique(species_code)))
-
-ggplot(plot_sum, aes(x = pct_change, y = species_code)) +
+ggplot(trend_table, aes(x = reorder(species_common_name, -trend_pct_change), y = trend_pct_change, colour = trend_jasper)) +
   geom_point() +
-  facet_wrap(~ ecoregion) +
-  geom_vline(xintercept = 0, linetype = "dashed") +
-  theme_bw()
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  facet_wrap(~trend_ecoregion) +
+  coord_flip() + 
+  theme_bw() +
+  xlab("Species") +
+  ylab("Trend Percentage Change (%)") +
+  labs(colour = "Trend Status")
+
+
 ```
 
 # Discussion and recommendations
