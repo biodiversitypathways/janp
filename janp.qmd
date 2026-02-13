@@ -167,7 +167,7 @@ This project aims to analyze Jasper’s passive acoustic monitoring data from 20
 - Describe the data management and processing procedures for acoustic data collected from 2007 to 2025.
 - Compare how different data processing methods influence the count of species and individuals detected on recordings.
 - Report on trends in bird abundance by species and by guild in the montane (forest indicator) and alpine (alpine indicator) ecoregions, incorporating time-to-first-detection analysis
-  - Summarize results by ecoregion as the percentage of species and guilds declining by ≥2.5% in both montane and alpine regions.
+  - Summarize results by ecoregion as the percentage of species and guilds declining by ≥2.5% in both forest and alpine regions. Explore methods (e.g., inclusion of covariates and summarizing by guild) to interpret these changes, understanding how birds may be responding to stressors in the park or across their ranges and how changing populations may affect ecosystems.
 - Estimate species richness trends to determine if they provides insight about bird community conditions.
 - Provide recommendations for: 
   - Prioritizing previous years’ data for re-transcription to 1SPT; 
@@ -406,6 +406,59 @@ datatable(janp_locs_table,
 ## Habitat and survey variables
 
 We used the existing Vegetation Resource Inventory (VRI) derived from 2020 orthophoto imagery, before the 2022 Chetamon and 2024 Jasper Wildfire to describe habitat conditions. We extracted variables describing dominant land cover (including conifer, broadleaf, shrub, herbaceous, and exposed soil classes), forest structure (canopy height, age), and understory characteristics (shrub height, crown closure). To account for the severe habitat alteration caused by the 2024 Jasper Wildfire, we manually reclassified the land cover variable for all sites on the TEKARRA and VALLEY5 transects as "Burned" for the 2025 data. This classification replaced the pre-fire VRI categories (e.g., conifer, shrub) in the analysis.
+
+## Weather variables
+
+To examine the influence of weather on species richness and abundance, we fit a negative binomial generalized linear model (glm.nb()) with richness as the response and temperature, sky (clear, overcast, scattered), wind, Julian day, and hour as predictors. Model dispersion, calculated as the ratio of residual deviance to residual degrees of freedom, was 1.02, indicating minor overdispersion and suggesting an adequate fit. Julian day (β = –0.014, p < 0.001) and hour (β = –0.024, p = 0.002) were significantly negatively associated with richness, while temperature, wind, and sky type showed weak or non-significant effects. Although temperature and wind were not significant in this model, they were retained in subsequent analyses due to their known ecological influence on bat activity and detection probability. The model residual deviance was 1527.5 on 1494 degrees of freedom, with an AIC of 7684.5 and an estimated dispersion parameter (θ) of 40.77 (SE = 8.59). For abundance… 
+
+```{r}
+
+janp_richness <- janp_main %>%
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Forested")) |>
+  mutate(hour = hour(recording_date_time), julian = yday(recording_date_time)) |>
+  group_by(location, ecoregion, recording_date_time, julian, hour) %>%
+  summarise(
+    richness = n_distinct(species_code),
+    temperature = first(temperature),
+    sky = first(sky),
+    wind = first(wind),
+    .groups = "drop"
+  ) |>
+  drop_na()
+
+ggplot(janp_richness, aes(x = temperature, y = richness)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "glm", method.args = list(family = "poisson")) +
+  facet_wrap(~ecoregion) +
+  theme_bw()
+
+ggplot(janp_richness, aes(x = sky, y = richness)) +
+  geom_boxplot() +
+  facet_wrap(~ecoregion) +
+  theme_bw()
+
+ggplot(janp_richness, aes(x = wind, y = richness)) +
+  geom_point(alpha = 0.3) +
+  facet_wrap(~ecoregion) +
+  geom_smooth(method = "glm", method.args = list(family = "poisson")) +
+  theme_bw()
+
+rich_mod <- glm(
+  richness ~ temperature + sky + wind + julian + hour,
+  data = janp_richness,
+  family = poisson()
+)
+
+rich_mod2 <- glm.nb(
+  richness ~ temperature + sky + wind + julian + hour,
+  data = janp_richness
+)
+
+deviance(rich_mod2) / df.residual(rich_mod2)
+
+```
+
 
 ## Data management, processing and quality control
 
@@ -1363,7 +1416,13 @@ plot_RDA_fire
 #| results: hide
 #| code-fold: true
 
-janp_ready_trend <- janp_main |>
+janp_main_out <- janp_main |>
+  mutate(equipment_make = case_when(year >= 2023 ~ "Wildlife Acoustics", 
+                                    TRUE ~ "RiverForks"),
+         equipment_model = case_when(year >= 2023 ~ "SM4",
+                                     TRUE ~ "RiverForks"))
+
+janp_ready_trend <- janp_main_out |>
   inner_join(lc_150m, by = c("location" = "Point_ID")) |>
   inner_join(canopy_150m, by = c("location" = "Point_ID")) |>
   inner_join(understory_150m, by = c("location" = "Point_ID")) |>
@@ -1400,6 +1459,7 @@ run_trend <- function(spp, summary = TRUE) {
   if (nrow(spp_max |> filter(species_code == spp)) < 20) {
     
       warning(paste0("Probably an error in Alpine with ", spp))
+    
       trend_result_alpine <- tibble(
         ecoregion = "Alpine",
         tau          = NA,
@@ -1408,7 +1468,17 @@ run_trend <- function(spp, summary = TRUE) {
         pct_change   = NA,
         trend        = NA)
       
-      lambda_year_alpine_plot <- NA
+      lamba_year_alpine <- tibble(
+        year = NA,
+        lambda_hat = NA
+      )
+      
+      lambda_year_alpine_plot <- tibble(
+        year = NA,
+        location = NA,
+        ecoregion = NA,
+        lambda_hat = NA
+      )
       
   } else {
     
@@ -1512,7 +1582,17 @@ run_trend <- function(spp, summary = TRUE) {
         pct_change   = NA,
         trend        = NA)
       
-      lambda_year_montane_plot <- NA
+      lamba_year_montane <- tibble(
+        year = NA,
+        lambda_hat = NA
+      )
+      
+      lambda_year_montane_plot <- tibble(
+        year = NA,
+        location = NA,
+        ecoregion = NA,
+        lambda_hat = NA
+      )
       
     } else {
       
@@ -1602,12 +1682,11 @@ trendz <- janp_main |>
   group_by(species_code) |>
   tally() |>
   arrange(-n) |>
-  filter(!(species_code %in% c("RESQ","NONE"))) |>
-  slice(1:2) |>
-  mutate(trend = map(species_code, safe_run_trend))
-
-trendz <- trendz |>
-  filter(!grepl('^UN',species_code))
+  filter(!(species_code %in% c("RESQ","NONE")),
+         !grepl('^UN',species_code)) |>
+  filter(!n<20) |>
+  slice(1:70) |>
+  mutate(trend = map(species_code, run_trend))
 
 ```
 
@@ -1619,12 +1698,22 @@ trendz <- trendz |>
 #| include: true
 #| code-fold: true
 
+socb <- read_csv("species-status.csv") |>
+  select(1:2) |>
+  distinct() |>
+  rename(species = 1,
+         trend_status_socb = 2) |>
+  drop_na() |>
+  slice(-1)
+
 trend_table <- trendz %>%
   mutate(trend = map(trend, ~ if(!is.list(.x)) {list(NA)} else {.x})) %>%
   mutate(trend = map(trend, 1)) %>%
   unnest_wider(trend, names_sep = "_") %>%
   unnest(cols = everything()) %>%
-  mutate(across(where(is.numeric), ~ round(.x, 2)))
+  mutate(across(where(is.numeric), ~ round(.x, 2))) %>%
+  left_join(wt_get_species() |> select(species_code, species_common_name), by = "species_code") |>
+  left_join(socb, by = c("species_common_name" = "species"))
 
 ```
 
