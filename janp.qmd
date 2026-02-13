@@ -179,9 +179,13 @@ This project aims to analyze Jasper’s passive acoustic monitoring data from 20
 
 ## Bird surveys
 
-Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, and 20 sites that were added in 2025. To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region (see @fig-aru-monitoring locations).
+Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, and 20 sites that were added in 2025. To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region (@fig-aru-monitoring-locations).
 
-Songbird data were collected using autonomous recording units (ARUs) deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing nine or ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each monumented location, the ARU was set up, and technicians moved 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording to capture voice notes and the standardized 10-minute survey period. Four covariates thought to influence detection or abundance were recorded: start time, wind speed, cloud cover, temperature and recording equipment. Recording equipment varied throughout the course of the study. During the 2021 and 2022 field seasons, paired recordings were collected concurrently at each site using both Wildlife Acoustics SM4 autonomous recording units and the original recording devices (Riverforks CZM or Zoom H2N Pro, depending on site-specific deployment). This dual-recording approach was implemented to support calibration and continuity across equipment types. However, to maintain consistency in data processing, only recordings from the original devices were transcribed and included in the final analyses for those years. Beginning in 2023, recordings were collected exclusively using SM4 units.
+Songbird data were collected using autonomous recording units (ARUs) deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing nine or ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each documented location, the ARU was set up, and technicians moved 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording to capture voice notes and the standardized 10-minute survey period. Four covariates thought to influence detection or abundance were recorded: start time, wind speed (km/h), cloud cover (clear, broken, scattered, overcast), temperature (&deg;C) and recording equipment. Recording equipment varied throughout the course of the study; during the 2021 and 2022 field seasons, paired recordings were collected concurrently at each site using both Wildlife Acoustics SM4 autonomous recording units and the original recording devices (RiverForks CZM or Zoom H2N Pro, depending on site-specific deployment). This dual-recording approach was implemented to support calibration and continuity across equipment types. However, to maintain consistency in data processing, only recordings from the original devices were transcribed and included in the final analyses for those years. Beginning in 2023, recordings were collected exclusively using SM4 units.
+
+::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
+The 2012 field season was reduced significantly and was not included in some of the subsequent analyses. Refer to @tbl-loc-summary for more information.
+:::
 
 ```{r}
 #| echo: false
@@ -1110,95 +1114,6 @@ Species richness per location is shown in @fig-spp-rich-locs and Shannon's diver
 #| include: true
 #| results: hide
 #| fig-align: center
-#| fig-cap: Seasonal detection activity of by nesting guild and ecoregion
-#| label: fig-spp-activity-nesting
-#| code-fold: true
-
-ggplot(guild_activity, aes(x = julian, y = habitat_guild, fill = habitat_guild)) + 
-      geom_density_ridges(alpha = 0.7) +
-      scale_fill_viridis_d(option = "cividis") +
-      facet_wrap(~ecoregion) +
-      theme_bw() +
-      xlab("Day of Year") + 
-      ylab("Species")
-
-```
-
-```{r}
-#| warning: false
-#| echo: false
-#| eval: true
-#| message: false
-#| include: true
-#| results: hide
-#| fig-align: center
-#| fig-cap: Seasonal detection activity of by migratory guild and ecoregion
-#| label: fig-spp-activity-migratory
-#| code-fold: true
-
-ggplot(guild_activity, aes(x = julian, y = migratory_guild, fill = migratory_guild)) + 
-      geom_density_ridges(alpha = 0.7) +
-      scale_fill_viridis_d(option = "cividis") +
-      facet_wrap(~ecoregion) +
-      theme_bw() +
-      xlab("Day of Year") + 
-      ylab("Species")
-
-```
-
-```{r}
-#| warning: false
-#| echo: false
-#| eval: true
-#| message: false
-#| include: true
-#| results: hide
-#| fig-align: center
-#| fig-cap: Seasonal detection activity of by trait and ecoregion
-#| label: fig-spp-activity-trait
-#| code-fold: true
-
-ggplot(guild_activity |> filter(!is.na(trait)), aes(x = julian, y = trait, fill = trait)) + 
-      geom_density_ridges(alpha = 0.7) +
-      scale_fill_viridis_d(option = "cividis") +
-      facet_wrap(~ecoregion) +
-      theme_bw() +
-      xlab("Day of Year") + 
-      ylab("Species")
-
-```
-
-```{r}
-#| warning: false
-#| echo: false
-#| eval: true
-#| message: false
-#| include: true
-#| results: hide
-#| fig-align: center
-#| fig-cap: Seasonal detection activity of by dietary guild and ecoregion.
-#| label: fig-spp-activity-dietary
-#| code-fold: true
-
-ggplot(guild_activity, aes(x = julian, y = dietary_guild, fill = dietary_guild)) + 
-      geom_density_ridges(alpha = 0.7) +
-      scale_fill_viridis_d(option = "cividis") +
-      facet_wrap(~ecoregion) +
-      theme_bw() +
-      xlab("Day of Year") + 
-      ylab("Species")
-
-```
-
-
-```{r}
-#| warning: false
-#| echo: false
-#| eval: true
-#| message: false
-#| include: true
-#| results: hide
-#| fig-align: center
 #| fig-cap: Mean functional diversity (Rao's Q) over time
 #| label: fig-raos-q
 #| code-fold: true
@@ -1441,18 +1356,18 @@ run_trend <- function(spp, summary = TRUE) {
              julian = yday(recording_date_time)) |>
       dplyr::select(organization, project_id, longitude, latitude, location,
                     location_id, task_id, ecoregion, landcover, prop_cover,
-                    VEGETATION_DENSITY,  temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,
+                    VEGETATION_DENSITY,  temperature, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,
                     individual_order, abundance, detection_time) |>
       distinct() |>
       wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","human","unknown"), zerofill = T)
   
   base_zero <- janp_trend |>
-      dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
+      dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
       distinct()
   
   spp_max <- janp_trend |>
       filter(species_code == spp) |>
-      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
+      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
       summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
       ungroup()
   
@@ -1483,18 +1398,18 @@ run_trend <- function(spp, summary = TRUE) {
   } else {
     
     jpt <- base_zero |> 
-      left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "sky", "wind", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
+      left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "wind", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
       mutate(individual_order = tidyr::replace_na(individual_order, 0)) |> mutate(year = year(recording_date_time), hour = hour(recording_date_time), julian = yday(recording_date_time)) |>
       filter(!is.infinite(individual_order)) |> 
       mutate(canopy_species = factor(canopy_species), lc_group = case_when(landcover %in% c("Tree Coniferous", "Shrub Low", "Herbaceous Mixed", "Bedrock") ~ landcover, TRUE ~ "Other"), .after = landcover) |> 
-      dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, canopy_species,  temperature, sky, wind, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
+      dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, canopy_species,  temperature, wind, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
       pivot_wider(names_from = lc_group, values_from = prop_cover, values_fill = 0, values_fn = sum) |> 
       ungroup() |> 
       rename(shrub = `Shrub Low`, conf = `Tree Coniferous`, herb = `Herbaceous Mixed`, bedrock = `Bedrock`, other = Other) |> 
       mutate(across(c(shrub, conf, herb, other, bedrock, canopy_cover, avg_height, julian, hour, temperature, wind), scale)) |> 
       distinct()
 
-    fit <- svabu(individual_order ~ year + shrub + herb + conf + bedrock + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + sky + wind, data = jpt)
+    fit <- svabu(individual_order ~ year + shrub + herb + conf + bedrock + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + wind, data = jpt)
 
     ref_zero_infl <- jpt |>
       summarise(observer = first(observer),
@@ -1503,7 +1418,6 @@ run_trend <- function(spp, summary = TRUE) {
                 canopy_cover = mean(canopy_cover, na.rm = TRUE),
                 avg_height = mean(avg_height, na.rm = TRUE),
                 temperature = first(temperature),
-                sky = first(sky),
                 wind = first(wind))
   
     newdata <- jpt |>
@@ -1513,7 +1427,6 @@ run_trend <- function(spp, summary = TRUE) {
              avg_height = ref_zero_infl$avg_height,
              hour = ref_zero_infl$hour,
              temperature = ref_zero_infl$temperature,
-             sky = ref_zero_infl$sky,
              wind = ref_zero_infl$wind)
     
     jpt$lambda_hat <- predict(fit, newdata = newdata, type = "response")
@@ -1556,18 +1469,18 @@ run_trend <- function(spp, summary = TRUE) {
              julian = yday(recording_date_time)) |>
       dplyr::select(organization, project_id, longitude, latitude, location,
                     location_id, task_id, ecoregion, landcover, prop_cover,
-                    VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,
+                    VEGETATION_DENSITY, temperature, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code,
                     individual_order, abundance, detection_time) |>
       distinct() |>
       wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","human","unknown"), zerofill = T)
     
     base_zero <- janp_trend |>
-      dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
+      dplyr::select(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer) |>
       distinct()
     
     spp_max <- janp_trend |>
       filter(species_code == spp) |>
-      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
+      group_by(location, ecoregion, landcover, prop_cover, VEGETATION_DENSITY, temperature, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, species_code) |>
       summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
       ungroup()
     
@@ -1597,18 +1510,18 @@ run_trend <- function(spp, summary = TRUE) {
     } else {
       
       jpt <- base_zero |> 
-        left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "sky", "wind", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
+        left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "wind", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
         mutate(individual_order = tidyr::replace_na(individual_order, 0)) |> mutate(year = year(recording_date_time), hour = hour(recording_date_time), julian = yday(recording_date_time)) |>
         filter(!is.infinite(individual_order)) |> 
         mutate(canopy_species = factor(canopy_species), lc_group = case_when(landcover %in% c("Tree Coniferous", "Shrub Low", "Herbaceous Mixed", "Bedrock") ~ landcover, TRUE ~ "Other"), .after = landcover) |> 
-        dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, temperature, sky, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
+        dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, temperature, wind, canopy_species, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
         pivot_wider(names_from = lc_group, values_from = prop_cover, values_fill = 0, values_fn = sum) |> 
         ungroup() |> 
         rename(shrub = `Shrub Low`, conf = `Tree Coniferous`, herb = `Herbaceous Mixed`, other = Other) |> 
         mutate(across(c(shrub, conf, herb, other, canopy_cover, avg_height, julian, hour, temperature, wind), scale)) |> 
         distinct()
 
-      fit <- svabu(individual_order ~ year + shrub + herb + conf + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + sky + wind, data = jpt)
+      fit <- svabu(individual_order ~ year + shrub + herb + conf + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + wind, data = jpt)
       
       ref_zero_infl <- jpt |>
           summarise(
@@ -1618,7 +1531,6 @@ run_trend <- function(spp, summary = TRUE) {
           canopy_cover = mean(canopy_cover, na.rm = TRUE),
           avg_height   = mean(avg_height, na.rm = TRUE),
           temperature = first(temperature),
-          sky = first(sky),
           wind = first(wind))
       
       newdata <- jpt %>%
@@ -1628,7 +1540,6 @@ run_trend <- function(spp, summary = TRUE) {
                  avg_height   = ref_zero_infl$avg_height,
                  hour         = ref_zero_infl$hour,
                  temperature = ref_zero_infl$temperature,
-                 sky = ref_zero_infl$sky,
                  wind = ref_zero_infl$wind)
       
       jpt$lambda_hat <- predict(fit, newdata = newdata, type = "response")
