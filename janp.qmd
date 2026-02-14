@@ -62,7 +62,7 @@ library(FD)
 library(detect)
 library(segmented)
 library(fs)
-library(tinytex)
+library(tidytext)
 library(spdep)
 
 wt_auth()
@@ -416,6 +416,11 @@ We used the existing Vegetation Resource Inventory (VRI) derived from 2020 ortho
 To examine the influence of weather on species richness and abundance, we fit a negative binomial generalized linear model (glm.nb()) with richness as the response and temperature, sky (clear, overcast, scattered), wind, Julian day, and hour as predictors. Model dispersion, calculated as the ratio of residual deviance to residual degrees of freedom, was 1.02, indicating minor overdispersion and suggesting an adequate fit. Julian day (β = –0.014, p < 0.001) and hour (β = –0.024, p = 0.002) were significantly negatively associated with richness, while temperature, wind, and sky type showed weak or non-significant effects. Although temperature and wind were not significant in this model, they were retained in subsequent analyses due to their known ecological influence on bat activity and detection probability. The model residual deviance was 1527.5 on 1494 degrees of freedom, with an AIC of 7684.5 and an estimated dispersion parameter (θ) of 40.77 (SE = 8.59). For abundance… 
 
 ```{r}
+#| warning: false
+#| echo: false
+#| eval: false
+#| message: false
+#| include: false
 
 janp_richness <- janp_main %>%
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
@@ -823,7 +828,7 @@ To assess trends in species’ abundances and interpret community-level ecologic
 
 ### Ecoregion community composition analysis
 
-To characterize bird community composition, we first aggregated species-level observations into a species-by-location matrix, populated with the maximum count of each species at each location. Survey points were then classified into two primary ecoregions: alpine and montane (high elevation forest). For the purpose of this analysis, the montane category served as a broad aggregate, grouping the upper subalpine, lower subalpine, and montane ecoregions into a single unit that refers to high elevation habitat below treeline. We quantified the variation in community composition explained by these two ecoregions using Redundancy Analysis (RDA) in the vegan package (@Oksanen2025) and visualized species–ecoregion relationships with ordination plots (@Rao1964). Finally, to test for statistical differences in composition between the Alpine and Montane groups, we performed a permutational multivariate analysis of variance (PERMANOVA; @Anderson2001). This test was conducted on Bray–Curtis dissimilarities using 999 permutations under a reduced model.
+To characterize bird community composition, we first aggregated species-level observations into a species-by-location matrix, populated with the maximum count of each species at each location. Survey points were then classified into two primary ecoregions: alpine and montane (high elevation forest). For the purpose of this analysis, the montane category served as a broad aggregate, grouping the upper subalpine, lower subalpine, and montane ecoregions into a single unit that refers to high elevation habitat below treeline. We quantified the variation in community composition explained by these two ecoregions using Redundancy Analysis (RDA) in the vegan package (@vegan2025) and visualized species–ecoregion relationships with ordination plots (@Rao1964). Finally, to test for statistical differences in composition between the Alpine and Montane groups, we performed a permutational multivariate analysis of variance (PERMANOVA; @Anderson2001). This test was conducted on Bray–Curtis dissimilarities using 999 permutations under a reduced model.
 
 ### Functional and community-level diversity
 
@@ -1694,14 +1699,14 @@ trend_guild <- trend_table |>
   inner_join(guilds, by = "species_code") |>
   drop_na(trend_ecoregion)
   
-trend_guild |>
+datatable(trend_guild |>
   group_by(trend_ecoregion, trend_jasper) |>
   summarise(n = n_distinct(species_code)) |>
   drop_na(trend_jasper) |>
   pivot_wider(names_from = trend_jasper, values_from = n) |>
   rowwise() |>
   mutate(`Percent Decreasing` = round((Decreasing / sum(c(Decreasing, Increasing, Stable)) * 100),2)) |>
-  ungroup()
+  ungroup())
 
 ```
 
@@ -1714,20 +1719,27 @@ trend_guild |>
 #| include: true
 #| code-fold: true
 #| label: fig-trend-vert
-#| tbl-cap: Summary of trend percent change by species and ecoregion. Colours indicated departure from baseline to increasing (+2.5%) or decreasing (-2.5%) territory.
+#| fig-cap: Summary of trend percent change by species and ecoregion. Colours indicated departure from baseline to increasing (+2.5%) or decreasing (-2.5%) territory.
 #| fig-width: 8
 #| fig-height: 12
 
-ggplot(trend_table, aes(x = reorder(species_common_name, -trend_pct_change), y = trend_pct_change, colour = trend_jasper)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  facet_wrap(~trend_ecoregion) +
-  coord_flip() + 
+ggplot(trend_table |> filter(!is.na(trend_jasper)),
+       aes(x = reorder_within(species_common_name,
+                              trend_pct_change,
+                              trend_ecoregion),
+           y = trend_pct_change,
+           colour = trend_jasper)) +
+  geom_point(size = 3) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
+  geom_hline(yintercept = -2.5, linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 2.5, linetype = "dashed", color = "green") +
+  facet_wrap(~trend_ecoregion, scales = "free_y") +
+  coord_flip() +
   theme_bw() +
+  scale_x_reordered() +
   xlab("Species") +
   ylab("Trend Percentage Change (%)") +
   labs(colour = "Trend Status")
-
 
 ```
 
