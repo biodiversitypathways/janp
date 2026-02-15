@@ -116,6 +116,23 @@ janp_aru <- imap_dfr(
     ) |> mutate(data_type = .y, .after = organization) 
 )
 
+janp_hawkears <- imap_dfr(
+  janp_project_lists,
+  ~ map_dfr(
+      .x, 
+      ~ wt_download_report(
+          project_id = .x,
+          sensor_id = "ARU",
+          reports = c("ai")
+        )
+    ) |> mutate(data_type = .y, .after = organization) 
+)
+
+janp_hawkears_clean <- list(janp_hawkears |> mutate(year = year(recording_date_time)) |> filter(year > 2022) |> dplyr::select(-year), janp_aru |> mutate(year = year(recording_date_time)) |> filter(year > 2022) |> dplyr::select(-year))
+
+janp_hawkears_eval <- wt_evaluate_classifier(janp_hawkears_clean, resolution = "task", remove_species = TRUE)
+janp_hawkears_add <- wt_additional_species(janp_hawkears_clean, remove_species = T, threshold = 0.8, resolution = "task")
+
 rel_wea <- imap_dfr(
   janp_project_lists,
   ~ map_dfr(
@@ -129,6 +146,14 @@ rel_wea <- imap_dfr(
     ) |> mutate(data_type = .y, .after = organization) 
 )
 
+mis_wea <- read_csv("jasper2425.csv") |>
+  rename(location = PointID) |>
+  mutate(location = paste0(toupper(gsub(" .*", "", Transect)),"-",location)) |>
+  mutate(recording_date_time = paste0(paste(Year, Month, Day, sep = "-")," ",Time), .after = location) |>
+  mutate(recording_date_time = ymd_hms(recording_date_time)) |>
+  dplyr::select(Year, location, Temperature, Sky, Wind) |>
+  distinct()
+
 # Bind legacy data with acoustic data
 janp_main <- bind_rows(old_s_max, janp_aru) |>
   group_by(location) |>
@@ -136,8 +161,18 @@ janp_main <- bind_rows(old_s_max, janp_aru) |>
   ungroup() |>
   mutate(location = case_when(grepl("^VALLEY-",location) ~ gsub("VALLEY-","VALLEY5-",location), TRUE ~ location),
          ecoregion = case_when(grepl("COTTONWOOD|MUSHROOM|VALLEY5",location) & is.na(ecoregion) ~ "Montane", TRUE ~ ecoregion),
-         year = year(recording_date_time)) # Get year in as a variable
-
+         year = year(recording_date_time)) |>
+  arrange(year, location, recording_date_time) |>
+  mutate(ecoregion = case_when(location == "WILCOX-5" ~ "Alpine", TRUE ~ ecoregion))
+  # left_join(mis_wea, by = c("year" = "Year", "location" = "location")) |>
+  # rowwise() |>
+  # mutate(temperature = case_when(is.na(temperature) ~ Temperature, TRUE ~ temperature),
+  #        sky = case_when(is.na(sky) ~ Sky, TRUE ~ Sky),
+  #        wind = case_when(is.na(wind) ~ Wind, TRUE ~ Wind)) |>
+  # ungroup() |>
+  # group_by(location, recording_date_time) |>
+  # fill(temperature, sky, wind, .direction = "down") |>
+  # ungroup()
 ```
 
 ::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
@@ -468,10 +503,9 @@ deviance(rich_mod2) / df.residual(rich_mod2)
 
 ```
 
-
 ## Data management, processing and quality control
 
-Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (@MacPhail2025_avian). Tags were then drawn to encompass the signal within the methods indicated in each project (see @tbl-transcriptions). Transcribers also had site photos available to optimize their species identification by having habitat context while processing.
+Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (@MacPhail2026_avian). Tags were then drawn to encompass the signal within the methods indicated in each project (see @tbl-transcriptions). Transcribers also had site photos available to optimize their species identification by having habitat context while processing.
 
 To ensure comparability across the 18-year dataset, we harmonized the abundance metrics derived from the differing transcription protocols prior to analysis. For legacy data collected between 2012 and 2020 using the 3-minute interval method, we calculated abundance as the maximum count observed in any single time bin rather than summing across bins. This conservative approach prevents the double-counting of individuals that sing continuously throughout the recording. Conversely, for data processed or re-transcribed using the modern 1SPT protocol (time of first detection of each unique individual of each species; 2007–2011 and 2021–2025), abundance was defined as the total count of unique individuals detected over the full 10-minute duration. Specifically, in WildTrax maximum count of individuals was used (i.e. AMRO1, AMRO2, AMRO3 max of 3 represents 3 individuals total).
 
@@ -568,6 +602,28 @@ tmtt_tags <- janp_main |>
 ```
 
 ![Visit photos at CAVELL-3](assets/locationphotos.png){#fig-visitphotos .float-left .fig-align-center}
+We also evaluated the performance of the HawkEars and BirdNET classifiers on the acoustic recordings (@fig-classifiers).
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| eval: false
+#| include: true
+#| code-fold: true
+#| label: fig-classifier
+#| fig-cap: Performance of each acoustic classifier on the Jasper dataset.
+
+ggplot(janp_hawkears_eval) +
+  geom_smooth(aes(x=recall, y=precision, colour=classifier), linewidth=1.5) +
+  xlab("Recall") +
+  ylab("Precision") +
+  xlim(0,1) +
+  ylim(0,1) +
+  theme_bw() +
+  scale_colour_viridis_d(option = "cividis")
+```
+
 
 ## Analytical methods
 
@@ -740,11 +796,13 @@ obs_dups <- janp_main |>
   mutate(n = n_distinct(data_type), n_obs = n_distinct(observer)) |>
   ungroup() |>
   filter(n > 1) |>
-  distinct() |>
+  distinct()
+
+obs_dups <- obs_dups |>
   dplyr::select(-c(organization, data_type, project_id:n_obs)) |>
   arrange(recording_date_time) |>
-  group_by(location, recording_date_time, species_code, observer) %>%
-  summarise(individual_order = max(individual_order, na.rm = TRUE), .groups = "drop") %>%
+  group_by(location, recording_date_time, species_code, observer) |>
+  summarise(individual_order = max(individual_order, na.rm = TRUE), .groups = "drop") |>
   ungroup() |>
   distinct() |>
   left_join(name_key, by = c("observer" = "name")) |>
@@ -870,7 +928,7 @@ guild_activity <- janp_main |>
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
                                ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Montane"))
 
-datatable(guilds |> left_join(guild_activity |> dplyr::select(species_code, n)), 
+datatable(guilds |> left_join(guild_activity |> dplyr::select(species_code, n) |> relocate(n, .after = species_code)), 
           options = list(
             searching = TRUE,  
             paging = TRUE,    
@@ -1018,7 +1076,15 @@ While global Moran’s *I* indicated significant positive spatial autocorrelatio
 
 #### Detection-corrected abundance estimation
 
-Temporal trends in abundance were estimated using single-visit abundance models implemented in the `detect::svabu()` function (@solymos2012conditional). This framework jointly models site-level abundance and detection probability from single-visit counts, providing unbiased estimates without requiring repeated surveys. In the models, year, ecoregion and landcover type and proportion at a 150 meter buffer were included as observation covariates with julian date, hour of day and observer included in the detection covariates to account for within-season and diurnal variation in detectability.The resulting detection-corrected expected abundance per site-visit (λ) was then aggregated by year to produce mean annual abundance indices. These indices were subsequently used to evaluate temporal trends in species abundance.
+Abundance was estimated using single-visit n-mixture abundance models implemented in the `detect::svabu()` function (@solymos2012conditional). This framework jointly models site-level abundance with observation and detection probability from single-visit counts as conditional likelihood estimates. The package and framework make it easy for users to add and interpret observation and detection covariates which supports logistical considerations for single-visit surveys. We first stratified analyses by ecoregion (alpine vs. forest), fitting separate detection-abundance models given the assumption site characteristics and ecological drivers are different in both ecoregions. Expected abundance per site visit was modelled using the latent abundance component (λ) specified as a function of interannual variation, local observation covariates and detection covariates. For the observation covariates, proportional landcover was measured within a 150-m buffer and classified into shrub, herbaceous cover, conifer cover, bedrock and other. Canopy cover, and mean canopy height were computed as observation-level predictors. Separate models were fitted using canopy cover and height as detection covariates but models failed to converge due to overdispersion and low sample size. Detectability was modelled simultaneously using julian date, hour of day, temperature (degrees C) and wind (km/h). Although we modeled for differences between observers, and structural vegetation influences on detection probability (see @yip2025contributions), which included once again canopy height and canopy cover at the point level, models failed to converge. Abundance was modeled with a log link, and detection probability with a logit link. Conditional maximum likelihood estimates were used, with model fit assessed via log-likelihood and AIC with successful models below:
+
+		log(λi​)=β0​+β1​yearc,i​+β2​shrubi​+β3​confi​+β4​avg_heighti​+β5​canopy_coveri​.
+		
+where detection (or availability) probability was modeled, and,
+
+\logit(pi)=α0+α1 temperaturei+α2 windi+α3 juliani+α4 houri.\logit(p_i) = \alpha_0 + \alpha_1\,\text{temperature}_i + \alpha_2\,\text{wind}_i + \alpha_3\,\text{julian}_i + \alpha_4\,\text{hour}_i .\logit(pi​)=α0​+α1​temperaturei​+α2​windi​+α3​juliani​+α4​houri​.
+
+was used to generate standardized, detection-corrected expected abundances (λ) for each site visit, which were then averaged by year to produce annual abundance indices. These indices were subsequently used to evaluate temporal trends in species abundance. 
 
 #### Trend estimation
 
@@ -1348,14 +1414,19 @@ janp_ready_trend <- janp_main |>
   inner_join(canopy_150m, by = c("location" = "Point_ID")) |>
   inner_join(understory_150m, by = c("location" = "Point_ID")) |>
   mutate(landcover = case_when(grepl('TEKARRA|VALLEY5', location) & year > 2024 ~ "Burned", TRUE ~ landcover)) |>
-  distinct()
+  distinct() |>
+  mutate(ecoregion = case_when(location == "WILCOX-5" ~ "Alpine", TRUE ~ ecoregion))
 
 # Trend
-run_trend <- function(spp, summary = TRUE) {
+run_trend <- function(spp) {
   
   #### Alpine
   janp_trend <- janp_ready_trend |>
-      filter(!(data_type == "single_visit_0_max" & year < 2021)) |>
+      group_by(location, recording_date_time) |>
+      mutate(n_data_type = n_distinct(data_type)) |>
+      ungroup() |>
+      filter(!(data_type == "legacy" & year < 2023 & observer == "Theresa Hannah" & n_data_type == 2),
+             !(data_type == "single_visit_0_max" & year < 2021 & observer != "Theresa Hannah")) |>
       filter(ecoregion %in% c("Alpine")) |>
       mutate(year = year(recording_date_time), 
              hour = hour(recording_date_time),
@@ -1407,35 +1478,36 @@ run_trend <- function(spp, summary = TRUE) {
       left_join(spp_max, by = c("location", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "wind", "canopy_species", "canopy_cover", "avg_height", "recording_date_time", "observer")) |>
       mutate(individual_order = tidyr::replace_na(individual_order, 0)) |> mutate(year = year(recording_date_time), hour = hour(recording_date_time), julian = yday(recording_date_time)) |>
       filter(!is.infinite(individual_order)) |> 
-      mutate(canopy_species = factor(canopy_species), lc_group = case_when(landcover %in% c("Tree Coniferous", "Shrub Low", "Herbaceous Mixed", "Bedrock") ~ landcover, TRUE ~ "Other"), .after = landcover) |> 
+      mutate(canopy_species = factor(canopy_species), 
+             lc_group = case_when(landcover %in% c("Tree Coniferous", "Shrub Low", "Herbaceous Mixed", "Bedrock") ~ landcover, TRUE ~ "Other"), .after = landcover) |> 
       dplyr::select(-c(landcover, VEGETATION_DENSITY)) |> group_by(location, ecoregion, canopy_species,  temperature, wind, canopy_cover, avg_height, recording_date_time, observer, individual_order, year, hour, julian) |>
       pivot_wider(names_from = lc_group, values_from = prop_cover, values_fill = 0, values_fn = sum) |> 
       ungroup() |> 
       rename(shrub = `Shrub Low`, conf = `Tree Coniferous`, herb = `Herbaceous Mixed`, bedrock = `Bedrock`, other = Other) |> 
-      mutate(across(c(shrub, conf, herb, other, bedrock, canopy_cover, avg_height, julian, hour, temperature, wind), scale)) |> 
-      distinct()
-
-    fit <- svabu(individual_order ~ year + shrub + herb + conf + bedrock + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + wind, data = jpt)
+      mutate(across(c(shrub, conf, herb, other, bedrock, canopy_cover, avg_height, julian, hour, temperature, wind), ~ as.numeric(scale(.x)))) |> 
+      mutate(year_c = scale(year)) |>
+      distinct() |>
+      mutate(ecoregion = case_when(location == "WILCOX-5" ~ "Alpine", TRUE ~ ecoregion))
+    
+    fit <- svabu(individual_order ~ year_c + shrub + conf + avg_height + canopy_cover | temperature + wind + julian + hour, data = jpt, zeroinfl = F)
+    model_fit_alpine <- if (!is.null(fit)) {summary(fit)} else {NA}
 
     ref_zero_infl <- jpt |>
-      summarise(observer = first(observer),
-                julian = mean(julian, na.rm = TRUE),
-                hour = mean(hour, na.rm = TRUE),
-                canopy_cover = mean(canopy_cover, na.rm = TRUE),
-                avg_height = mean(avg_height, na.rm = TRUE),
-                temperature = first(temperature),
-                wind = first(wind))
-  
-    newdata <- jpt |>
-      mutate(observer = ref_zero_infl$observer,
-             julian = ref_zero_infl$julian,
-             canopy_cover = ref_zero_infl$canopy_cover,
-             avg_height = ref_zero_infl$avg_height,
-             hour = ref_zero_infl$hour,
-             temperature = ref_zero_infl$temperature,
-             wind = ref_zero_infl$wind)
+      summarise(julian   = mean(julian, na.rm = TRUE),
+                hour     = mean(hour, na.rm = TRUE),
+          temperature =  mean(temperature, na.rm = TRUE),
+          wind =  mean(wind, na.rm = TRUE))
+      
+      newdata <- jpt %>%
+          mutate(
+                 julian       = ref_zero_infl$julian,
+                 hour         = ref_zero_infl$hour,
+                 temperature = ref_zero_infl$temperature,
+                 wind = ref_zero_infl$wind)
     
-    jpt$lambda_hat <- predict(fit, newdata = newdata, type = "response")
+    jpt$lambda_hat <- NA
+    jpt$lambda_hat[!is.na(newdata$year_c) & !is.na(newdata$avg_height)] <- 
+  predict(fit, newdata = newdata, type = "response")
     
     lambda_year_alpine <- jpt |>
       group_by(year) |>
@@ -1467,7 +1539,11 @@ run_trend <- function(spp, summary = TRUE) {
     }
     
     janp_trend <- janp_ready_trend |>
-      filter(!(data_type == "single_visit_0_max" & year < 2021)) |>
+            group_by(location, recording_date_time) |>
+      mutate(n_data_type = n_distinct(data_type)) |>
+      ungroup() |>
+      filter(!(data_type == "legacy" & year < 2023 & observer == "Theresa Hannah" & n_data_type == 2),
+             !(data_type == "single_visit_0_max" & year < 2021 & observer != "Theresa Hannah")) |>
       filter(ecoregion %in% c("Montane", "Upper Subalpine", "Lower Subalpine"), !grepl('COTTONWOOD|MUSHROOM', location), !year == 2012) |>
       mutate(ecoregion = "Montane") |>
       mutate(year = year(recording_date_time), 
@@ -1525,30 +1601,28 @@ run_trend <- function(spp, summary = TRUE) {
         ungroup() |> 
         rename(shrub = `Shrub Low`, conf = `Tree Coniferous`, herb = `Herbaceous Mixed`, other = Other) |> 
         mutate(across(c(shrub, conf, herb, other, canopy_cover, avg_height, julian, hour, temperature, wind), scale)) |> 
-        distinct()
+        mutate(year_c = scale(year)) |>
+        distinct() |>
+        mutate(ecoregion = case_when(location == "WILCOX-5" ~ "Alpine", TRUE ~ ecoregion))
 
-      fit <- svabu(individual_order ~ year + shrub + herb + conf + canopy_cover + avg_height | julian + hour + observer + canopy_cover + avg_height + temperature + wind, data = jpt)
+      fit <- svabu(individual_order ~ year_c + shrub + conf + avg_height + canopy_cover | temperature + wind + julian + hour, data = jpt, zeroinfl = F)
+      model_fit_montane <- if (!is.null(fit)) {summary(fit)} else {NA}
       
       ref_zero_infl <- jpt |>
           summarise(
-          observer = first(observer),  # factor
           julian   = mean(julian, na.rm = TRUE),
           hour     = mean(hour, na.rm = TRUE),
-          canopy_cover = mean(canopy_cover, na.rm = TRUE),
-          avg_height   = mean(avg_height, na.rm = TRUE),
-          temperature = first(temperature),
-          wind = first(wind))
+          temperature = mean(temperature, na.rm = TRUE),
+          wind = mean(wind, na.rm = TRUE))
       
       newdata <- jpt %>%
-          mutate(observer     = ref_zero_infl$observer,
-                 julian       = ref_zero_infl$julian,
-                 canopy_cover = ref_zero_infl$canopy_cover,
-                 avg_height   = ref_zero_infl$avg_height,
+          mutate(julian       = ref_zero_infl$julian,
                  hour         = ref_zero_infl$hour,
                  temperature = ref_zero_infl$temperature,
                  wind = ref_zero_infl$wind)
       
       jpt$lambda_hat <- predict(fit, newdata = newdata, type = "response")
+      jpt$lambda_hat[!is.na(newdata$year_c) & !is.na(newdata$avg_height)] <- predict(fit, newdata = newdata, type = "response")
 
       lambda_year_montane <- jpt |>
           group_by(year) |>
@@ -1578,11 +1652,17 @@ run_trend <- function(spp, summary = TRUE) {
       
     }
     
-    return(list(bind_rows(trend_result_alpine, trend_result_montane), bind_rows(lambda_year_alpine, lambda_year_montane), bind_rows(lambda_year_alpine_plot, lambda_year_montane_plot)))
+    return(list(bind_rows(trend_result_alpine, trend_result_montane), bind_rows(lambda_year_alpine, lambda_year_montane), bind_rows(lambda_year_alpine_plot, lambda_year_montane_plot), model_fit_alpine, model_fit_montane))
     
 }
 
 ```
+
+<!-- \[ -->
+<!-- \text{individual\_order}_i \sim \text{Abundance}(\lambda_i), \quad -->
+<!-- \log(\lambda_i) = \beta_0 + \beta_1\,\text{year}_{c,i} + \beta_2\,\text{shrub}_i + \beta_3\,\text{conf}_i + \beta_4\,\text{avg\_height}_i + \beta_5\,\text{canopy\_cover}_i, \quad -->
+<!-- \text{Detection: } \logit(p_i) = \alpha_0 + \alpha_1\,\text{temperature}_i + \alpha_2\,\text{wind}_i + \alpha_3\,\text{julian}_i + \alpha_4\,\text{hour}_i -->
+<!-- \] -->
 
 ```{r}
 #| warning: false
@@ -1599,11 +1679,16 @@ trendz <- janp_main |>
   group_by(species_code) |>
   tally() |>
   arrange(-n) |>
-  filter(!(species_code %in% c("RESQ","NONE")),
+  filter(!(species_code %in% c("RESQ","NONE","AMPK")),
          !grepl('^UN',species_code)) |>
   filter(!n<20) |>
-  slice(1:70) |>
+  slice(1:11) |>
   mutate(trend = map(species_code, run_trend))
+
+coefz <- trendz |>
+  mutate(model_alpine = map(trend, ~ .x[[4]])) %>%
+  mutate(model_montane = map(trend, ~ .x[[5]])) %>%
+  select(species_code, n, model_alpine, model_montane)
 
 ```
 
@@ -1633,7 +1718,8 @@ trend_table <- trendz %>%
   left_join(socb, by = c("species_common_name" = "species")) |>
   rename(trend_jasper = trend_trend) |>
   relocate(trend_jasper, .after = trend_ecoregion) |>
-  relocate(trend_status_socb, .after = trend_jasper)
+  relocate(trend_status_socb, .after = trend_jasper) |>
+  relocate(species_common_name, .after = species_code)
 
 ```
 
@@ -1669,20 +1755,20 @@ plot_dat <- trendz |>
   mutate(trend_summary = map(trend, ~ .x[[3]])) |>
   unnest_longer(trend_summary) |>
   unnest() |>
-  dplyr::select(species_code, year, location, ecoregion, lambda_hat) |>
+  dplyr::select(species_code, n, year, location, ecoregion, lambda_hat) |>
   distinct() |>
+  filter(!is.na(ecoregion)) |>
   mutate(ecoregion = case_when(location == "WILCOX-5" ~ "Alpine", TRUE ~ ecoregion))
 
 ggplot(plot_dat, aes(x = year, y = lambda_hat, color = ecoregion)) + 
   geom_smooth() +
   geom_point(alpha = 0.01) +
-  facet_wrap(~species_code) +
+  facet_wrap(~ forcats::fct_reorder(species_code, n, .desc = TRUE), scales = "free_y") +
   theme_bw() + 
   scale_colour_viridis_d(option = "cividis") + 
   ylim(0, 2) + 
   ylab(expression("Detection-corrected abundance ("*hat(lambda)*")")) + 
   xlab("Year")
-
 ```
 
 ```{r}
@@ -1744,4 +1830,8 @@ ggplot(trend_table |> filter(!is.na(trend_jasper)),
 ```
 
 # Discussion and recommendations
+
+Our analysis confirms that biological phenology, rather than immediate weather conditions, was the primary driver of species detections in Jasper National Park. The significant negative relationship between species richness and both Julian day and survey hour is consistent with well-established avian activity patterns. The decline in detections later in the season reflects the cessation of territorial signaling as breeding concludes (Catchpole & Slater 2008), while the negative effect of survey hour captures the waning of the dawn chorus (Robbins 1981).
+
+Contrary to the strong temporal signals, we found that temperature, wind speed, and sky conditions had weak or non-significant effects on overall species richness. This lack of a uniform negative response likely reflects the complexity of bird community responses rather than a total lack of sensitivity. For instance, Morelli et al. (2022) found that weather effects on detectability are highly guild-specific: while wind negatively affected the detection of insectivores and granivores, it had no effect on omnivores and was actually associated with increased detection of granivore-insectivores. In our analysis, these heterogeneous responses likely offset one another when aggregated into a single "Species Richness" metric. Furthermore, by restricting surveys to favorable conditions—avoiding high winds and precipitation—the monitoring program likely minimized the variance attributable to these factors, ensuring that the observed long-term trends in abundance are driven by ecological changes rather than artifacts of sampling conditions.
 
