@@ -5,7 +5,7 @@ old_data <- read_csv("./assets/jasper_legacy_data.csv")
 ### Three different versions of legacy data tiedied and formatted. One is max count, one is mean across the ten minute period and one is mean across the 3 minute period. Goal is to determine the differences between the uses cases for modelling.
 
 # Function to preprocess data
-old_s_max <- old_data |>
+old_s_max_all <- old_data |>
     dplyr::select(observer, pointID, latitude, longitude, elevation, ecoregion, temperature, sky, wind,
                   survey_duration, date, species_code, species_common_name, TTFD, start_time,
                   abundance3.3:abundance10, max.species.individuals) |>
@@ -23,7 +23,7 @@ old_s_max <- old_data |>
              survey_duration, observer, species_code, species_common_name, TTFD) |>
     summarise(individual_order = as.numeric(max(across(starts_with("abundance"))))) |>
     ungroup() |>
-    dplyr::select(location, latitude, longitude, ecoregion, temperature, sky, wind, recording_date_time, observer, species_code,
+    dplyr::select(location, latitude, longitude, ecoregion, elevation, temperature, sky, wind, recording_date_time, observer, species_code,
                   species_common_name, TTFD, individual_order) |>
     distinct() |>
     rename(detection_time = TTFD) |>
@@ -34,6 +34,16 @@ old_s_max <- old_data |>
       TRUE ~ location
     )) |>
     mutate(organization = "JNP", .before = location, data_type = "legacy") |>
-    mutate(year = year(recording_date_time)) |>
+    mutate(year = year(recording_date_time))
+
+old_s_max_temps <- old_s_max_all |>
+  filter(year %in% c(2021:2023)) |>
+  dplyr::select(location, year, temperature, sky, wind) |>
+  rename(temp = temperature,
+         sk = sky,
+         wi = wind) |>
+  distinct()
+
+old_s_max <- old_s_max_all |>
     filter(!year %in% c(2021:2023)) |>
     dplyr::select(-year)
