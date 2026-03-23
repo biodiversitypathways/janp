@@ -203,32 +203,40 @@ We respectfully acknowledge that Jasper National Park is located in Treaty 6 and
 
 Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (@allan2017recent). The repercussions of habitat fragmentation (@fahrig2003effects) and loss (@hanski2011habitat), climate change (@mantyka2012interactions, @sattar2021review, @abrahms2023climate), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in protected areas in Canada (@lemieux2011state). In Alberta’s Rocky Mountain Natural Region, these pressures are compounded by increasing wildfire activity, which has significantly impacted montane bird monitoring. Studies have shown large declines in bird abundance in the last several decades across large regions of North America (@rosenberg2019decline), suggesting the need for parkwide monitoring of bird abundance.
 
-In 2007, Jasper National Park initiated a program incorporating passive acoustic monitoring of the park’s vocalizing wildlife. Autonomous Recording Units (ARUs) are compact environmental sensors that are designed to passively record the environment (@aru-overview), capturing vocalizing species like birds and amphibians—a method growing in use across the globe (@lots-of-pam). This technology enables biologists to conduct prolonged surveys with minimal human interference, while creating a permanent, archiveable recording of the soundscape. Given the rapidity and ease of accumulating data from these units, maintaining a high standard of data integrity is paramount to ensure future data interoperability and sharing. The data collected by these units contribute valuable information to ecological integrity metrics such as species richness, diversity, occupancy, abundance trends of species and human activities in National Parks over time. 
+In 2007, Jasper National Park initiated a program to address the following monitoring question for forest and alpine bird communities: Has the abundance of forest and alpine birds declined over the duration of monitoring and during the past ten years? A species-specific decline threshold of 2.5% per year (approximately 20% over 10 years) was applied, consistent with both the IUCN Vulnerable listing criteria (30% decline over 10 years = 3.5% per year; IUCN 2001) and the Partners in Flight Conservation Urgency half-life benchmark, where species projected to lose 50% of their population within 30 years (equivalent to ~2.3% per year decline) are considered high urgency (Partners in Flight 2019, Rosenberg et al. 2016).
 
 This project analyzes Jasper’s passive acoustic monitoring data from 2007 to 2025, to assess trends while accounting for the clustering of survey points within transects and determining time-to-first-detection usability in analysis. We selected species abundance as our primary monitoring measure following recommendations in [Fletcher et al. (2025)]{.mark}. Measures that reflect abundance, reproductive performance, survival, dispersal, habitat quality, and role in ecosystem functioning provide richer insights for the achievement of conservation goals than species richness or species incidence. For example, incidence alone does not mean that a species’ presence is meaningful from a conservation perspective because a single observation is treated the same as an abundant species. As changes in abundance are more closely linked to extinction risk than species incidence, abundance-based metrics have been promoted to better assess goals in biodiversity conservation. Abundance can fluctuate more than occurrence and may therefore better track key changes in the environment, although care should be taken to not overinterpret “noisy” abundance variation. Information on abundance is essential for diagnosing decline and recovery of species and may better capture the resilience of biodiversity to ongoing environmental threats
 
-Jasper National Park reports on the condition of three park ecosystems in its State of the Park Report: freshwater, alpine and forest (montane). Since birds are indicators in both the forest and alpine ecosystems, separate analyses were conducted for the montane ecoregion (grouping of the upper subalpine, lower subalpine, and true montane ecoregions) and alpine ecoregion. To enhance accessibility and reproducibility, the findings were presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations were developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. 
+The program incorporates passive acoustic monitoring of the park’s vocalizing wildlife. Autonomous Recording Units (ARUs) are compact environmental sensors that are designed to passively record the environment (Shonfield and Bayne (2017)), capturing vocalizing species like birds and amphibians—a method growing in use across the globe (Sugai et al. 2018). This technology enables biologists to conduct prolonged surveys with minimal human interference, while creating a permanent, archiveable recording of the soundscape. Given the rapidity and ease of accumulating data from these units, maintaining a high standard of data integrity is paramount to ensure future data interoperability and sharing. The data collected by these units contribute valuable information to ecological integrity metrics such as species richness, diversity, occupancy, abundance trends of species and human activities in National Parks over time. 
 
-This project aims to analyze Jasper’s passive acoustic monitoring data from 2007 to 2025, assessing trends in species and guild abundance while accounting for the clustering of survey points within transects. Separate analyses will be conducted for montane and sub-alpine and alpine ecoregions to align with Ecological Integrity reporting requirements, determining time-to-first-detection usability in analysis. To enhance accessibility and reproducibility, the findings will be presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations will be developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring. The objectives of this report are to:
+This project analyzes Jasper’s passive acoustic monitoring data from 2007 to 2025, assessing trends while accounting for the clustering of survey points within transects and determining time-to-first-detection usability in analysis. We selected species abundance as our primary monitoring measure following recommendations in Fletcher et al. (2025). Measures reflecting abundance provide richer insights for conservation goals than species richness or species incidence. Because changes in abundance are more closely linked to extinction risk, abundance-based metrics better assess goals in biodiversity conservation. While abundance can fluctuate more than occurrence, this sensitivity allows for finer tracking of environmental changes, provided natural variation is not overinterpreted. Abundance is essential for diagnosing species decline and recovery and may better capture the resilience of biodiversity to ongoing environmental threats.
+
+Jasper National Park reports on the condition of three park ecosystems in its State of the Park Report: freshwater, alpine and forest. Since birds are indicators in both the forest and alpine ecosystems, separate analyses were conducted for the forest ecoregion (grouping of the upper subalpine, lower subalpine, and montane ecoregions) and alpine ecoregion. To enhance accessibility and reproducibility, the findings were presented in this online report with fully documented code, allowing future updates as data collection methods become standardized. Additionally, recommendations were developed to refine data transcription priorities, improve annual reporting methods, and evaluate species guild classifications for long-term monitoring.
+
+The objectives of this report are to:
 
 - Describe the data management and processing procedures for acoustic data collected from 2007 to 2025.
 - Compare how different data processing methods influence the count of species and individuals detected on recordings.
-- Report on trends in bird abundance by species and by guild in the montane (forest indicator) and alpine (alpine indicator) ecoregions, incorporating time-to-first-detection analysis
-  - Summarize results by ecoregion as the percentage of species and guilds declining by ≥2.5% in both forest and alpine regions. Explore methods (e.g., inclusion of covariates and summarizing by guild) to interpret these changes, understanding how birds may be responding to stressors in the park or across their ranges and how changing populations may affect ecosystems.
-- Estimate species richness trends to determine if they provides insight about bird community conditions.
+- Report on trends in bird abundance by species and by guild in the forest and alpine ecoregions, incorporating time-to-first-detection analysis.
+  - Summarize results by ecoregion as the percentage of species and guilds declining by ≥2.5% in both forest and alpine regions.
+  - Explore methods (e.g., inclusion of covariates and summarizing by guild) to interpret these changes, understanding how birds may be responding to stressors in the park or across their ranges and how changing populations may affect ecosystems. 
+  - Estimate species richness and diversity trends to determine if they provide insight about bird community conditions.
 - Provide recommendations for: 
   - Prioritizing previous years’ data for re-transcription to 1SPT; 
   - Optimizing annual reporting methods (e.g., baseline comparisons vs. 10-year trends); and 
-  - Refining methods for evaluating species trends against thresholds and reviewing guilds and traits used in assessments
-- Facilitate data publication to the public, resource managers, academic institutions, and any other relevant agencies
+  - Refining methods for evaluating species trends against thresholds and reviewing guilds and traits used in assessments.
+- Facilitate data publication to the public, resource managers, academic institutions, and any other relevant agencies.
+
 
 # Methods
 
 ## Bird surveys
 
-Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, and 20 sites that were added in 2025. To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region (@fig-aru-monitoring-locations).
+Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, and 20 sites that were added in 2025. To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region.
 
-Songbird data were collected using autonomous recording units (ARUs) deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing nine or ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each documented location, the ARU was set up, and technicians moved 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording to capture voice notes and the standardized 10-minute survey period. Four covariates thought to influence detection or abundance were recorded: start time, wind speed (km/h), cloud cover (clear, broken, scattered, overcast), temperature (&deg;C) and recording equipment. Recording equipment varied throughout the course of the study; during the 2021 and 2022 field seasons, paired recordings were collected concurrently at each site using both Wildlife Acoustics SM4 autonomous recording units and the original recording devices (RiverForks CZM or Zoom H2N Pro, depending on site-specific deployment). This dual-recording approach was implemented to support calibration and continuity across equipment types. However, to maintain consistency in data processing, only recordings from the original devices were transcribed and included in the final analyses for those years. Beginning in 2023, recordings were collected exclusively using SM4 units.
+Songbird data were collected using autonomous recording units (ARUs) deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing nine or ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each monumented location, the ARU was set up, and technicians moved 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording to capture voice notes and the standardized 10-minute survey period. Five covariates thought to influence detection or abundance were recorded: start time, wind speed, temperature, cloud cover and recording equipment. Recording equipment varied throughout the course of the study. 
+
+During the 2021 and 2022 field seasons, paired recordings were collected concurrently at each site using both Wildlife Acoustics SM4 autonomous recording units and the original recording devices (Riverforks CZM or Zoom H2N Pro, depending on site-specific deployment). This dual-recording approach was implemented to support calibration and continuity across equipment types. However, to maintain consistency in data processing, only recordings from the original devices were transcribed and included in the final analyses for those years. Beginning in 2023, recordings were collected exclusively using SM4 units. 
 
 ::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
 The 2012 field season was reduced significantly and was not included in some of the subsequent analyses. Refer to @tbl-loc-summary for more information.
@@ -379,7 +387,7 @@ pal <- colorFactor(
 
 fire_color <- "#C71585"  # You can adjust to a medium pink if you like
 
-leaflet() %>%
+m <- leaflet() %>%
   addTiles() %>%
   addPolygons(
     data = janp_shp,
@@ -431,6 +439,14 @@ leaflet() %>%
   addMeasure(primaryLengthUnit = "meters", primaryAreaUnit = "sqmeters") %>%
   addMiniMap(position = "bottomleft")
 
+if (knitr::is_html_output()) {
+  m
+} else {
+  map_file <- "map_aru_locations.png"
+  if (!file.exists(map_file)) mapview::mapshot2(m, file = map_file)
+  knitr::include_graphics(map_file)
+}
+
 ```
 
 ```{r Table of locations}
@@ -454,10 +470,6 @@ datatable(janp_locs_table,
               backgroundColor = styleEqual(c("NA"), "lightgray"))  
 ```
 
-## Habitat and survey variables
-
-We used the existing Vegetation Resource Inventory (VRI) derived from 2020 orthophoto imagery, before the 2022 Chetamon and 2024 Jasper Wildfire to describe habitat conditions. We extracted variables describing dominant land cover (including conifer, broadleaf, shrub, herbaceous, and exposed soil classes), forest structure (canopy height, age), and understory characteristics (shrub height, crown closure). To account for the severe habitat alteration caused by the 2024 Jasper Wildfire, we manually reclassified the land cover variable for all sites on the TEKARRA and VALLEY5 transects as "Burned" for the 2025 data. This classification replaced the pre-fire VRI categories (e.g., conifer, shrub) in the analysis.
-
 ## Weather variables
 
 To examine the influence of weather on species richness and abundance, we fit a negative binomial generalized linear model (glm.nb()) with richness as the response and temperature, sky (clear, overcast, scattered), wind, Julian day, and hour as predictors. Model dispersion, calculated as the ratio of residual deviance to residual degrees of freedom, was 1.02, indicating minor overdispersion and suggesting an adequate fit. Julian day (β = –0.014, p < 0.001) and hour (β = –0.024, p = 0.002) were significantly negatively associated with richness, while temperature, wind, and sky type showed weak or non-significant effects. Although temperature and wind were not significant in this model, they were retained in subsequent analyses due to their known ecological influence on bat activity and detection probability. The model residual deviance was 1527.5 on 1494 degrees of freedom, with an AIC of 7684.5 and an estimated dispersion parameter (θ) of 40.77 (SE = 8.59).
@@ -469,7 +481,7 @@ To examine the influence of weather on species richness and abundance, we fit a 
 #| message: false
 #| include: false
 
-janp_richness <- janp_main %>%
+janp_inds <- janp_main %>%
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
                                ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Forested")) |>
   mutate(hour = hour(recording_date_time), julian = yday(recording_date_time)) |>
@@ -483,18 +495,18 @@ janp_richness <- janp_main %>%
   ) |>
   drop_na()
 
-ggplot(janp_richness, aes(x = temperature, y = inds)) +
+ggplot(janp_inds, aes(x = temperature, y = inds)) +
   geom_point(alpha = 0.3) +
   geom_smooth() +
   facet_wrap(~ecoregion) +
   theme_bw()
 
-ggplot(janp_richness, aes(x = sky, y = inds)) +
+ggplot(janp_inds, aes(x = sky, y = inds)) +
   geom_boxplot() +
   facet_wrap(~ecoregion) +
   theme_bw()
 
-ggplot(janp_richness, aes(x = temperature, y = inds)) +
+ggplot(janp_inds, aes(x = temperature, y = inds)) +
   geom_point(alpha = 0.3) +
   facet_wrap(~ecoregion, scales = "free_x") +
   geom_smooth(method = "glm", method.args = list(family = "poisson")) +
@@ -503,13 +515,56 @@ ggplot(janp_richness, aes(x = temperature, y = inds)) +
 
 rich_mod <- glm(
   inds ~ temperature + sky + wind + julian + hour,
-  data = janp_richness,
+  data = janp_inds,
   family = "poisson"
 )
 
 deviance(rich_mod) / df.residual(rich_mod)
 
+janp_richness <- janp_main %>%
+  mutate(ecoregion = case_when(
+    ecoregion %in% c("Alpine") ~ "Alpine",
+    ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Forested"
+  )) %>%
+  mutate(hour = hour(recording_date_time), julian = yday(recording_date_time)) %>%
+  group_by(location, ecoregion, recording_date_time, julian, hour) %>%
+  summarise(
+    richness = n_distinct(species_code),  # or whatever your species column is called
+    temperature = first(temperature),
+    sky = first(sky),
+    wind = first(wind),
+    .groups = "drop"
+  ) %>%
+  drop_na()
+
+# Plots
+ggplot(janp_richness, aes(x = temperature, y = richness)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(method = "glm", method.args = list(family = "poisson")) +
+  facet_wrap(~ecoregion, scales = "free_x") +
+  theme_bw() +
+  xlab("Temperature (C)") + ylab("Species richness")
+
+ggplot(janp_richness, aes(x = sky, y = richness)) +
+  geom_boxplot() +
+  facet_wrap(~ecoregion) +
+  theme_bw()
+
+# Model
+rich_mod <- glm(
+  richness ~ temperature + sky + wind + julian + hour,
+  data = janp_richness,
+  family = "poisson"
+)
+
+deviance(rich_mod) / df.residual(rich_mod)
+summary(rich_mod)
+
 ```
+
+## Habitat and survey variables
+
+We used the existing Vegetation Resource Inventory (VRI) derived from 2020 orthophoto imagery, before the 2022 Chetamon and 2024 Jasper Wildfire to describe habitat conditions. We extracted variables describing dominant land cover (including conifer, broadleaf, shrub, herbaceous, and exposed soil classes), forest structure (canopy height, age), and understory characteristics (shrub height, crown closure). To account for the severe habitat alteration caused by the 2024 Jasper Wildfire, we manually reclassified the land cover variable for all sites on the TEKARRA and VALLEY5 transects as "Burned" for the 2025 data. This classification replaced the pre-fire VRI categories (e.g., conifer, shrub) in the analysis.
 
 ## Data management, processing and quality control
 
@@ -820,58 +875,62 @@ name_key <- tibble(name = unique(janp_main$observer)) |>
   mutate(pseudonym = paste0("Observer_", sprintf("%02d", row_number())))
 
 obs_dups <- janp_main |>
-  filter(!observer == "Not Assigned") |>
+  filter(!observer %in% c("Not Assigned","Alex MacPhail")) |>
   filter(!(detection_time > 180)) |>
   group_by(location, recording_date_time) |>
-  mutate(n = n_distinct(data_type), n_obs = n_distinct(observer)) |>
+  summarise(n = n_distinct(data_type), n_obs = n_distinct(observer)) |>
   ungroup() |>
   filter(n > 1) |>
   distinct()
 
-obs_dups <- obs_dups |>
-  dplyr::select(-c(organization, data_type, project_id:n_obs)) |>
-  arrange(recording_date_time) |>
+janp_obs_filtered <- janp_main %>%
+  semi_join(obs_dups, by = c("location", "recording_date_time")) |>
   group_by(location, recording_date_time, species_code, observer) |>
-  summarise(individual_order = max(individual_order, na.rm = TRUE), .groups = "drop") |>
-  ungroup() |>
-  distinct() |>
-  left_join(name_key, by = c("observer" = "name")) |>
-  pivot_wider(
-    names_from = pseudonym,
-    values_from = individual_order,
-    values_fill = 0  # missing species = 0
+  summarise(individual_order = max(individual_order, na.rm = TRUE), .groups = "drop")
+
+obs_pairs <- janp_obs_filtered |>
+  rename(observer_a = observer, abundance_a = individual_order) |>
+  inner_join(
+    janp_obs_filtered |> rename(observer_b = observer, abundance_b = individual_order),
+    by = c("location", "recording_date_time", "species_code")
   ) |>
-  inner_join(janp_main |> dplyr::select(location, recording_date_time, recording_id) |> distinct(), by = c("location" = "location", "recording_date_time" = "recording_date_time")) |>
-  relocate(recording_id, .after = recording_date_time) |>
-  drop_na()
+  filter(observer_a < observer_b) |>  # avoid duplicates (A vs B and B vs A)
+  mutate(
+    both_detected  = TRUE,  # implicit since inner_join
+    abundance_match = abundance_a == abundance_b,
+    abundance_diff  = abundance_a - abundance_b
+  )
 
-obs_matrix <- obs_dups %>%
-  dplyr::select(-location, -recording_date_time, -species_code, -observer, -recording_id) %>%
-  mutate(across(everything(), ~ ifelse(. > 0, 1, 0)))
+obs_presence_only <- janp_obs_filtered |>
+  rename(observer_a = observer, abundance_a = individual_order) |>
+  full_join(
+    janp_obs_filtered |> rename(observer_b = observer, abundance_b = individual_order),
+    by = c("location", "recording_date_time", "species_code")
+  ) |>
+  filter(observer_a < observer_b | is.na(observer_a) | is.na(observer_b))
 
-# Observer names
-observer_cols <- colnames(obs_matrix)
+obs_cor <- obs_presence_only |>
+  filter(!is.na(abundance_a), !is.na(abundance_b)) |>
+  group_by(observer_a, observer_b) |>
+  summarise(
+    r = cor(abundance_a, abundance_b, method = "pearson"),
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  # Mirror the matrix for a full heatmap
+  bind_rows(
+    tibble(observer_a = .$observer_b, observer_b = .$observer_a, r = .$r, n = .$n)
+  ) |>
+  # Add diagonal (self-correlation = 1)
+  bind_rows(
+    tibble(
+      observer_a = unique(c(obs_presence_only$observer_a, obs_presence_only$observer_b)),
+      observer_b = unique(c(obs_presence_only$observer_a, obs_presence_only$observer_b)),
+      r = 1, n = NA
+    )
+  ) 
 
-# Initialize empty tibble for pairwise Spearman correlations
-pairwise_corr <- tibble(obs1 = character(), obs2 = character(), corr = double())
 
-# Compute pairwise correlations
-for(i in 1:(length(observer_cols)-1)) {
-  for(j in (i+1):length(observer_cols)) {
-    o1 <- observer_cols[i]
-    o2 <- observer_cols[j]
-    c <- cor(obs_matrix[[o1]], obs_matrix[[o2]], method = "spearman", use = "pairwise.complete.obs")
-    pairwise_corr <- pairwise_corr %>%
-      add_row(obs1 = o1, obs2 = o2, corr = c)
-  }
-}
-
-pairwise_corr_pseudo <- pairwise_corr |>
-  left_join(name_key, by = c("obs1" = "name")) |>
-  rename(obs1_pseudo = pseudonym) |>
-  left_join(name_key, by = c("obs2" = "name")) |>
-  rename(obs2_pseudo = pseudonym) |>
-  drop_na(corr)
 ```
 
 ```{r Heatmap of pairwise observer comparisons}
@@ -885,13 +944,15 @@ pairwise_corr_pseudo <- pairwise_corr |>
 #| fig-cap: Heatmap visualizes how consistently different observers recorded abundance estimates. Yellow indicates strong positive correlation (high reliability between observers), orange/red indicates weak positive correlation (general consistency) and dark purple indicates a diversion in counts while white appears where there are no overlapping observations to compare.
 
 # Heatmap
-ggplot(pairwise_corr_pseudo, aes(x = obs1, y = obs2, fill = corr)) +
-  geom_tile() +
-  scale_fill_viridis_c(option = "C") +
-  labs(x = "Observer", y = "Observer", fill = "Correlation",
-       title = "Pairwise observer correlations") +
+ggplot(obs_cor, aes(x = observer_a, y = observer_b, fill = r)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(r, 2)), size = 3) +
+  scale_fill_gradient2(low = "steelblue", mid = "white", high = "tomato",
+                       midpoint = 0, limits = c(-1, 1), name = "Pearson r") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = NULL, y = NULL, title = "Observer agreement in species and abundance estimates",
+       subtitle = "Pearson correlation of species and abundance for repeated surveys")
 
 ```
 
@@ -1246,7 +1307,6 @@ spp_rich_location |>
   ggplot(aes(x=as.factor(year), y=species_count, fill=year)) +
   geom_boxplot() +
   geom_point(alpha = 0.7, colour = "grey") +
-  geom_smooth(method = "lm") +
   theme_bw() +
   facet_wrap(~ecoregion, ncol = 1) +
   scale_fill_viridis_c(option = "cividis") +
@@ -1295,12 +1355,11 @@ The pre-fire and 1-year post-fire points occupy overlapping but shifted regions 
 #| fig-cap: Distances to the montane centroid are similar (distributions overlap strongly) between the control and the montane reference groups.
 
 comm_matrix1 <- janp_main |>
+  mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
+                               ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Forested")) |>
   filter(!(grepl("VALLEY5|TEKARRA",location) & year > 2024), year %in% c(2023:2025)) |>
   wt_tidy_species(remove = c("mammal","amphibian","abiotic","insect","unknown"), zerofill = T) |>
-  dplyr::select(-ecoregion) |>
-  inner_join(locs_summary, by = c("location" = "Location")) |>
-  # mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
-  #                              ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
+  
   group_by(location, ecoregion, species_code) |>
   summarise(individual_order = max(individual_order)) |>
   ungroup() |>
@@ -1308,7 +1367,7 @@ comm_matrix1 <- janp_main |>
   drop_na(individual_order) |>
   pivot_wider(names_from = species_code, values_from = individual_order, values_fill = 0)
 
-montane_all <- comm_matrix1 |> filter(ecoregion == "Montane")
+montane_all <- comm_matrix1 |> filter(ecoregion == "Forested")
 sp_mat <- montane_all |> dplyr::select(-location, -ecoregion)
 sp_mat <- as.data.frame(sp_mat)
 rownames(sp_mat) <- montane_all$location
@@ -1478,7 +1537,7 @@ spp_max_alpine <- janp_alpine |>
   ungroup()
 
 
-if (nrow(spp_max_alpine |> filter(species_code == spp) |> dplyr::select(location, recording_date_time, species_code, individual_order) |> distinct()) < 20) {
+if (nrow(spp_max_alpine |> filter(species_code == spp) |> dplyr::select(location, recording_date_time, species_code, individual_order) |> distinct()) < 3) {
   
   warning(paste0("Probably an error in Alpine with ", spp))
   
@@ -1508,7 +1567,9 @@ if (nrow(spp_max_alpine |> filter(species_code == spp) |> dplyr::select(location
   
   print(paste0("Modelling alpine for ", spp))
   fit_alpine <- svabu(individual_order ~ year_c + Shrub + Conifer + mean_tree_height + mean_shrub_height | temperature + mean_tree_height + wind + data_type + detection_time, data = jpt_alpine, zeroinfl = check_zeroinfl(jpt_alpine, "individual_order"))
+  summary(fit_alpine)
   model_fit_alpine <- if (!is.null(fit_alpine)) {enframe(coef(fit_alpine), name = "term", value = "estimate")} else {NA}
+
   
   ref_zero_infl_alpine <- jpt_alpine |>
     summarise(julian = mean(julian, na.rm = TRUE), 
@@ -1569,7 +1630,7 @@ spp_max_forested <- janp_forested |>
   summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
   ungroup()
 
-if (nrow(spp_max_forested |> filter(species_code == spp) |> dplyr::select(location, recording_date_time, species_code, individual_order) |> distinct()) < 20) {
+if (nrow(spp_max_forested |> filter(species_code == spp) |> dplyr::select(location, recording_date_time, species_code, individual_order) |> distinct()) < 3) {
   warning(paste0("Probably an error in Forested with ", spp))
   
   trend_result_forested <- tibble(ecoregion = "Forested", tau = NA, p_value = NA, sen_slope = NA, pct_change = NA, trend = NA)
@@ -1604,6 +1665,7 @@ if (nrow(spp_max_forested |> filter(species_code == spp) |> dplyr::select(locati
   
   print(paste0("Modelling forested for ", spp))
   fit_forested <- svabu(individual_order ~ year_c + Conifer + Broadleaf + Mixedwood + mean_tree_height + mean_shrub_height | temperature + wind + julian + hour + detection_time + data_type + mean_tree_height + canopy_cover, data = jpt_forested, zeroinfl = check_zeroinfl(jpt_forested, "individual_order"))
+  summary(fit_forested)
   model_fit_forested <- if (!is.null(fit_forested)) {enframe(coef(fit_forested), name = "term", value = "estimate")} else {NA}
   
   ref_zero_infl_forested <- jpt_forested |>
@@ -1666,7 +1728,7 @@ return(list(bind_rows(trend_result_alpine, trend_result_forested), bind_rows(lam
 
 safe_run_trend <- possibly(run_trend, otherwise = NA)
 
-trendz4 <- janp_main |>
+trendz <- janp_main |>
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
                                ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Forested")) |>
   group_by(species_code, ecoregion) |>
@@ -1681,8 +1743,8 @@ trendz4 <- janp_main |>
   filter(!ecoregion_total<20) |>
   dplyr::select(-c(ecoregion, ecoregion_total)) |>
   distinct() |>
-  slice(21:30) |>
-  mutate(trend = map(species_code, run_trend))
+  slice(5:6) |>
+  mutate(trend = map(species_code, safe_run_trend))
 
 coefz <- trendz |>
   mutate(model_alpine = map(trend, ~ .x[[4]])) %>%
@@ -1743,7 +1805,7 @@ socb <- read_csv("species-status.csv") |>
   drop_na() |>
   slice(-1)
 
-trendzz <- bind_rows(trendz, trendz2, trendz3, trendz4)
+trendzz <- bind_rows(trendz, trendzz)
 
 trend_table <- trendzz %>%
   mutate(trend = map(trend, ~ if(!is.list(.x)) {list(NA)} else {.x})) %>%
@@ -1799,7 +1861,7 @@ plot_dat <- trendzz |>
 ggplot(plot_dat, aes(x = year, y = lambda_hat, color = ecoregion)) + 
   geom_smooth() +
   geom_point(alpha = 0.01) +
-  facet_wrap(~species_code, scales = "free_y") +
+  facet_wrap(~species_code) +
   theme_bw() + 
   scale_colour_viridis_d(option = "cividis") + 
   ylab(expression("Detection-corrected abundance ("*hat(lambda)*")")) + 
