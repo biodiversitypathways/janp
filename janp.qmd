@@ -1536,16 +1536,21 @@ spp_max_alpine <- janp_alpine |>
   summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
   ungroup()
 
+check_spp_alpine <- spp_max_alpine |> filter(species_code == spp) |> dplyr::select(location, recording_date_time, species_code, individual_order) |> distinct()
 
-if (nrow(spp_max_alpine |> filter(species_code == spp) |> dplyr::select(location, recording_date_time, species_code, individual_order) |> distinct()) < 3) {
+cat("Species:", spp, "\n")
+cat("Alpine n =", nrow(check_spp_alpine), "\n")
+
+if (nrow(check_spp_alpine) <= 3) {
   
-  warning(paste0("Probably an error in Alpine with ", spp))
+  print(paste0("Too little data for Alpine for ", spp))
   
-  trend_result_alpine <- tibble(ecoregion = "Alpine", tau = NA, p_value = NA, sen_slope = NA, pct_change = NA, trend = NA)
-  lamba_year_alpine <- tibble(year = NA, lambda_hat = NA)
-  lambda_year_alpine_plot <- tibble(year = NA, location = NA, ecoregion = NA, lambda_hat = NA)
+  trend_result_alpine <- tibble(ecoregion = "Alpine", tau = NA_real_, p_value = NA_real_, sen_slope = NA_real_, pct_change = NA_real_, trend = NA_character_)
+  lambda_year_alpine <- tibble(year = NA_integer_, lambda_hat = NA_real_)
+  lambda_year_alpine_plot <- tibble(year = NA_integer_, location = NA_character_, ecoregion = NA_character_, lambda_hat = NA_real_)
+  model_fit_alpine <-  tibble(term = NA_character_, estimate = NA_real_, std.error = NA_real_, conf.low  = NA_real_, conf.high = NA_real_, z.value = NA_real_, p.value = NA_real_)
   
-} else {
+  } else {
   
   jpt_alpine <- base_zero_alpine |>
     left_join(spp_max_alpine, by = c("location", "data_type", "elevation", "ecoregion", "landcover", "prop_cover", "VEGETATION_DENSITY", "temperature", "wind", "canopy_species", "canopy_cover", "mean_tree_height", "mean_shrub_height", "recording_date_time", "year", "hour", "julian", "observer", "detection_time")) |>
@@ -1568,8 +1573,23 @@ if (nrow(spp_max_alpine |> filter(species_code == spp) |> dplyr::select(location
   print(paste0("Modelling alpine for ", spp))
   fit_alpine <- svabu(individual_order ~ year_c + Shrub + Conifer + mean_tree_height + mean_shrub_height | temperature + mean_tree_height + wind + data_type + detection_time, data = jpt_alpine, zeroinfl = check_zeroinfl(jpt_alpine, "individual_order"))
   summary(fit_alpine)
-  model_fit_alpine <- if (!is.null(fit_alpine)) {enframe(coef(fit_alpine), name = "term", value = "estimate")} else {NA}
-
+  model_fit_alpine <- if (!is.null(fit_alpine)) {
+    est <- coef(fit_alpine)
+    ci  <- confint(fit_alpine)
+    se  <- sqrt(diag(vcov(fit_alpine)))
+    ci <- ci[names(est), ]
+    se <- se[names(est)]
+    z <- est / se
+    p <- 2 * pnorm(-abs(z))
+    tibble(
+      term      = names(est),
+      estimate  = est,
+      std.error = se,
+      conf.low  = ci[, 1],
+      conf.high = ci[, 2],
+      z.value   = z,
+      p.value   = p)
+  }
   
   ref_zero_infl_alpine <- jpt_alpine |>
     summarise(julian = mean(julian, na.rm = TRUE), 
@@ -1630,12 +1650,19 @@ spp_max_forested <- janp_forested |>
   summarise(individual_order = max(individual_order, na.rm = TRUE)) |>
   ungroup()
 
-if (nrow(spp_max_forested |> filter(species_code == spp) |> dplyr::select(location, recording_date_time, species_code, individual_order) |> distinct()) < 3) {
-  warning(paste0("Probably an error in Forested with ", spp))
+check_spp_forested <- spp_max_forested |> filter(species_code == spp) |> dplyr::select(location, recording_date_time, species_code, individual_order) |> distinct()
+
+cat("Species:", spp, "\n")
+cat("Forested n =", nrow(check_spp_forested), "\n")
+
+if (nrow(check_spp_forested) <= 3) {
+
+  print(paste0("Probably an error in Forested with ", spp))
   
-  trend_result_forested <- tibble(ecoregion = "Forested", tau = NA, p_value = NA, sen_slope = NA, pct_change = NA, trend = NA)
-  lamba_year_forested <- tibble(year = NA, lambda_hat = NA)
-  lambda_year_forested_plot <- tibble(year = NA, location = NA, ecoregion = NA, lambda_hat = NA)
+  trend_result_forested <- tibble(ecoregion = "Forested", tau = NA_real_, p_value = NA_real_, sen_slope = NA_real_, pct_change = NA_real_, trend = NA_character_)
+  lamba_year_forested <- tibble(year = NA_integer_, lambda_hat = NA_real_)
+  lambda_year_forested_plot <- tibble(year = NA_integer_, location = NA_character_, ecoregion = NA_character_, lambda_hat = NA_real_)
+  model_fit_forested <-  tibble(term = NA_character_, estimate = NA_real_, std.error = NA_real_, conf.low  = NA_real_, conf.high = NA_real_, z.value = NA_real_, p.value = NA_real_)
   
 } else {
   
@@ -1666,7 +1693,23 @@ if (nrow(spp_max_forested |> filter(species_code == spp) |> dplyr::select(locati
   print(paste0("Modelling forested for ", spp))
   fit_forested <- svabu(individual_order ~ year_c + Conifer + Broadleaf + Mixedwood + mean_tree_height + mean_shrub_height | temperature + wind + julian + hour + detection_time + data_type + mean_tree_height + canopy_cover, data = jpt_forested, zeroinfl = check_zeroinfl(jpt_forested, "individual_order"))
   summary(fit_forested)
-  model_fit_forested <- if (!is.null(fit_forested)) {enframe(coef(fit_forested), name = "term", value = "estimate")} else {NA}
+  model_fit_forested <- if (!is.null(fit_forested)) {
+    est <- coef(fit_forested)
+    ci  <- confint(fit_forested)
+    se  <- sqrt(diag(vcov(fit_forested)))
+    ci <- ci[names(est), ]
+    se <- se[names(est)]
+    z <- est / se
+    p <- 2 * pnorm(-abs(z))
+    tibble(
+    term = names(est),
+    estimate = est,
+    std.error = se,
+    conf.low = ci[, 1],
+    conf.high = ci[, 2],
+    z.value = z,
+    p.value = p)
+  }
   
   ref_zero_infl_forested <- jpt_forested |>
     summarise(julian = mean(julian, na.rm = TRUE),
@@ -1726,8 +1769,6 @@ return(list(bind_rows(trend_result_alpine, trend_result_forested), bind_rows(lam
 #| results: hide
 #| code-fold: true
 
-safe_run_trend <- possibly(run_trend, otherwise = NA)
-
 trendz <- janp_main |>
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
                                ecoregion %in% c("Upper Subalpine", "Lower Subalpine", "Montane") ~ "Forested")) |>
@@ -1743,8 +1784,8 @@ trendz <- janp_main |>
   filter(!ecoregion_total<20) |>
   dplyr::select(-c(ecoregion, ecoregion_total)) |>
   distinct() |>
-  slice(5:6) |>
-  mutate(trend = map(species_code, safe_run_trend))
+  slice(1:12) |>
+  mutate(trend = map(species_code, run_trend))
 
 coefz <- trendz |>
   mutate(model_alpine = map(trend, ~ .x[[4]])) %>%
@@ -1768,17 +1809,18 @@ coefz_long <- coefz %>%
   ) |>
   mutate(ecoregion = case_when(grepl('montane',ecoregion) ~ "Forested", TRUE ~ "Alpine"))
 
-coefz_long %>%
-  ggplot(aes(x = term, y = estimate, shape = ecoregion, colour = species_code)) +
+coefz_long |>
+  drop_na(term) |>
+  mutate(alpha_sig = factor(case_when(p.value < 0.05 ~ 1, is.na(p.value) ~ 0.7, TRUE ~ 0.8))) |>
+  ggplot(aes(x = term, y = estimate, shape = ecoregion, colour = species_code, alpha = alpha_sig)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
+                position = position_dodge(width = 0.8),
+                width = 0.2) +
   geom_point(position = position_dodge(width = 0.8)) +
   coord_flip() +
   facet_wrap(~component, scales = "free_y") +
-  labs(
-    x = NULL,
-    y = "Coefficient (β)",
-    title = "Distribution of coefficients across species by ecoregion"
-  ) +
+  labs(x = NULL, y = "Coefficient (β)", title = "Distribution of coefficients across species by ecoregion") +
   theme_bw() +
   theme(
     axis.text.y = element_text(size = 8),
@@ -1805,7 +1847,7 @@ socb <- read_csv("species-status.csv") |>
   drop_na() |>
   slice(-1)
 
-trendzz <- bind_rows(trendz, trendzz)
+trendzz <- bind_rows(trendz)
 
 trend_table <- trendzz %>%
   mutate(trend = map(trend, ~ if(!is.list(.x)) {list(NA)} else {.x})) %>%
@@ -1860,8 +1902,8 @@ plot_dat <- trendzz |>
 
 ggplot(plot_dat, aes(x = year, y = lambda_hat, color = ecoregion)) + 
   geom_smooth() +
-  geom_point(alpha = 0.01) +
-  facet_wrap(~species_code) +
+  geom_point(alpha = 0.1) +
+  facet_wrap(~species_code, scales = "free_y") +
   theme_bw() + 
   scale_colour_viridis_d(option = "cividis") + 
   ylab(expression("Detection-corrected abundance ("*hat(lambda)*")")) + 
@@ -1894,7 +1936,7 @@ plot_dat |>
   group_by(location, year, ecoregion, trait) |>
   summarise(mean = mean(lambda_hat)) |>
   ggplot(aes(x=year, y=mean, color=ecoregion)) +
-  geom_point(alpha = 0.01) +
+  geom_point(alpha = 0.1) +
   geom_smooth() +
   theme_bw() +
   facet_wrap(~trait, scales = "free_y") +
