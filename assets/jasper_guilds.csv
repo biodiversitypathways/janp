@@ -28,7 +28,7 @@ BLJA,Blue Jay,Omnivore,Omnivore,Forest Generalist,Winter residents,NA,NA
 BLPW,Blackpoll Warbler,Invertebrate,Insect gleaner,Late succession forest,Long-distance migrants,Common Bird in Steep Decline,Stable
 BOCH,Boreal Chickadee,Invertebrate,Insect gleaner,Forest Generalist,Winter resident,NA,Stable
 BRBL,Brewer's Blackbird,Invertebrate,Insect gleaner,Habitat Generalist,Short-distance migrants,Common Bird in Steep Decline,Improving
-BRCR,Brown Creeper,NA,Bark forager,Late succession forest,Winter residents,NA,Stable
+BRCR,Brown Creeper,Invertebrate,Bark forager,Late succession forest,Winter residents,NA,Stable
 BRSP,Brewer's Sparrow,Omnivore,Granivore-insectivore,Grassland-shrubland-alpine,Long-distance migrants,Common Bird in Steep Decline,Potential extirpation
 BUFF,Bufflehead,Invertebrate,Aquatic,Wetland,Short-distance migrants,NA,Potential extirpation
 BWTE,Blue-winged Teal,PlantSeed,Aquatic,Wetland,Long-distance migrants,NA,Stable
@@ -39,7 +39,7 @@ CAJA,Canada Jay,Omnivore,Omnivore,Forest Generalist,Winter residents,NA,Stable
 CANG,Canada Goose,PlantSeed,Aquatic,Wetland,Short-distance migrants,NA,Stable
 CAVI,Cassin's Vireo,Invertebrate,Insect gleaner,Forest Generalist,Long-distance migrants,NA,Improving
 CBCH,Chestnut-backed Chickadee,Invertebrate,Insect gleaner,Forest Generalist,Winter resident,NA,NA
-CCSP,Clay-colored Sparrow,NA,Granivore-herbivore,Grassland-shrubland-alpine,Long-distance migrants,NA,Stable
+CCSP,Clay-colored Sparrow,PlantSeed,Granivore-herbivore,Grassland-shrubland-alpine,Long-distance migrants,NA,Stable
 CEDW,Cedar Waxwing,FruiNect,Frugivore-nectarivore,Forest Generalist,Short-distance migrants,NA,Improving
 CHSP,Chipping Sparrow,PlantSeed,Granivore-insectivore,Forest Generalist,Short-distance migrants,NA,Stable
 CITE,Cinnamon Teal,PlantSeed,Aquatic,Wetland,Short-distance migrants,Common Bird in Steep Decline; previously Watch List,Stable
@@ -64,7 +64,7 @@ EVGR,Evening Grosbeak,PlantSeed,Granivore-herbivore,Late succession forest,Winte
 FOSP,Fox Sparrow,Omnivore,Granivore-insectivore,Forest Generalist,Short-distance migrants,NA,Stable
 GBHE,Great Blue Heron,VertFishScav,Aquatic,Wetland,Short-distance migrants,NA,Improving
 GCKI,Golden-crowned Kinglet,Invertebrate,Insect gleaner,Late succession forest,Short-distance migrants,Common Bird in Steep Decline,Stable
-GCRF,Gray-crowned Rosy-Finch,NA,Granivore-herbivore,Grassland-shrubland-alpine,Short-distance migrants,Common Bird in Steep Decline,Stable
+GCRF,Gray-crowned Rosy-Finch,PlantSeed,Granivore-herbivore,Grassland-shrubland-alpine,Short-distance migrants,Common Bird in Steep Decline,Stable
 GCSP,Golden-crowned Sparrow,PlantSeed,Granivore-insectivore,Grassland-shrubland-alpine,Short-distance migrants,NA,Stable
 GGOW,Great Gray Owl,NA,Carnivore,Late succession forest,Winter residents,NA,Potential colonisation
 GHOW,Great Horned Owl,VertFishScav,Carnivore,Habitat Generalist,Winter residents,NA,Improving
@@ -98,7 +98,7 @@ OCWA,Orange-crowned Warbler,Invertebrate,Insect gleaner,Forest Generalist,Short-
 OSFL,Olive-sided Flycatcher,Invertebrate,Aerial insectivore,Forest Generalist,Long-distance migrants,Watch List/Tipping Point Yellow,Improving
 OSPR,Osprey,VertFishScav,Aquatic,Wetland,Short-distance migrants,NA,Improving
 OVEN,Ovenbird,Invertebrate,Insect gleaner,Late succession forest,Long-distance migrants,NA,Improving
-PAWR,Pacific Wren,NA,Insect gleaner,Late succession forest,Short-distance migrants,NA,Improving
+PAWR,Pacific Wren,Invertebrate,Insect gleaner,Late succession forest,Short-distance migrants,NA,Improving
 PBGR,Pied-billed Grebe,Invertebrate,Aquatic,Wetland,Short-distance migrants,NA,Improving
 PIGR,Pine Grosbeak,PlantSeed,Granivore-herbivore,Forest Generalist,Winter residents,Common Bird in Steep Decline,Stable
 PISI,Pine Siskin,PlantSeed,Granivore-herbivore,Forest Generalist,Winter residents,Common Bird in Steep Decline,Stable
@@ -145,9 +145,9 @@ WCSP,White-crowned Sparrow,PlantSeed,Granivore-insectivore,Habitat Generalist,Sh
 WEFL,Western Flycatcher,NA,Aerial insectivore,Forest Generalist,Long-distance migrants,NA,NA
 WEME,Western Meadowlark,Omnivore,Insect gleaner,Grassland-shrubland-alpine,Short-distance migrants,NA,Improving
 WETA,Western Tanager,Invertebrate,Insect gleaner,Forest Generalist,Long-distance migrants,NA,Improving
-WEWP,Western Wood-Pewee,NA,Aerial insectivore,Late succession forest,Long-distance migrants,NA,Stable
+WEWP,Western Wood-Pewee,Invertebrate,Aerial insectivore,Late succession forest,Long-distance migrants,NA,Stable
 WIFL,Willow Flycatcher,Invertebrate,Aerial insectivore,Forest Generalist,Long-distance migrants,NA,Improving
-WISN,Wilson's Snipe,NA,Aquatic,Wetland,Long-distance migrants,NA,Stable
+WISN,Wilson's Snipe,Invertebrate,Aquatic,Wetland,Long-distance migrants,NA,Stable
 WIWA,Wilson's Warbler,Invertebrate,Insect gleaner,Forest Generalist,Long-distance migrants,NA,Stable
 WTPT,White-tailed Ptarmigan,PlantSeed,Granivore-herbivore,Grassland-shrubland-alpine,Winter residents,NA,NA
 WTSP,White-throated Sparrow,PlantSeed,Granivore-insectivore,Forest Generalist,Short-distance migrants,NA,Improving
