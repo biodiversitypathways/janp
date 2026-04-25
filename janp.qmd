@@ -1074,13 +1074,17 @@ In the forest model selection, the candidate model set was again ranked via BIC 
 * **Abundance submodel (log link):** log(λ) = β₀ + β₁(year_c) + β₂(Conifer) + β₃(Broadleaf) + β₄(Mixedwood) + β₅(mean_tree_height) + β₆(mean_shrub_height)
 * **Detection submodel (logit link):** logit(p) = α₀ + α₁(temperature) + α₂(wind) + α₃(julian) + α₄(hour) + α₅(detection_time) + α₆(data_type) + α₇(mean_tree_height) + α₈(canopy_cover)
  
-#### Trend evaluation
+#### Percent change evaluation
 
 Temporal trends were quantified using the modified Mann-Kendall test (@mann1945non; @hamed2009), which includes variance correction for autocorrelation between years, and detects monotonic directional change, and Sen’s Slope (@Sen01121968), which estimates the magnitude of those trends. Both tests were implemented via the `modifiedmk` package (@hamed1998) and applied to the detection-corrected abundance estimates (λ̂).
 
 Sen’s slope provides an estimate of the median annual rate of change in the abundance index over the time series. To express this rate in a standardized and interpretable way, we converted Sen’s slope to a percent change per year by dividing the estimated slope by the mean annual abundance index across the full time series and multiplying by 100. This metric represents the average proportional change in abundance per year, relative to the long-term mean abundance of the species in that ecoregion. Positive values indicate increasing abundance, while negative values indicate declining abundance. We quantified this percent change as both an annual change in the mean abundance as well as the percentage change across the entire time period.
 
-We also quantified annual abundance trends within each ecoregion, grouped by functional guild: diet guild (frugivore, nectarivore, invertivore, omnivore, granivore, and vertebrate-fish-scavenger), habitat guild (forest generalist, habitat generalist, wetland, late-successional forest, and grassland-shrubland-alpine), and migratory guild (long-distance migrant, short-distance migrant, and winter resident).
+We also quantified annual abundance trends within each ecoregion, grouped by functional guild: diet guild (frugivore, nectarivore, insectivore, omnivore, granivore, and vertebrate-fish-scavenger), habitat guild (forest generalist, habitat generalist, wetland, late-successional forest, and grassland-shrubland-alpine), and migratory guild (long-distance migrant, short-distance migrant, and winter resident).
+
+#### Climate-trend evaluation
+
+Abundance estimates (λ̂) were joined with species-level migratory guild classifications and site-level climate data by location and year. Migratory guild labels were standardized prior to analysis. Data were aggregated to the year × ecoregion × migratory guild level by calculating mean abundance (λ̂) and mean climate variables, including spring temperature Tave), precipitation metrics, and associated anomalies. To facilitate comparison of temporal trends, variables were standardized (z-scored) within the full dataset. Scaled abundance and temperature were visualized over time using linear model fits within each guild–ecoregion combination. To quantify climate–abundance relationships, Pearson’s correlation coefficients (r) were calculated between mean annual temperature (tave) and mean abundance (λ̂) for each migratory guild within each ecoregion, using one value per year to avoid pseudoreplication.
 
 # Results
 
@@ -1227,7 +1231,7 @@ obs_cor <- obs_presence_only |>
 #| include: true
 #| code-fold: false
 #| label: fig-pairwise
-#| fig-cap: Heatmap visualizes how consistently different observers recorded abundance estimates. Yellow indicates strong positive correlation (high reliability between observers), orange/red indicates weak positive correlation (general consistency) and dark purple indicates a diversion in counts while white appears where there are no overlapping observations to compare.
+#| fig-cap: Heatmap of Pearson’s correlation coefficients (r) comparing species detections and abundance estimates among observers processing the same recordings. Positive values indicate agreement, while negative values indicate divergence in species identification and abundance estimates.
 
 # Heatmap
 ggplot(obs_cor, aes(x = observer_a, y = observer_b, fill = r)) +
@@ -1253,7 +1257,7 @@ ggplot(obs_cor, aes(x = observer_a, y = observer_b, fill = r)) +
 #| eval: true
 #| include: true
 #| label: fig-community
-#| tbl-cap: Community matrix of species associations between montane and alpine ecoregions
+#| fig-cap: Community matrix of species associations between forested and alpine ecoregions
 
 comm_matrix <- janp_main |>
   filter(!grepl('COTTONWOOD|MUSHROOM', location)) |>
@@ -1261,7 +1265,7 @@ comm_matrix <- janp_main |>
   dplyr::select(-ecoregion) |>
   left_join(janp_locs_table |> dplyr::select(location, ecoregion), by = "location") |>
   mutate(ecoregion = case_when(ecoregion %in% c("Alpine") ~ "Alpine",
-                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Montane")) |>
+                               ecoregion %in% c("Upper Subalpine","Lower Subalpine","Montane") ~ "Forested")) |>
   group_by(location, ecoregion, species_code) |>
   summarise(individual_order = max(individual_order)) |>
   ungroup() |>
@@ -1482,6 +1486,8 @@ plot_RDA_fire
 ```
 
 ## Trends
+
+### Single-species trends
 
 ```{r Run trend}
 #| warning: false
@@ -1957,6 +1963,8 @@ purrr::walk(species_list, function(sp) {
 cat(":::\n")
 ```
 
+### Guild trends
+
 ```{r}
 #| warning: false
 #| echo: false
@@ -2069,6 +2077,73 @@ ggplot(trend_table |>
   labs(colour = "Trend Status")
 
 ```
+
+### Trends with climate
+
+Correlations between mean annual temperature and abundance were weak and not statistically significant across all migratory guilds and ecoregions (@fig-trend-climate, |r| ≤ 0.41, p > 0.05). In alpine systems, winter residents showed the strongest negative association (r = -0.41, p = 0.093), while short-distance migrants exhibited a weaker negative trend (r = -0.17, p = 0.499). Long-distance migrants showed little relationship with temperature (r = 0.08, p = 0.744). In forested systems, all guilds exhibited negative correlations, with the strongest observed in long-distance migrants (r = -0.39, p = 0.123), followed by short-distance migrants (r = -0.31, p = 0.235) and winter residents (r = -0.27, p = 0.293). Overall, these results indicate no statistically supported relationship between temperature and abundance, although the predominance of negative correlations suggests a consistent but weak tendency for abundance to decline with increasing temperature across guilds.
+
+```{r}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| code-fold: true
+#| label: fig-trend-climate
+#| fig-cap: Scaled relationship of abundance estimates with average spring temperature over a 3-year moving window.
+
+clim <- read_csv("./assets/climjanp.csv")
+
+clim_guilds <- plot_dat |>
+  inner_join(guilds) |>
+  mutate(migratory_guild = case_when(migratory_guild == "Winter resident" ~ "Winter residents", TRUE ~ migratory_guild)) |>
+  inner_join(clim, by = c("location" = "site", "year" = "year")) |>
+  group_by(year, ecoregion.x, migratory_guild) |>
+  summarise(
+    mean_lambda = mean(lambda_hat, na.rm = TRUE),
+    mean_tave   = mean(tave_sp, na.rm = TRUE),
+    mean_pasat = mean(pas_at, na.rm = TRUE),
+    mean_pasanomaly = mean(pas_anomaly, na.rm = TRUE),
+    mean_taveanomaly = mean(tave_anomaly, na.rm = TRUE),
+    mean_tsp = mean(tsp_resid, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  mutate(
+    lambda_scaled = scale(mean_lambda)[,1],
+    tave_scaled   = scale(mean_tave)[,1],
+    pasat_scaled = scale(mean_pasat)[,1],
+    pasanomaly_scaled = scale(mean_pasanomaly)[,1],
+    taveanomaly_scaled = scale(mean_taveanomaly)[,1],
+    tsp_scaled = scale(mean_tsp)[,1]
+  ) |>
+  tidyr::pivot_longer(
+    cols = c(lambda_scaled, tave_scaled, pasat_scaled, pasanomaly_scaled, taveanomaly_scaled, tsp_scaled),
+    names_to = "variable",
+    values_to = "value"
+  )
+
+ggplot(clim_guilds |> filter(variable %in% c("lambda_scaled","tave_scaled")), aes(x = year, y = value, color = variable)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+    facet_wrap(~ migratory_guild + ecoregion.x, scales = "free_y", ncol = 3) +
+  theme_bw() +
+  labs(
+    y = "Scaled value",
+    color = ""
+  )
+
+clim_guilds |>
+  distinct(year, ecoregion.x, migratory_guild, mean_lambda, mean_tave) |>
+  group_by(ecoregion.x, migratory_guild) |>
+  summarise(
+    r = cor(mean_tave, mean_lambda, use = "complete.obs"),
+    p = cor.test(mean_tave, mean_lambda)$p.value,
+    n = n(),
+    .groups = "drop"
+  )
+
+```
+
 
 # Discussion and recommendations
 

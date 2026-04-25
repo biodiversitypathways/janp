@@ -9,7 +9,7 @@
 <meta name="author" content="Alex MacPhail">
 <meta name="author" content="Brenda Shepherd">
 <meta name="author" content="Nina Veselka">
-<meta name="dcterms.date" content="2026-04-24">
+<meta name="dcterms.date" content="2026-04-25">
 
 <title>Report on the use of passive acoustic monitoring for analysis of bird trends in Jasper National Park</title>
 <style>
@@ -162,7 +162,12 @@ div.csl-indent {
   <li><a href="#ecoregion-community-composition-analysis-1" id="toc-ecoregion-community-composition-analysis-1" class="nav-link" data-scroll-target="#ecoregion-community-composition-analysis-1">Ecoregion community composition analysis</a></li>
   <li><a href="#functional-and-community-level-diversity-1" id="toc-functional-and-community-level-diversity-1" class="nav-link" data-scroll-target="#functional-and-community-level-diversity-1">Functional and community-level diversity</a></li>
   <li><a href="#jasper-2024-fire-effects-1" id="toc-jasper-2024-fire-effects-1" class="nav-link" data-scroll-target="#jasper-2024-fire-effects-1">Jasper 2024 fire effects</a></li>
-  <li><a href="#trends" id="toc-trends" class="nav-link" data-scroll-target="#trends">Trends</a></li>
+  <li><a href="#trends" id="toc-trends" class="nav-link" data-scroll-target="#trends">Trends</a>
+  <ul class="collapse">
+  <li><a href="#single-species-trends" id="toc-single-species-trends" class="nav-link" data-scroll-target="#single-species-trends">Single-species trends</a></li>
+  <li><a href="#guild-trends" id="toc-guild-trends" class="nav-link" data-scroll-target="#guild-trends">Guild trends</a></li>
+  <li><a href="#trends-with-climate" id="toc-trends-with-climate" class="nav-link" data-scroll-target="#trends-with-climate">Trends with climate</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#discussion-and-recommendations" id="toc-discussion-and-recommendations" class="nav-link" data-scroll-target="#discussion-and-recommendations">Discussion and recommendations</a>
   <ul class="collapse">
@@ -217,7 +222,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 24, 2026</p>
+      <p class="date">April 25, 2026</p>
     </div>
   </div>
   
@@ -609,11 +614,15 @@ Table&nbsp;3: Guilds
 <li><strong>Detection submodel (logit link):</strong> logit(p) = α₀ + α₁(temperature) + α₂(wind) + α₃(julian) + α₄(hour) + α₅(detection_time) + α₆(data_type) + α₇(mean_tree_height) + α₈(canopy_cover)</li>
 </ul>
 </section>
-<section id="trend-evaluation" class="level4">
-<h4 class="anchored" data-anchor-id="trend-evaluation">Trend evaluation</h4>
+<section id="percent-change-evaluation" class="level4">
+<h4 class="anchored" data-anchor-id="percent-change-evaluation">Percent change evaluation</h4>
 <p>Temporal trends were quantified using the modified Mann-Kendall test (<span class="citation" data-cites="mann1945non">Mann (<a href="#ref-mann1945non" role="doc-biblioref">1945a</a>)</span>; <span class="citation" data-cites="hamed2009">Hamed (<a href="#ref-hamed2009" role="doc-biblioref">2009</a>)</span>), which includes variance correction for autocorrelation between years, and detects monotonic directional change, and Sen’s Slope (<span class="citation" data-cites="Sen01121968">Pranab Kumar Sen (<a href="#ref-Sen01121968" role="doc-biblioref">1968</a>)</span>), which estimates the magnitude of those trends. Both tests were implemented via the <code>modifiedmk</code> package (<span class="citation" data-cites="hamed1998">Hamed and Rao (<a href="#ref-hamed1998" role="doc-biblioref">1998</a>)</span>) and applied to the detection-corrected abundance estimates (λ̂).</p>
 <p>Sen’s slope provides an estimate of the median annual rate of change in the abundance index over the time series. To express this rate in a standardized and interpretable way, we converted Sen’s slope to a percent change per year by dividing the estimated slope by the mean annual abundance index across the full time series and multiplying by 100. This metric represents the average proportional change in abundance per year, relative to the long-term mean abundance of the species in that ecoregion. Positive values indicate increasing abundance, while negative values indicate declining abundance. We quantified this percent change as both an annual change in the mean abundance as well as the percentage change across the entire time period.</p>
-<p>We also quantified annual abundance trends within each ecoregion, grouped by functional guild: diet guild (frugivore, nectarivore, invertivore, omnivore, granivore, and vertebrate-fish-scavenger), habitat guild (forest generalist, habitat generalist, wetland, late-successional forest, and grassland-shrubland-alpine), and migratory guild (long-distance migrant, short-distance migrant, and winter resident).</p>
+<p>We also quantified annual abundance trends within each ecoregion, grouped by functional guild: diet guild (frugivore, nectarivore, insectivore, omnivore, granivore, and vertebrate-fish-scavenger), habitat guild (forest generalist, habitat generalist, wetland, late-successional forest, and grassland-shrubland-alpine), and migratory guild (long-distance migrant, short-distance migrant, and winter resident).</p>
+</section>
+<section id="climate-trend-evaluation" class="level4">
+<h4 class="anchored" data-anchor-id="climate-trend-evaluation">Climate-trend evaluation</h4>
+<p>Abundance estimates (λ̂) were joined with species-level migratory guild classifications and site-level climate data by location and year. Migratory guild labels were standardized prior to analysis. Data were aggregated to the year × ecoregion × migratory guild level by calculating mean abundance (λ̂) and mean climate variables, including spring temperature Tave), precipitation metrics, and associated anomalies. To facilitate comparison of temporal trends, variables were standardized (z-scored) within the full dataset. Scaled abundance and temperature were visualized over time using linear model fits within each guild–ecoregion combination. To quantify climate–abundance relationships, Pearson’s correlation coefficients (r) were calculated between mean annual temperature (tave) and mean abundance (λ̂) for each migratory guild within each ecoregion, using one value per year to avoid pseudoreplication.</p>
 </section>
 </section>
 </section>
@@ -662,10 +671,10 @@ Figure&nbsp;4: Distances to the montane centroid are similar (distributions over
 <div id="fig-pairwise" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pairwise-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="janp_files/figure-html/fig-pairwise-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;5: Heatmap visualizes how consistently different observers recorded abundance estimates. Yellow indicates strong positive correlation (high reliability between observers), orange/red indicates weak positive correlation (general consistency) and dark purple indicates a diversion in counts while white appears where there are no overlapping observations to compare."><img src="janp_files/figure-html/fig-pairwise-1.png" class="img-fluid figure-img" width="672"></a>
+<a href="janp_files/figure-html/fig-pairwise-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;5: Heatmap of Pearson’s correlation coefficients (r) comparing species detections and abundance estimates among observers processing the same recordings. Positive values indicate agreement, while negative values indicate divergence in species identification and abundance estimates."><img src="janp_files/figure-html/fig-pairwise-1.png" class="img-fluid figure-img" width="672"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pairwise-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: Heatmap visualizes how consistently different observers recorded abundance estimates. Yellow indicates strong positive correlation (high reliability between observers), orange/red indicates weak positive correlation (general consistency) and dark purple indicates a diversion in counts while white appears where there are no overlapping observations to compare.
+Figure&nbsp;5: Heatmap of Pearson’s correlation coefficients (r) comparing species detections and abundance estimates among observers processing the same recordings. Positive values indicate agreement, while negative values indicate divergence in species identification and abundance estimates.
 </figcaption>
 </figure>
 </div>
@@ -675,15 +684,15 @@ Figure&nbsp;5: Heatmap visualizes how consistently different observers recorded 
 <section id="ecoregion-community-composition-analysis-1" class="level2">
 <h2 class="anchored" data-anchor-id="ecoregion-community-composition-analysis-1">Ecoregion community composition analysis</h2>
 <p><a href="#fig-community" class="quarto-xref">Figure&nbsp;6</a> shows the relationship between species and ecoregion. The PERMANOVA test was performed using Bray-Curtis dissimilarity to assess whether community composition significantly differed between ecoregion groups. The analysis revealed a significant difference in bird community composition between alpine and forest groups. The ecoregion grouping explained approximately 27.85% of the variation in community composition, while residual variation accounted for 72.15%. These findings indicate a substantial divergence in species composition between ecoregion groups, justifying the decision to analyse trends separately for these two groups.</p>
-<div class="cell" data-tbl-cap="Community matrix of species associations between montane and alpine ecoregions">
+<div class="cell">
 <div class="cell-output-display">
-<div id="fig-community" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<div id="fig-community" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-community-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="janp_files/figure-html/fig-community-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;6: "><img src="janp_files/figure-html/fig-community-1.png" id="fig-community" class="img-fluid figure-img" width="672"></a>
+<a href="janp_files/figure-html/fig-community-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;6: Community matrix of species associations between forested and alpine ecoregions"><img src="janp_files/figure-html/fig-community-1.png" class="img-fluid figure-img" width="672"></a>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-community-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-community-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Community matrix of species associations between forested and alpine ecoregions
 </figcaption>
 </figure>
 </div>
@@ -781,6 +790,8 @@ Figure&nbsp;10: Community matrix of species associations before and after the Ja
 </section>
 <section id="trends" class="level2">
 <h2 class="anchored" data-anchor-id="trends">Trends</h2>
+<section id="single-species-trends" class="level3">
+<h3 class="anchored" data-anchor-id="single-species-trends">Single-species trends</h3>
 <div class="cell">
 <div id="tbl-trend" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1002,6 +1013,9 @@ Table&nbsp;4: Summary of trend of species by ecoregion.
 </div>
 </div>
 </div>
+</section>
+<section id="guild-trends" class="level3">
+<h3 class="anchored" data-anchor-id="guild-trends">Guild trends</h3>
 <div class="cell" data-tbl-cap="Summary of trend of guilds">
 <div class="cell-output-display">
 <div id="fig-trend-guilds-1" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
@@ -1069,6 +1083,36 @@ Figure&nbsp;14: Summary of trend percent change by species and ecoregion. Colour
 </div>
 </div>
 </div>
+</section>
+<section id="trends-with-climate" class="level3">
+<h3 class="anchored" data-anchor-id="trends-with-climate">Trends with climate</h3>
+<p>Correlations between mean annual temperature and abundance were weak and not statistically significant across all migratory guilds and ecoregions (<a href="#fig-trend-climate" class="quarto-xref">Figure&nbsp;15</a>, |r| ≤ 0.41, p &gt; 0.05). In alpine systems, winter residents showed the strongest negative association (r = -0.41, p = 0.093), while short-distance migrants exhibited a weaker negative trend (r = -0.17, p = 0.499). Long-distance migrants showed little relationship with temperature (r = 0.08, p = 0.744). In forested systems, all guilds exhibited negative correlations, with the strongest observed in long-distance migrants (r = -0.39, p = 0.123), followed by short-distance migrants (r = -0.31, p = 0.235) and winter residents (r = -0.27, p = 0.293). Overall, these results indicate no statistically supported relationship between temperature and abundance, although the predominance of negative correlations suggests a consistent but weak tendency for abundance to decline with increasing temperature across guilds.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  ecoregion.x migratory_guild               r      p     n
+  &lt;chr&gt;       &lt;chr&gt;                     &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;
+1 Alpine      Long-distance migrants   0.0828 0.744     18
+2 Alpine      Short-distance migrants -0.171  0.499     18
+3 Alpine      Winter residents        -0.408  0.0930    18
+4 Forested    Long-distance migrants  -0.388  0.123     17
+5 Forested    Short-distance migrants -0.305  0.235     17
+6 Forested    Winter residents        -0.271  0.293     17</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="fig-trend-climate" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-trend-climate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="janp_files/figure-html/fig-trend-climate-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-83" title="Figure&nbsp;15: Scaled relationship of abundance estimates with average spring temperature over a 3-year moving window."><img src="janp_files/figure-html/fig-trend-climate-1.png" class="img-fluid figure-img" width="672"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-trend-climate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15: Scaled relationship of abundance estimates with average spring temperature over a 3-year moving window.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
 </section>
 </section>
 <section id="discussion-and-recommendations" class="level1">
