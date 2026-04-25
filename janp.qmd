@@ -1970,6 +1970,7 @@ cat(":::\n")
 # Guild plots
 plot_dat |> 
   inner_join(guilds) |>
+  mutate(migratory_guild = case_when(migratory_guild == "Winter resident" ~ "Winter residents", TRUE ~ migratory_guild)) |>
   group_by(location, year, ecoregion, migratory_guild) |>
   summarise(mean = mean(lambda_hat)) |>
   ggplot(aes(x=year, y=mean, color=ecoregion)) +
