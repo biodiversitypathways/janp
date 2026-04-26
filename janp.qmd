@@ -12,6 +12,9 @@ format:
     geometry:
       - margin=1in
     papersize: letter
+  docx:
+    toc: true
+    number-sections: true
 navbar: right
 theme: cosmo
 lightbox: true
@@ -59,7 +62,7 @@ library(segmented) # Breakpoint regressions
 library(sf) # Spatial mapping
 library(spdep) # Spatial dependence
 library(tidytext) # Pretty text
-library(tidyverse) # Universe of data wrangling functions (dplyr, purrr, tidyr, ggplot)
+library(tidyverse) # Universe of data wrangling functions (dplyr, purrr, tidyr, ggplot2)
 library(vegan) # Multivariate data analysis
 library(wildrtrax) # Environmental sensor data to and from WildTrax
 
@@ -211,7 +214,7 @@ We respectfully acknowledge that Jasper National Park is located in Treaty 6 and
 
 # Introduction
 
-Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (@allan2017recent). The repercussions of habitat fragmentation (@fahrig2003effects) and loss (@hanski2011habitat), climate change (@mantyka2012interactions, @sattar2021review, @abrahms2023climate), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in protected areas in Canada (@lemieux2011state). In Alberta’s Rocky Mountain Natural Region, these pressures are compounded by increasing wildfire activity, which has significantly impacted montane bird monitoring. Studies have shown large declines in bird abundance in the last several decades across large regions of North America (@rosenberg2019decline), suggesting the need for parkwide monitoring of bird abundance.
+Human activities have been identified as key pressures and contributors to the global decline in forest wildlife (@allan2017recent). The repercussions of habitat fragmentation (@fahrig2003effects) and loss (@hanski2011habitat), climate change (@mantyka2012interactions, @sattar2021review, @abrahms2023climate), and increased access to sensitive areas exert direct and indirect pressures on forest biodiversity, particularly in protected areas in Canada (@lemieux2011state). In Alberta’s Rocky Mountain Natural Region, these pressures are compounded by increasing wildfire activity, which has significantly impacted montane bird monitoring. Studies have shown large declines in bird abundance in the last several decades across large regions of North America (@rosenberg2019decline), suggesting the need for park-wide monitoring of bird abundance.
 
 In 2007, Jasper National Park initiated a program to address the following monitoring question for forest and alpine bird communities: Has the abundance of forest and alpine birds declined over the duration of monitoring and during the past ten years? A species-specific decline threshold of 2.5% per year (approximately 20% over 10 years) was applied, consistent with both the IUCN Vulnerable listing criteria (30% decline over 10 years = 3.5% per year; IUCN 2001) and the Partners in Flight Conservation Urgency half-life benchmark, where species projected to lose 50% of their population within 30 years (equivalent to ~2.3% per year decline) are considered high urgency (Partners in Flight 2019, Rosenberg et al. 2016).
 
@@ -241,11 +244,7 @@ The objectives of this report are to:
 
 ## Bird surveys
 
-Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, and 20 sites that were added in 2025. To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region.
-
-Songbird data were collected using autonomous recording units (ARUs) deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing nine or ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations. At each monumented location, the ARU was set up, and technicians moved 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording to capture voice notes and the standardized 10-minute survey period. Five covariates thought to influence detection or abundance were recorded: start time, wind speed, temperature, cloud cover and recording equipment. Recording equipment varied throughout the course of the study. 
-
-During the 2021 and 2022 field seasons, paired recordings were collected concurrently at each site using both Wildlife Acoustics SM4 autonomous recording units and the original recording devices (Riverforks CZM or Zoom H2N Pro, depending on site-specific deployment). This dual-recording approach was implemented to support calibration and continuity across equipment types. However, to maintain consistency in data processing, only recordings from the original devices were transcribed and included in the final analyses for those years. Beginning in 2023, recordings were collected exclusively using SM4 units. 
+Monitoring for forest and alpine birds in Jasper National Park has been conducted annually since 2007 across a core set of 129 sites, with 20 sites that were added in 2025 after the Jasper 2024 fire (see @sec-jasper-fire). To ensure long-term feasibility, sites were clustered along transects, and transects were randomly selected from hiking trails that were at least 500 m away from roads and were at least five kilometers apart. To sample the diversity of birds in the park, transects were stratified by ecological region. Songbird data were collected using autonomous recording units (ARUs; @aru-overview) deployed by field staff to capture one 10-minute recording per point count annually. Surveys were scheduled consistently each breeding season in June and early July, starting 30 minutes before sunrise. Technicians walked transects containing nine or ten points, each spaced at least 300 m apart to prevent duplicate detections and ensure independence of locations (but see @sec-independent-locations). At each location, the ARU was set up, and technicians moved 10–20 m away to minimize disturbance, allowing at least 11 minutes of recording to capture voice notes and the standardized 10-minute survey period. Five covariates thought to influence detection or abundance were recorded: start time, wind speed (km/h), temperature (*~degree*C*), cloud cover (overcast, broken, scattered, clear) and recording equipment. Recording equipment varied throughout the course of the study. During the 2021 and 2022 field seasons, paired recordings were collected concurrently at each site using both Wildlife Acoustics SM4 autonomous recording units and the original recording devices (Riverforks CZM or Zoom H2N Pro, depending on site-specific deployment). This dual-recording approach was implemented to support calibration and continuity across equipment types. However, to maintain consistency in data processing, only recordings from the original devices were transcribed and included in the final analyses for those years. Beginning in 2023, recordings were collected exclusively using SM4 units. 
 
 ::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
 The 2012 field season was reduced significantly and was not included in some of the subsequent analyses. Refer to @tbl-loc-summary for more information.
@@ -481,7 +480,7 @@ datatable(janp_locs_table,
 
 ## Weather variables
 
-To examine the influence of weather on species richness and abundance, we fit two Poisson generalized linear models with richness and abundance as responses to temperature, sky condition, wind, Julian day, and hour as predictors. Model dispersion, calculated as the ratio of residual deviance to residual degrees of freedom, was 1.31 for the richness model and 0.31 for the abundance model, indicating mild overdispersion and underdispersion respectively. For species richness, Julian day (β = –0.016, p < 0.001) and hour (β = –0.031, p < 0.001) were strongly and negatively associated with richness, and wind showed a significant negative effect (β = –0.014, p = 0.002), while temperature and sky condition were non-significant. For abundance, only hour was a significant predictor (β = –0.042, p = 0.004), with Julian day, wind, temperature, and sky condition all showing weak or non-significant effects. Although temperature and sky condition were not significant in either model, they were retained due to their known ecological influence on bird activity and detection probability.
+To examine the influence of weather on species richness and abundance, species richness and abundance were modeled separately for each ecoregion using Poisson generalized linear models with richness and abundance as responses to temperature, cloud cover, wind, Julian day, and hour of day as predictors. In the alpine ecoregion, richness increased with temperature (β = 0.008, p = 0.03) and declined with wind (β = –0.019, p < 0.001) and hour (β = –0.053, p < 0.001), with additional reductions under clear and scattered sky conditions. In contrast, richness in the forested ecoregion was dominated by a pronounced seasonal decline (Julian day: β = –0.021, p < 0.001), alongside negative effects of wind (β = –0.031, p = 0.011) and hour (β = –0.027, p < 0.001); temperature had no detectable influence. Abundance showed minimal sensitivity to environmental variation; no predictors were significant in the alpine ecoregion, while in the forested ecoregion, only hour exerted a detectable negative effect (β = –0.045, p = 0.006). Temperature and wind were retained in abundance models due to their established influence on avian activity and detection, despite weak effects observed in these exploratory analyses.
 
 ```{r Relationship of weather variables with species abundance}
 #| warning: false
@@ -504,12 +503,6 @@ janp_inds <- janp_main %>%
   ) |>
   drop_na()
 
-ggplot(janp_inds, aes(x = temperature, y = inds)) +
-  geom_point(alpha = 0.3) +
-  geom_smooth() +
-  facet_wrap(~ecoregion) +
-  theme_bw()
-
 ggplot(janp_inds, aes(x = sky, y = inds)) +
   geom_boxplot() +
   facet_wrap(~ecoregion) +
@@ -522,13 +515,22 @@ ggplot(janp_inds, aes(x = temperature, y = inds)) +
   theme_bw() +
   xlab("Temperature (C)") + ylab("Maximum count of individuals")
 
-rich_mod <- glm(
-  inds ~ temperature + sky + wind + julian + hour,
-  data = janp_inds,
-  family = "poisson"
-)
+ggplot(janp_inds, aes(x = wind, y = inds)) +
+  geom_point(alpha = 0.3) +
+  facet_wrap(~ecoregion, scales = "free_x") +
+  geom_smooth(method = "glm", method.args = list(family = "poisson")) +
+  theme_bw() +
+  xlab("Wind (km/h)") + ylab("Maximum count of individuals")
 
-deviance(rich_mod) / df.residual(rich_mod)
+mods_inds <- janp_inds |>
+  group_split(ecoregion) |>
+  map(~ glm(
+    inds ~ temperature + sky + wind + julian + hour,
+    data = .x,
+    family = "poisson"
+  ))
+
+deviance(inds_mod) / df.residual(inds_mod)
 
 janp_richness <- janp_main %>%
   mutate(ecoregion = case_when(
@@ -560,11 +562,13 @@ ggplot(janp_richness, aes(x = sky, y = richness)) +
   theme_bw()
 
 # Model
-rich_mod <- glm(
-  richness ~ temperature + sky + wind + julian + hour,
-  data = janp_richness,
-  family = "poisson"
-)
+mods_rich <- janp_richness |>
+  group_split(ecoregion) |>
+  map(~ glm(
+    richness ~ temperature + sky + wind + julian + hour,
+    data = .x,
+    family = "poisson"
+  ))
 
 deviance(rich_mod) / df.residual(rich_mod)
 summary(rich_mod)
@@ -573,13 +577,11 @@ summary(rich_mod)
 
 ## Habitat variables
 
-We used the existing Vegetation Resource Inventory (VRI) derived from 2020 orthophoto imagery, before the 2022 Chetamon and 2024 Jasper Wildfire to describe habitat conditions. We extracted variables describing dominant land cover classes into groups which included conifer forest, broadleaf forest, mixedwood forest, shrub cover (low and tall subgroups), herbaceous (graminoid, mixed and forb subgroups), water (lake, river/stream), human (urban and road surface), and exposed soil classes (talus, exposed soil, bedrock), forest structure (mean canopy height, mean canopy cover), and understory characteristics (shrub height, mean shrub crown closure) at 150 meter radius around each location. To account for the severe habitat alteration caused by the 2024 Jasper Wildfire, we manually reclassified the land cover variable for all sites on the TEKARRA and VALLEY5 transects as simply "Burned" for the 2025 data. This classification replaced the pre-fire VRI categories (e.g., conifer, shrub) in the analysis. Assessment of the burn severity classification was not used in this analysis, but field visits and current knowledge would classify the burn as high to severe overall.
+We used the existing Vegetation Resource Inventory (VRI; [REF]) derived from 2020 orthophoto imagery, before the 2022 Chetamon and 2024 Jasper Wildfire to describe habitat conditions. We extracted variables describing dominant land cover classes into groups which included conifer forest, broadleaf forest, mixedwood forest, shrub cover (low and tall subgroups), herbaceous (graminoid, mixed and forb subgroups), water (lake, river/stream), human (urban and road surface), and exposed soil classes (talus, exposed soil, bedrock), forest structure (mean canopy height, mean canopy cover), and understory characteristics (shrub height, mean shrub crown closure) at 150 meter radius around each location. To account for the severe habitat alteration caused by the 2024 Jasper Wildfire, we manually reclassified the land cover variable for all sites on the TEKARRA and VALLEY5 transects as simply "Burned" for the 2025 data. This classification replaced the pre-fire VRI categories (e.g., conifer, shrub) in the analysis. Assessment of the burn severity classification was not used in this analysis, but field visits and current knowledge would classify the burn as high to severe overall.
 
 ## Data management, processing and quality control
 
-Recordings were clipped and organized to only include the 10-minute count. Before adopting WildTrax in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (@MacPhail2026_avian). Tags were then drawn to encompass the signal within the methods indicated in each project (see @tbl-transcriptions). Transcribers also had site photos available to optimize their species identification by having habitat context while processing.
-
-To ensure comparability across the 18-year dataset, we harmonized the abundance metrics derived from the differing transcription protocols prior to analysis. For legacy data collected between 2012 and 2020 using the 3-minute interval method, we calculated abundance as the maximum count observed in any single time bin rather than summing across bins. This conservative approach prevents the double-counting of individuals that sing continuously throughout the recording. Conversely, for data processed or re-transcribed using the modern 1SPT protocol (time of first detection of each unique individual of each species; 2007–2011 and 2021–2025), abundance was defined as the total count of unique individuals detected over the full 10-minute duration. Specifically, in WildTrax maximum count of individuals was used (i.e. AMRO1, AMRO2, AMRO3 max of 3 represents 3 individuals total).
+Recordings were clipped and organized to only include the 10-minute count. Before adopting [WildTrax](https://wildtrax.ca) in 2021, processing analysts excluded the initial 20 seconds to 1.5 minutes of recordings to reduce human impact on detection probability, then logged the first detection time per species. Recordings are now uploaded as clean 10-minute files with the voice note and observer notes removed. In WildTrax, individuals were counted by users scanning both the spectrogram and listening to the audio output (@MacPhail2026_avian). Tags of each species-individual were drawn to encompass each signal (@fig-acousticprocessing). Transcribers also had locations photos available to optimize their species identification by having habitat context while processing. To ensure comparability across the 18-year dataset, we harmonized the abundance metrics derived from the differing transcription protocols prior to analysis. For legacy data collected between 2012 and 2020 using the 3-minute interval method, we calculated abundance as the maximum count observed in any single time bin rather than summing across bins. This conservative approach prevents the double-counting of individuals that sing continuously throughout the recording. Conversely, for data processed or re-transcribed using the modern 1SPT protocol (time of first detection of each unique individual of each species; 2007–2011 and 2021–2025), abundance was defined as the total count of unique individuals detected over the full 10-minute duration. Specifically, in WildTrax maximum count of individuals was used (i.e. AMRO1, AMRO2, AMRO3 max of 3 represents 3 individuals total).
 
 ```{r Transcription method table}
 #| warning: false
@@ -652,7 +654,7 @@ tmtt_tags <- janp_main |>
 ```
 
 ![Visit photos at CAVELL-3](assets/locationphotos.png){#fig-visitphotos .float-left .fig-align-center}
-We also evaluated the performance of the HawkEars and BirdNET classifiers on the acoustic recordings (@fig-classifier).
+Simultaneously, we evaluated the performance of two acoustic classifiers, HawkEars v.1.0.8 (@huus2025hawkears) and BirdNET v2.1 and Lite (@kahl2021birdnet), on the acoustic recordings (@fig-classifier). Across the recall range, BirdNET-Lite maintained the highest precision, with BirdNET v2.1 closely tracking but consistently lower. HawkEars v1.0.8 performed well at low recall but declined rapidly as recall increased. At low recall, all models exceeded 0.9 precision, with BirdNET-Lite marginally leading. Performance converged at intermediate recall (~0.6–0.75), where precision ranged from ~0.75–0.8. At high recall (>0.8), differences widened: BirdNET-Lite degraded most gradually, BirdNET v2.1 declined more steeply, and HawkEars showed a sharp drop in precision. Overall, BirdNET-Lite demonstrated the most favourable precision–recall tradeoff, particularly under high-recall conditions where false positives increase.
 
 ```{r HawkEars and BirdNET performance}
 #| warning: false
@@ -678,7 +680,7 @@ ggplot(janp_hawkears_eval) +
 ## Analytical methods
 
 ::: {.callout-note collapse="true" style="background-color: #f4f4f4; padding: 20px;"}
-For the purpose of these analyses, abundance was defined as the count of individuals detected during point counts, rather than as a density x area relationship. All analyses took place in R 4.5.2 ‘[Not] Part in a Rumble’.
+For the purpose of these analyses, abundance was defined as the count of individuals detected during point counts, rather than as a density x area relationship. All analyses took place in R 4.5.3 ‘Reassured Reassurer’.
 :::
 
 Our analysis proceeded in the following steps. We:
@@ -694,7 +696,7 @@ Our analysis proceeded in the following steps. We:
 
 ### Location correlation {#sec-location-correction}
 
-To inform our subsequent modeling choices, we first evaluated the bird survey data for spatial autocorrelation (e.g., survey points close to one another exhibit similar bird counts). To test for this, we calculated a total abundance index for each location and year by summing the maximum number of individuals detected, representing the minimum number of individuals known to be present. Because survey points were typically spaced 300 m apart, we defined spatial neighbor relationships using a 1-nearest-neighbor approach (*k* = 1) based on great-circle distances. We derived spatial coordinates from geographic point data, excluding non-finite values to ensure valid estimation. Using the `knearneigh()` and `knn2nb()` functions in R, we constructed a spatial weights matrix with row-standardized weights to reflect immediate adjacency between points. We assessed global spatial autocorrelation in total abundance using Moran’s *I* under a randomization assumption. This statistic evaluates whether the landscape is spatially structured—specifically, whether nearby locations tend to have similar abundance values more often than expected by chance. To determine if this dependence was driven by localized clustering, we further calculated Local Indicators of Spatial Association (LISA) using local Moran’s *I*. This allowed for the identification of potential high–high, low–low, and spatial outlier patterns, with statistical significance evaluated at *α* = 0.05. While global Moran’s *I* indicated significant positive spatial autocorrelation across the study area, local Moran’s *I* revealed no statistically significant clusters. This pattern suggests that similarities in bird counts among nearby survey locations were spread broadly rather than concentrated in distinct hotspots, consistent with spatial dependence arising from gradual, landscape‑scale ecological processes rather than localized aggregations. Therefore, we proceeded by treating the locations as spatially independent.
+To inform our subsequent modeling choices, we first evaluated the bird survey data for spatial autocorrelation, in other words, whether survey points close to one another exhibit similar bird counts. To test for this, we calculated a total abundance index for each location and year by summing the maximum number of individuals detected, representing the minimum number of individuals known to be present. Because survey points were typically spaced 300 m apart, we defined spatial neighbor relationships using a 1-nearest-neighbor approach (*k* = 1) based on great-circle distances. We derived spatial coordinates from geographic point data, excluding non-finite values to ensure valid estimation. Using the `spdep` R package (@spdeppackage), we constructed a spatial weights matrix with row-standardized weights to reflect immediate adjacency between points. We assessed global spatial autocorrelation in total abundance using Moran’s *I* (@bivand2018comparing) under a randomization assumption. This statistic evaluates whether the landscape is spatially structured—specifically, whether nearby locations tend to have similar abundance values more often than expected by chance. To determine if this dependence was driven by localized clustering, we further calculated Local Indicators of Spatial Association (LISA) using local Moran’s *I* (@anselin1995local) which allowed for the identification of potential high–high, low–low, and spatial outlier patterns, with statistical significance evaluated at *α* = 0.05. While global Moran’s *I* indicated significant positive spatial autocorrelation across the study area, local Moran’s *I* revealed no statistically significant clusters. This pattern suggests that similarities in bird counts among nearby survey locations were spread broadly rather than concentrated in distinct hotspots, consistent with spatial dependence arising from gradual, landscape‑scale ecological processes rather than localized aggregations. Therefore, we proceeded by treating the locations as spatially independent.
 
 ### New reference site comparisons
 
@@ -904,7 +906,7 @@ spp_rich_mod <- lmer(species_count ~ year_c + ecoregion + (1|location), data = s
 summary(spp_rich_mod)
 ```
 
-### Jasper 2024 fire effects
+### Jasper 2024 fire effects {#sec-jasper-fire}
 
 We characterized the shift in bird community composition on the VALLEY5 and TEKARRA transects using redundancy analysis (RDA). We constructed a species-by-site community matrix using maximum abundance counts, restricting the pre-fire baseline to data from the montane ecoregion collected over the three years prior to the wildfire (2022–2024). We then modeled community structure as a function of fire period (pre-fire vs. post fire). This constrained ordination allows us to quantify the variation in species assemblages explicitly explained by the fire event and visualize the directional responses of individual species
 
@@ -912,7 +914,7 @@ We characterized the shift in bird community composition on the VALLEY5 and TEKA
 
 To quantify temporal changes in bird populations and community composition from 2007 to 2025, we analyzed trends in species-specific abundance, in forest and alpine ecoregions separately, and grouping species by functional guilds. Analyses were designed to separate biological change from potential sampling and methodological effects, ensuring that observed patterns represented genuine ecological responses. This was achieved through a multi-step framework that (1) evaluated and modeled detection probability and methodological variability, (2) estimated detection-corrected abundance, and (3) evaluated long-term directional trends and associated shifts in functional and community-level diversity.
 
-#### Location correlation
+#### Location correlation {#sec-independent-locations}
 
 To inform modeling choices, we assessed spatial autocorrelation among bird survey locations across years. We examined the spatial relationship between survey points based on total species abundance per location and year in order to determine whether spatial clustering or spatial dependence exists in the species abundance data. Because survey points were typically spaced 300 m apart, we defined spatial neighbor relationships using a 1-nearest-neighbor approach (*k* = 1) based on great-circle distances. We derived spatial coordinates from geographic point data, excluding non-finite values to ensure valid estimation. Using the `knearneigh()` and `knn2nb()` in the `spdep` package in R, we constructed a spatial weights matrix with row-standardized weights to reflect immediate adjacency between points.
 
@@ -1060,14 +1062,14 @@ run_spatial_tests()
 
 Abundance was estimated using single-visit *N*-mixture abundance models implemented in the `detect::svabu()` function (@solymos2012conditional). This framework jointly models site-level abundance with observation and detection probability from single-visit counts as conditional likelihood estimates. The package and framework make it easy for users to add and interpret observation and detection covariates which supports logistical considerations for single-visit surveys. We first stratified analyses by ecoregion (alpine vs. forested), fitting separate detection-abundance models given the assumption site characteristics and ecological drivers are different in both ecoregions. Expected abundance per site visit was modelled using the latent abundance component (λ).
 
-#### Alpine modelling
+#### Alpine model structure
 
 For alpine model selection, we constructed a candidate model set incorporating observation and detection covariates performed model selection ranked via BIC, which applies a stronger penalty for model complexity than AIC and is appropriate for large candidate model sets (). We also determined distribution and zero-inflation of each set of variables for the species and assigned the appropriate type to the species in the alpine ecoregion, noting zero-inflated distribution for most species. We examined the use of scaled variables for year (to detect temporal abundance trends), elevation, and previously mentioned habitat and landcover variables. Mean tree height and mean shrub height were used as structural vegetation covariates and were included as potential predictors of both abundance and detectability. Julian date, hour, detection time, data type were also included as detection covariates. Prior to model fitting, correlations between cover and height variables were assessed to evaluate collinearity. Conifer cover and mean tree height were moderately correlated (*r* = 0.38), while shrub cover and mean shrub height were essentially uncorrelated (*r* = 0.07), indicating that cover and height capture independent dimensions of habitat structure. For example, an alpine site may have high shrub cover composed of low-growing dense vegetation, or sparse but structurally tall shrubs, attributes that may be ecologically distinct and potentially relevant to different species. Model selection via BIC identified mean tree height as the primary variable influencing detection probability, with taller vegetation reducing detectability, while abundance was best explained by a combination of vegetation cover types and temporal trend. Variation inflation factors were simultaneously calculated for all landcover covariates included in the abundance submodel to assess collinearity.
 
 * **Abundance submodel (log link):** log(λ) = β₀ + β₁(year_c) + β₂(Shrub) + β₃(Conifer) + β₄(mean_tree_height) + β₅(mean_shrub_height)
 * **Detection submodel (logit link):** logit(p) = α₀ + α₁(temperature) + α₂(mean_tree_height) + α₃(wind) + α₄(data_type) + α₅(detection_time)
 
-#### Forested modelling
+#### Forested model structure
 
 In the forest model selection, the candidate model set was again ranked via BIC but included the following ecoregion-specific variables: scaled variables for year, shrub cover, conifer cover, broadleaf cover, mixedwood cover, water cover, human (urban and road surface), herbaceous cover (graminoid, mixed and forbs), and rock and soil (bedrock, exposed soil). The burned class exclusive to TEKARRA and VALLEY5 locations in 2025 was added to models but created complexity in the models by variance inflation factor testing.
 
@@ -1084,7 +1086,7 @@ We also quantified annual abundance trends within each ecoregion, grouped by fun
 
 #### Climate-trend evaluation
 
-Abundance estimates (λ̂) were joined with species-level migratory guild classifications and site-level climate data by location and year. Migratory guild labels were standardized prior to analysis. Data were aggregated to the year × ecoregion × migratory guild level by calculating mean abundance (λ̂) and mean climate variables, including spring temperature Tave), precipitation metrics, and associated anomalies. To facilitate comparison of temporal trends, variables were standardized (z-scored) within the full dataset. Scaled abundance and temperature were visualized over time using linear model fits within each guild–ecoregion combination. To quantify climate–abundance relationships, Pearson’s correlation coefficients (r) were calculated between mean annual temperature (tave) and mean abundance (λ̂) for each migratory guild within each ecoregion, using one value per year to avoid pseudoreplication.
+Abundance estimates (λ̂) were joined with species-level migratory guild classifications and site-level climate data by location and year. Migratory guild labels were standardized prior to analysis. Data were aggregated to the year × ecoregion × migratory guild level by calculating mean abundance (λ̂) and mean climate variables, including spring temperature Tave), precipitation metrics, and associated anomalies. To facilitate comparison of temporal trends, variables were standardized (z-scored) within the full dataset. Scaled abundance and temperature were visualized over time using linear model fits within each guild–ecoregion combination. To quantify climate–abundance relationships, Pearson’s correlation coefficients (r) were calculated between mean annual temperature (T<sub>ave</sub>) and mean abundance (λ̂) for each migratory guild within each ecoregion, using one value per year to avoid pseudoreplication.
 
 # Results
 
@@ -1376,9 +1378,9 @@ ggplot(yearly_rao, aes(x = year, y = meanRao)) +
 #| fig-cap: Species richness by year. Data from 2012 were excluded for montane sites because those sites were not sampled that year.
 #| label: fig-spp-rich-locs
 #| cap-location: bottom
-#| code-fold: true
 
 spp_rich_location |>
+  mutate(ecoregion = case_when(ecoregion == "Montane" ~ "Forested", TRUE ~ ecoregion)) |>
   ggplot(aes(x=as.factor(year), y=species_count, fill=year)) +
   geom_boxplot() +
   geom_point(alpha = 0.7, colour = "grey") +
@@ -1398,10 +1400,9 @@ spp_rich_location |>
 #| include: true
 #| results: hide
 #| fig-align: center
-#| fig-cap: Shannon diversity index across years. Data from 2012 were excluded for montane sites because those sites were not sampled that year.
+#| fig-cap: Shannon diversity index across years. Data from 2012 were excluded for forested sites because those sites were not sampled that year.
 #| label: fig-shannon
 #| cap-location: bottom
-#| code-fold: true
 
 shannon_d |>
   ggplot(aes(x = factor(year), y = shannon_index, fill = factor(year))) +
@@ -1489,6 +1490,8 @@ plot_RDA_fire
 
 ### Single-species trends
 
+
+
 ```{r Run trend}
 #| warning: false
 #| echo: false
@@ -1496,7 +1499,6 @@ plot_RDA_fire
 #| message: false
 #| include: true
 #| results: hide
-#| code-fold: true
 
 janp_ready_trend <- janp_main |>
   mutate(equipment_make = case_when(year >= 2023 ~ "Wildlife Acoustics", 
@@ -1783,7 +1785,6 @@ return(list(bind_rows(trend_result_alpine, trend_result_forested), bind_rows(lam
 
 }
 
-
 ```
 
 ```{r Organize data and look at beta coefficients}
@@ -1811,7 +1812,6 @@ trendz15 <- janp_main |>
   distinct() |>
   slice(66:69) |>
   mutate(trend = map(species_code, run_trend))
-
 
 trendzz <- bind_rows(trendz, trendz2, trendz3, trendz4, trendz5, trendz6, trendz7, trendz8, trendz9, trendz10, trendz11, trendz12, trendz13, trendz14, trendz15)
 
@@ -1857,7 +1857,6 @@ plot_dat <- trendzz |>
 #| eval: true
 #| message: false
 #| include: true
-#| code-fold: true
 
 socb <- read_csv("species-status.csv") |>
   dplyr::select(1:2) |>
