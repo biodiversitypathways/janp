@@ -1073,6 +1073,8 @@ We characterized the shift in bird community composition on the VALLEY5 and TEKA
 
 To quantify temporal changes in bird populations and community composition from 2007 to 2025, we analyzed trends in species-specific abundance, in forest and alpine ecoregions separately, and grouping species by functional guilds. Analyses were designed to separate biological change from potential sampling and methodological effects, ensuring that observed patterns represented genuine ecological responses. This was achieved through a multi-step framework that (1) evaluated and modeled detection probability and methodological variability, (2) estimated detection-corrected abundance, and (3) evaluated long-term directional trends and associated shifts in functional and community-level diversity.
 
+![Generalized framework and conceptual model of trend analysis]()
+
 #### Detection-corrected abundance estimation
 
 Abundance was estimated using single-visit *N*-mixture abundance models implemented in the `detect::svabu()` function (@solymos2012conditional). This framework jointly models site-level abundance with observation and detection probability from single-visit counts as conditional likelihood estimates. The package and framework make it easy for users to add and interpret observation and detection covariates which supports logistical considerations for single-visit surveys. We first stratified analyses by ecoregion (alpine vs. forested), fitting separate detection-abundance models given the assumption site characteristics and ecological drivers are different in both ecoregions. Expected abundance per site visit was modelled using the latent abundance component (λ).
@@ -1093,11 +1095,7 @@ In the forest model selection, the candidate model set was again ranked via BIC 
  
 #### Percent change evaluation
 
-Temporal trends were quantified using the modified Mann-Kendall test (@mann1945non; @hamed2009), which includes variance correction for autocorrelation between years, and detects monotonic directional change, and Sen’s Slope (@Sen01121968), which estimates the magnitude of those trends. Both tests were implemented via the `modifiedmk` package (@hamed1998) and applied to the detection-corrected abundance estimates (λ̂).
-
-Sen’s slope provides an estimate of the median annual rate of change in the abundance index over the time series. To express this rate in a standardized and interpretable way, we converted Sen’s slope to a percent change per year by dividing the estimated slope by the mean annual abundance index across the full time series and multiplying by 100. This metric represents the average proportional change in abundance per year, relative to the long-term mean abundance of the species in that ecoregion. Positive values indicate increasing abundance, while negative values indicate declining abundance. We quantified this percent change as both an annual change in the mean abundance as well as the percentage change across the entire time period.
-
-We also quantified annual abundance trends within each ecoregion, grouped by functional guild: diet guild (frugivore, nectarivore, insectivore, omnivore, granivore, and vertebrate-fish-scavenger), habitat guild (forest generalist, habitat generalist, wetland, late-successional forest, and grassland-shrubland-alpine), and migratory guild (long-distance migrant, short-distance migrant, and winter resident).
+Temporal trends were quantified using the modified Mann-Kendall test (@mann1945non; @hamed2009), which includes variance correction for autocorrelation between years, and detects monotonic directional change, and Sen’s Slope (@Sen01121968), which estimates the magnitude of those trends. Both tests were implemented via the `modifiedmk` package (@hamed1998) and applied to the detection-corrected abundance estimates (λ̂). Sen’s slope provides an estimate of the median annual rate of change in the abundance index over the time series. To express this rate in a standardized and interpretable way, we converted Sen’s slope to a percent change per year by dividing the estimated slope by the mean annual abundance index across the full time series and multiplying by 100. This metric represents the average proportional change in abundance per year, relative to the long-term mean abundance of the species in that ecoregion. Positive values indicate increasing abundance, while negative values indicate declining abundance. We quantified this percent change as both an annual change in the mean abundance as well as the percentage change across the entire time period. We also quantified annual abundance trends within each ecoregion, grouped by functional guild: diet guild (frugivore, nectarivore, insectivore, omnivore, granivore, and vertebrate-fish-scavenger), habitat guild (forest generalist, habitat generalist, wetland, late-successional forest, and grassland-shrubland-alpine), and migratory guild (long-distance migrant, short-distance migrant, and winter resident).
 
 #### Climate-trend evaluation
 
@@ -1503,7 +1501,7 @@ plot_RDA_fire
 
 ### Single-species trends
 
-Single-species trends, and their underlying coefficients with 95% CIs can be found in tabset in @fig-trend-points and @tbl-trend. The full outline of declines over the entire period can be seen in @fig-trend-vert.
+Single-species trends, and their underlying coefficients with 95% CIs can be found in tabset in @fig-trend-points and @tbl-trend. The full outline of declines over the entire period can be seen in @fig-trend-vert. Across ecoregions during the full study period, the proportion of species in decline differed substantially. In the forested ecoregion, 28 of 67 species exhibited declining trends, corresponding to 41.8% of assessed species. In contrast, the alpine ecoregion showed fewer declines, with 11 of 35 species classified as decreasing, representing 31.4% of species with estimated trends. These results indicate a higher prevalence of declining species in forested systems relative to alpine environments over the study period. However, the number of species with sufficient data to estimate trends was lower in the alpine ecoregion.
 
 ```{r Run trend}
 #| warning: false
@@ -1780,8 +1778,6 @@ if (nrow(check_spp_forested) <= 3) {
     mutate(pct_change = (lambda_hat - lag(lambda_hat)) / lag(lambda_hat) * 100) |>
     mutate(total_pct_change = (lambda_hat - first(lambda_hat)) / first(lambda_hat) * 100)
   
-  lambda_year_forested_plot <- jpt_forested |> dplyr::select(year, location, ecoregion, lambda_hat) |> distinct() |> arrange(year)
-  
   x_forested <- lambda_year_forested$lambda_hat
   mk_forested <- mmkh(x_forested)
   tau       <- mk_forested[6]
@@ -1950,12 +1946,13 @@ return(p1 / p2)
 
 ```
 
-```{r}
+```{r Plot top 5 species for trend}
 #| warning: false
 #| echo: false
 #| message: false
 #| inclde: true
 #| results: asis
+#| eval: true
 #| label: fig-trend-points
 #| tbl-cap: Summary of trend of species by ecoregion with coefficients for top 5 detected species.
 #| fig-width: 12
@@ -2006,9 +2003,23 @@ ggplot(trend_table |>
 
 ### Guild trends
 
-Trends grouped by guild can be found at @fig-trend-guilds-mig, @fig-trend-guilds-hab, and @fig-trend-guilds-trait. 
+Trends grouped by guild can be found at @fig-trend-guilds-mig, @fig-trend-guilds-hab, and @fig-trend-guilds-feeding and associated tables (@tbl-trend-mig-guild, @tbl-trend-hab-guild and @tbl-trend-guilds-feeding). Across guild classifications, consistent patterns emerged alongside notable ecoregional differences. Declines were most pronounced among long-distance migrants in both ecoregions, indicating that species reliant on migratory connectivity are disproportionately affected regardless of habitat context. In contrast, short-distance migrants showed comparatively low rates of decline, particularly in the forested ecoregion, suggesting greater resilience or stability within regional movement strategies. Winter residents exhibited intermediate but still elevated declines, especially in forested systems. Habitat associations revealed stronger divergence between ecoregions. In alpine environments, interpretation was limited by smaller sample sizes, though forest generalists showed moderate declines, suggesting some sensitivity even among broadly adaptable species. In forested systems, declines were concentrated among grassland–shrubland–alpine species and habitat generalists, pointing to potential pressures on species using open or transitional habitats within predominantly forested landscapes. Late-succession forest species and forest generalists exhibited more moderate declines, while wetland-associated species appeared comparatively stable. Dietary guilds further reinforced these patterns of ecological sensitivity. In alpine systems, declines were most evident among granivore–herbivores, while other feeding guilds showed moderate or uncertain trends due to limited data. In forested systems, aerial insectivores exhibited the strongest declines of any guild, aligning with broader evidence of vulnerability in this group, while granivore–herbivores and insect gleaners also showed notable declines. Other dietary groups, including granivore–insectivores, aquatic species, and omnivores, showed comparatively lower or more variable rates of decline.
 
-```{r}
+```{r Guild trend setup}
+#| warning: false
+#| echo: false
+#| eval: false
+#| message: false
+#| include: false
+
+trend_guild <- trend_table |>
+  inner_join(guilds, by = "species_code") |>
+  mutate(migratory_guild = case_when(migratory_guild == "Winter resident" ~ "Winter residents", TRUE ~ migratory_guild)) |>
+  drop_na(trend_ecoregion)
+
+```
+
+```{r Trend of migratory guilds}
 #| warning: false
 #| echo: false
 #| eval: true
@@ -2034,7 +2045,27 @@ plot_dat |>
 
 ```
 
-```{r}
+```{r Migratory guild table}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| label: tbl-trend-mig-guild
+#| tbl-cap: Summary of trend of species grouped by migratory guild and ecoregion
+
+datatable(trend_guild |>
+  group_by(trend_ecoregion, trend_jasper, migratory_guild) |>
+  summarise(n = n_distinct(species_code)) |>
+  drop_na(trend_jasper) |>
+  pivot_wider(names_from = trend_jasper, values_from = n) |>
+  rowwise() |>
+  mutate(`Percent Decreasing` = round((Decreasing / sum(c(Decreasing, Increasing, Stable)) * 100),2)) |>
+  ungroup())
+
+```
+
+```{r Trend of habitat guilds}
 #| warning: false
 #| echo: false
 #| eval: true
@@ -2058,47 +2089,17 @@ plot_dat |>
 
 ```
 
-```{r}
+```{r Habitat guild table}
 #| warning: false
 #| echo: false
 #| eval: true
 #| message: false
 #| include: true
-#| label: fig-trend-guilds-trait
-#| fig-cap: Summary of trend of feeding trait guilds
+#| label: tbl-trend-hab-guild
+#| tbl-cap: Summary of trend of species grouped by habitat guild and ecoregion
 
-plot_dat |> 
-  inner_join(guilds) |>
-  group_by(location, year, ecoregion, trait) |>
-  summarise(mean = mean(lambda_hat)) |>
-  ggplot(aes(x=year, y=mean, color=ecoregion)) +
-  geom_point(alpha = 0.01) +
-  geom_smooth() +
-  theme_bw() +
-  scale_colour_viridis_d(option = "cividis") +
-  facet_wrap(~trait, scales = "free_y") +
-  ggtitle("Combined trends of dietary trait guilds") +
-  ylab(expression("Detection-corrected abundance ("*hat(lambda)*")")) + xlab("Year")
-  
-```
-
-```{r Show trends by guilds}
-#| warning: false
-#| echo: false
-#| eval: true
-#| message: false
-#| include: true
-#| code-fold: true
-#| label: tbl-trend-guild
-#| tbl-cap: Summary of trend of species grouped by guild and ecoregion
-
-trend_guild <- trend_table |>
-  inner_join(guilds, by = "species_code") |>
-  mutate(migratory_guild = case_when(migratory_guild == "Winter resident" ~ "Winter residents", TRUE ~ migratory_guild)) |>
-  drop_na(trend_ecoregion)
-  
 datatable(trend_guild |>
-  group_by(trend_ecoregion, trend_jasper, trait) |>
+  group_by(trend_ecoregion, trend_jasper, habitat_guild) |>
   summarise(n = n_distinct(species_code)) |>
   drop_na(trend_jasper) |>
   pivot_wider(names_from = trend_jasper, values_from = n) |>
@@ -2108,11 +2109,55 @@ datatable(trend_guild |>
 
 ```
 
+```{r Feeding trait guild table}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| label: tbl-trend-guilds-feeding
+#| tbl-cap: Summary of trend of species grouped by dietary guild and ecoregion
+
+datatable(trend_guild |>
+  group_by(trend_ecoregion, trend_jasper, dietary_guild) |>
+  summarise(n = n_distinct(species_code)) |>
+  drop_na(trend_jasper) |>
+  pivot_wider(names_from = trend_jasper, values_from = n) |>
+  rowwise() |>
+  mutate(`Percent Decreasing` = round((Decreasing / sum(c(Decreasing, Increasing, Stable)) * 100),2)) |>
+  ungroup())
+
+```
+
+```{r Trend of feeding trait guilds}
+#| warning: false
+#| echo: false
+#| eval: true
+#| message: false
+#| include: true
+#| label: fig-trend-guilds-feeding
+#| fig-cap: Summary of trend of feeding guilds
+
+plot_dat |> 
+  inner_join(guilds) |>
+  group_by(location, year, ecoregion, dietary_guild) |>
+  summarise(mean = mean(lambda_hat)) |>
+  ggplot(aes(x=year, y=mean, color=ecoregion)) +
+  geom_point(alpha = 0.01) +
+  geom_smooth() +
+  theme_bw() +
+  scale_colour_viridis_d(option = "cividis") +
+  facet_wrap(~dietary_guild, scales = "free_y") +
+  ggtitle("Combined trends of dietary trait guilds") +
+  ylab(expression("Detection-corrected abundance ("*hat(lambda)*")")) + xlab("Year")
+  
+```
+
 ### Trends with climate
 
 Correlations between mean annual temperature and abundance were weak and not statistically significant across all migratory guilds and ecoregions (@fig-trend-climate, |r| ≤ 0.41, p > 0.05). In alpine systems, winter residents showed the strongest negative association (r = -0.41, p = 0.093), while short-distance migrants exhibited a weaker negative trend (r = -0.17, p = 0.499). Long-distance migrants showed little relationship with temperature (r = 0.08, p = 0.744). In forested systems, all guilds exhibited negative correlations, with the strongest observed in long-distance migrants (r = -0.39, p = 0.123), followed by short-distance migrants (r = -0.31, p = 0.235) and winter residents (r = -0.27, p = 0.293). Overall, these results indicate no statistically supported relationship between temperature and abundance, although the predominance of negative correlations suggests a consistent but weak tendency for abundance to decline with increasing temperature across guilds.
 
-```{r}
+```{r Plot climate-abundance relationship}
 #| warning: false
 #| echo: false
 #| eval: true
@@ -2163,7 +2208,7 @@ ggplot(clim_guilds |> filter(variable %in% c("lambda_scaled","tave_scaled")), ae
 
 ```
 
-```{r}
+```{r Table of climate-abundance correlations}
 #| warning: false
 #| echo: false
 #| eval: true
@@ -2205,7 +2250,33 @@ This is an important next step given the breadth of climate-driven change alread
 
 # Appendix
 
-```{r}
+## How-to run this Quarto report
+
+This report depends on a pre-saved workspace (`.RData`) that is loaded at the beginning of the document. All downstream code chunks assume those objects already exist in the environment.
+
+**Option 1**: Use the `.RData` file directly. This approach is best if you only need to reproduce results without modifying upstream data processing.
+
+1. Download the provided `.RData` file to your local machine.  
+2. Place it in the working directory of the Quarto project (or update the `load()` path in the document to match its location).  
+3. Open the `.qmd` file in RStudio (or another Quarto-compatible editor).  
+4. Ensure the setup chunk includes a call to `load("janp.RData")`.  
+5. Run the document:
+   - Render the full report (`Render` button or `quarto render`), or  
+   - Execute code chunks interactively.  
+
+**Option 2**: Clone or fork the repository. This approach is preferable if you plan to modify the analysis, update inputs, or integrate the workflow into a larger pipeline.
+
+1. Fork or clone the repository to your local machine.  
+2. Open the project in RStudio (recommended to preserve relative paths).  
+3. Confirm the `.RData` file is present in the expected directory.  
+4. Verify that all required packages are installed (install any missing dependencies).  
+5. Run or render the `.qmd` file as above.  
+
+The `.RData` file restores all required objects into the global environment; no data import steps are required unless you intend to regenerate it. If objects are missing or errors occur, confirm that the `.RData` file matches the version expected by the report. For reproducibility, avoid overwriting objects in the early chunks unless intentional.
+
+## Single-species trend models
+
+```{r All single-species trend models}
 #| warning: false
 #| echo: false
 #| message: false
@@ -2228,4 +2299,3 @@ purrr::walk(species_list2, function(sp) {
 cat(":::\n")
 ```
 
-```
