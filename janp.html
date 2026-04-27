@@ -556,6 +556,7 @@ Table&nbsp;4: Guilds
 <section id="trend-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="trend-analysis">Trend analysis</h3>
 <p>To quantify temporal changes in bird populations and community composition from 2007 to 2025, we analyzed trends in species-specific abundance, in forest and alpine ecoregions separately, and grouping species by functional guilds. Analyses were designed to separate biological change from potential sampling and methodological effects, ensuring that observed patterns represented genuine ecological responses. This was achieved through a multi-step framework that (1) evaluated and modeled detection probability and methodological variability, (2) estimated detection-corrected abundance, and (3) evaluated long-term directional trends and associated shifts in functional and community-level diversity.</p>
+<p>INSERT Generalized framework model figure</p>
 <section id="detection-corrected-abundance-estimation" class="level4">
 <h4 class="anchored" data-anchor-id="detection-corrected-abundance-estimation">Detection-corrected abundance estimation</h4>
 <p>Abundance was estimated using single-visit <em>N</em>-mixture abundance models implemented in the <code>detect::svabu()</code> function (<span class="citation" data-cites="solymos2012conditional">Sólymos, Lele, and Bayne (<a href="#ref-solymos2012conditional" role="doc-biblioref">2012</a>)</span>). This framework jointly models site-level abundance with observation and detection probability from single-visit counts as conditional likelihood estimates. The package and framework make it easy for users to add and interpret observation and detection covariates which supports logistical considerations for single-visit surveys. We first stratified analyses by ecoregion (alpine vs.&nbsp;forested), fitting separate detection-abundance models given the assumption site characteristics and ecological drivers are different in both ecoregions. Expected abundance per site visit was modelled using the latent abundance component (λ).</p>
@@ -678,7 +679,7 @@ Figure&nbsp;7: Mean functional diversity (Rao’s Q) over time
 </div>
 <div class="cell" data-layout-align="center" data-cap-location="bottom">
 <div class="cell-output-display">
-<div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
+<div id="fig-spp-rich-locs" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-spp-rich-locs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <a href="janp_files/figure-html/fig-spp-rich-locs-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;8: Species richness by year. Data from 2012 were excluded for montane sites because those sites were not sampled that year."><img src="janp_files/figure-html/fig-spp-rich-locs-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></a>
@@ -692,7 +693,7 @@ Figure&nbsp;8: Species richness by year. Data from 2012 were excluded for montan
 </div>
 <div class="cell" data-layout-align="center" data-cap-location="bottom">
 <div class="cell-output-display">
-<div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" data-cap-location="bottom">
+<div id="fig-shannon" class="quarto-float quarto-figure quarto-figure-center anchored" data-cap-location="bottom" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-shannon-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <a href="janp_files/figure-html/fig-shannon-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Figure&nbsp;9: Shannon diversity index across years. Data from 2012 were excluded for forested sites because those sites were not sampled that year."><img src="janp_files/figure-html/fig-shannon-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></a>
